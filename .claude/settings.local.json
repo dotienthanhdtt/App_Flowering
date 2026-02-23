@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(test:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter test:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(~/.claude/skills/.venv/bin/python3:*)",
+      "Bash(flutter:*)",
+      "Bash(tee:*)",
+      "Bash(dart test/app/routes/app-route-constants-validation-test.dart)"
+    ]
+  }
+}
