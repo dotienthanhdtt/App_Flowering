@@ -28,8 +28,9 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonHeight = height ?? 56.0;
-    final buttonPadding = padding ?? const EdgeInsets.symmetric(horizontal: 32);
+    final buttonHeight = height ?? 48.0;
+    final buttonPadding =
+        padding ?? const EdgeInsets.symmetric(horizontal: 24);
 
     Widget child = isLoading
         ? const SizedBox(
@@ -56,19 +57,33 @@ class AppButton extends StatelessWidget {
 
     switch (variant) {
       case AppButtonVariant.primary:
-        button = ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            minimumSize: Size(isFullWidth ? double.infinity : 0, buttonHeight),
-            padding: buttonPadding,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
-            ),
-            elevation: 0,
+        button = Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppColors.radiusPill),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x30FF7A27),
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
           ),
-          child: child,
+          child: ElevatedButton(
+            onPressed: isLoading ? null : onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.textOnPrimary,
+              minimumSize:
+                  Size(isFullWidth ? double.infinity : 0, buttonHeight),
+              padding: buttonPadding,
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(AppColors.radiusPill),
+              ),
+              elevation: 0,
+            ),
+            child: child,
+          ),
         );
         break;
 
@@ -76,12 +91,14 @@ class AppButton extends StatelessWidget {
         button = ElevatedButton(
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.secondary,
-            foregroundColor: Colors.white,
-            minimumSize: Size(isFullWidth ? double.infinity : 0, buttonHeight),
+            backgroundColor: AppColors.primarySoft,
+            foregroundColor: AppColors.primary,
+            minimumSize:
+                Size(isFullWidth ? double.infinity : 0, buttonHeight),
             padding: buttonPadding,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
+              borderRadius:
+                  BorderRadius.circular(AppColors.radiusPill),
             ),
             elevation: 0,
           ),
@@ -93,13 +110,19 @@ class AppButton extends StatelessWidget {
         button = OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.primary,
-            minimumSize: Size(isFullWidth ? double.infinity : 0, buttonHeight),
+            backgroundColor: AppColors.surface,
+            foregroundColor: AppColors.textSecondary,
+            minimumSize:
+                Size(isFullWidth ? double.infinity : 0, buttonHeight),
             padding: buttonPadding,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
+              borderRadius:
+                  BorderRadius.circular(AppColors.radiusPill),
             ),
-            side: const BorderSide(color: AppColors.primary),
+            side: const BorderSide(
+              color: AppColors.borderStrong,
+              width: 1.5,
+            ),
           ),
           child: child,
         );
@@ -110,7 +133,8 @@ class AppButton extends StatelessWidget {
           onPressed: isLoading ? null : onPressed,
           style: TextButton.styleFrom(
             foregroundColor: AppColors.primary,
-            minimumSize: Size(isFullWidth ? double.infinity : 0, buttonHeight),
+            minimumSize:
+                Size(isFullWidth ? double.infinity : 0, buttonHeight),
             padding: buttonPadding,
           ),
           child: child,
@@ -122,13 +146,19 @@ class AppButton extends StatelessWidget {
   }
 
   TextStyle get _textStyle {
+    final base = AppTextStyles.button.copyWith(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+    );
     switch (variant) {
       case AppButtonVariant.primary:
+        return base.copyWith(color: AppColors.textOnPrimary);
       case AppButtonVariant.secondary:
-        return AppTextStyles.button;
+        return base.copyWith(color: AppColors.primary);
       case AppButtonVariant.outline:
+        return base.copyWith(color: AppColors.textSecondary);
       case AppButtonVariant.text:
-        return AppTextStyles.button.copyWith(color: AppColors.primary);
+        return base.copyWith(color: AppColors.primary);
     }
   }
 }

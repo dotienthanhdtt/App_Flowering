@@ -140,32 +140,32 @@ Complete dependency setup with all required packages.
 
 #### 4. Core Constants
 
-**app_colors.dart** - Flowering Gen Z Aesthetic Palette:
+**app_colors.dart** - Pencil Warm Neutral Palette:
 ```dart
-- Primary: #FF9500 (Vibrant Orange - Primary Accent)
-- Primary Light: #FFD6A5 (Peach - Warm Highlight)
-- Primary Dark: #E68600
-- Secondary: #699A6B (Sage Green - Growth & Nature)
-- Secondary Light: #CAFFBF (Mint Green - Success States)
-- Secondary Dark: #4E7A50
+- Primary: #FF7A27 (Warm Orange)
 - Neutrals:
   - Background/Surface: #FFFDF7 (Cream White)
   - Text Primary: #292F36 (Charcoal)
   - Text Secondary: #699A6B (Sage Green)
-  - Text Hint: #A3A9AA
-  - Divider: #A3A9AA
+  - Text Tertiary: #A3A9AA (removed textHint)
+  - Border: #A3A9AA (renamed from divider)
 - Semantic:
   - Success: #CAFFBF (Mint Green)
   - Warning: #FFD6A5 (Peach)
   - Error: #FF4444
   - Info: #A0C4FF (Sky Blue)
-- Complementary:
-  - Peach: #FFD6A5
-  - Mint: #CAFFBF
-  - Sky Blue: #A0C4FF
-  - Soft Pink: #FDCAE1
+- Accent Groups (new):
+  - Blue: Brand accent group
+  - Green: Success accent group
+  - Lavender: Alternative accent group
+  - Rose: Alternative accent group
+- Light Semantic Variants (new):
+  - Success Light: Light success background
+  - Error Light: Light error background
+- Surface Variants (new):
+  - Surface variant for secondary backgrounds
 - Chat:
-  - User Bubble: #FF9500 (Vibrant Orange)
+  - User Bubble: #FF7A27 (Warm Orange)
   - AI Bubble: #FFFDF7 (Cream White)
 ```
 
@@ -173,8 +173,8 @@ Complete dependency setup with all required packages.
 ```dart
 - Headings: h1 (32px), h2 (24px), h3 (20px)
 - Body: bodyLarge (16px), bodyMedium (14px), bodySmall (12px)
-- Components: button (18px), caption (12px), label (14px)
-- Font: Google Fonts Inter
+- Components: button (15px), caption (12px), label (13px w600)
+- Font: Outfit (changed from Inter)
 ```
 
 **api_endpoints.dart** - API Routes:
@@ -657,22 +657,23 @@ Each feature module contains:
 
 ## Design System
 
-### Color Scheme - Flowering Gen Z Aesthetic
-- **Brand Primary:** Vibrant Orange (#FF9500) with Peach (#FFD6A5) and darker variant (#E68600)
-- **Brand Secondary:** Sage Green (#699A6B) with Mint (#CAFFBF) and darker variant (#4E7A50)
-- **Neutral:** Cream White (#FFFDF7) for backgrounds/surfaces, Charcoal (#292F36) for primary text
+### Color Scheme - Pencil Warm Neutral Palette
+- **Brand Primary:** Warm Orange (#FF7A27)
+- **Neutral:** Cream White (#FFFDF7) for backgrounds/surfaces, Charcoal (#292F36) for primary text, Tertiary text (#A3A9AA)
 - **Semantic:** Mint Green (#CAFFBF) for success, Peach (#FFD6A5) for warning, Red (#FF4444) for error, Sky Blue (#A0C4FF) for info
-- **Complementary:** Soft Pink (#FDCAE1) for additional accent needs
+- **Accent Groups:** Blue, Green, Lavender, Rose (new)
+- **Light Variants:** Success light, Error light (new)
+- **Surface Variants:** Surface variant for secondary backgrounds (new)
 
 ### Typography
-- **Font Family:** Inter (sans-serif)
+- **Font Family:** Outfit (sans-serif, changed from Inter)
 - **Scale:** 12px to 32px
 - **Weights:** 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
 - **Usage:** Consistent application via `AppTextStyles`
 
 ### Component Design Specs
-- **Buttons:** 56px height, 28px border radius (pill-shaped), 32px horizontal padding, 18px text
-- **Text Fields:** 16px border radius, 20px horizontal padding, 2px border width (all states)
+- **Buttons:** 48px height (down from 56px), pill radius (updated), 15px text (down from 18px), orange shadow on primary, new secondary (primarySoft bg), new outline (borderStrong border)
+- **Text Fields:** 12px border radius (down from 16px), 16px horizontal padding (down from 20px), 1.5px border width (down from 2px)
 - **Touch Targets:** Minimum 44x44
 
 ### Layout Principles

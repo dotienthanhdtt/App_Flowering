@@ -47,7 +47,7 @@ class ApiClient {}
 // Private constructors for utility classes
 class AppColors {
   AppColors._();  // Prevents instantiation
-  static const Color primary = Color(0xFFFF9500);
+  static const Color primary = Color(0xFFFF7A27);
 }
 ```
 

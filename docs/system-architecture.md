@@ -668,9 +668,10 @@ Get.updateLocale(const Locale('vi', 'VN'))  // Switch language
 ## Material3 Theme (Phase 5 ✅)
 
 **Color Scheme:**
-- Primary: Orange (#FF6B35)
+- Primary: Warm Orange (#FF7A27)
 - Seed color used for Material3 palette generation
 - System uses `useMaterial3: true`
+- Updated to Pencil warm neutral palette
 
 **System UI Configuration:**
 - Portrait-only orientation
