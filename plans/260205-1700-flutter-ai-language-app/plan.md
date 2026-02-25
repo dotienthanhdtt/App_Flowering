@@ -38,7 +38,7 @@ lib/
 | Phase | Description | Effort | Status |
 |-------|-------------|--------|--------|
 | [Phase 1](./phase-01-project-setup.md) | Project setup & dependencies | 1h | completed |
-| [Phase 2](./phase-02-network-layer.md) | Core network layer (Dio) | 2h | pending |
+| [Phase 2](./phase-02-network-layer.md) | Core network layer (Dio) | 2h | completed |
 | [Phase 3](./phase-03-core-services.md) | Core services (Hive, audio) | 2h | completed |
 | [Phase 4](./phase-04-base-classes-widgets.md) | Base classes & shared widgets | 2h | completed |
 | [Phase 5](./phase-05-routing-localization.md) | Routing & localization | 1.5h | completed |
