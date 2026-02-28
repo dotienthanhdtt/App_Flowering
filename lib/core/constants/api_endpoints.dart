@@ -9,6 +9,8 @@ class ApiEndpoints {
   static const String logout = '/auth/logout';
 
   // User
+  static const String userMe = '/users/me';
+  static const String updateUserMe = '/users/me'; // PATCH
   static const String profile = '/user/profile';
   static const String updateProfile = '/user/profile';
 

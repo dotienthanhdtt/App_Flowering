@@ -131,15 +131,13 @@ void main() {
       expect(find.text('Login - Coming Soon'), findsOneWidget);
     });
 
-    testWidgets('splash screen uses fade transition', (tester) async {
-      await tester.pumpWidget(
-        GetMaterialApp(
-          initialRoute: AppRoutes.splash,
-          getPages: AppPages.pages,
-        ),
+    test('splash route is registered with fade transition', () {
+      final splashPage = AppPages.pages.firstWhere(
+        (page) => page.name == AppRoutes.splash,
       );
 
-      expect(find.text('Splash - Coming Soon'), findsOneWidget);
+      expect(splashPage.transition, Transition.fade);
+      expect(splashPage.binding, isNotNull);
     });
   });
 

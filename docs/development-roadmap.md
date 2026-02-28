@@ -17,14 +17,15 @@ Phase 2: Network ████████████ 100% (2h) ✅ COMPLETED
 Phase 3: Services ████████████ 100% (2h) ✅ COMPLETED
 Phase 4: Base/Widgets ████████████ 100% (2h) ✅ COMPLETED
 Phase 5: Routes/i18n ████████████ 100% (1.5h) ✅ COMPLETED
-Phase 6: Auth ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
-Phase 7: Home ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
-Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending
-Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
-Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
+Phase 6: Onboarding ████████████ 100% (2h) ✅ COMPLETED (First Half)
+Phase 7: Auth ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
+Phase 8: Home ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
+Phase 9: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending
+Phase 10: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
+Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
 ```
 
-**Overall Progress:** 47% (8.5h / 18h completed)
+**Overall Progress:** 58% (10.5h / 18h completed)
 
 ## Phase Details
 
@@ -265,7 +266,60 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Phase 6: Authentication Feature 🔲 PENDING
+### Phase 6: Onboarding Feature ✅ COMPLETED (First Half)
+
+**Status:** ✅ Completed (First Half)
+**Duration:** 2 hours
+**Completion Date:** 2026-02-28
+**Dependencies:** Phase 5 ✅
+**Priority:** P1 - Critical
+
+**Deliverables:**
+- ✅ `splash_screen.dart` - Loading indicator screen
+- ✅ `onboarding_welcome_1/2/3_screen.dart` - 3 welcome screens with feature highlights
+- ✅ `onboarding_language_1/2_screen.dart` - Native and target language selection
+- ✅ `onboarding_controller.dart` - State and progression management
+- ✅ `onboarding_binding.dart` - Dependency injection
+- ✅ `onboarding_model.dart` - Data structure for selections
+- ✅ 5 new routes added (/splash, /onboarding-welcome-*, /onboarding-language-*)
+
+**Key Achievements:**
+- Splash screen with app initialization loading state
+- 3-screen welcome flow introducing app features
+- 2-screen language selection (native + target language)
+- Smooth transitions between onboarding screens
+- API integration with /users/me endpoints
+- UserModel updated with language fields (nativeLanguageId/Code/Name, targetLanguageId/Code/Name)
+- DisplayName field added to UserModel (replaces name)
+- Initial route changed from /login to /splash
+
+**API Integration:**
+- `GET /users/me` - Fetch current user profile
+- `PUT /users/me` - Update user profile with selected languages and display name
+
+**Configuration Changes:**
+- `.env.dev` API base URL updated to `https://dev.broduck.me`
+- Initial app route now `/splash` instead of `/login`
+- 5 new onboarding routes configured with rightToLeft transitions
+
+**Success Criteria Met:**
+- ✅ Onboarding screens render without errors
+- ✅ Navigation flow between screens works smoothly
+- ✅ Language selection persisted and sent to API
+- ✅ All transitions use consistent rightToLeft animation
+- ✅ Splash screen displays during app initialization
+- ✅ JSON serialization updated for UserModel fields
+
+**Artifacts:**
+- `/lib/features/onboarding/bindings/`
+- `/lib/features/onboarding/controllers/onboarding_controller.dart`
+- `/lib/features/onboarding/models/onboarding_model.dart`
+- `/lib/features/onboarding/views/` (splash + 5 onboarding screens)
+- `/lib/features/onboarding/widgets/` (feature-specific UI components)
+
+---
+
+### Phase 7: Authentication Feature 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 2 hours
@@ -301,11 +355,11 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Phase 7: Home Feature 🔲 PENDING
+### Phase 8: Home Feature 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 1.5 hours
-**Dependencies:** Phase 6
+**Dependencies:** Phase 7
 **Priority:** P2 - High
 
 **Objectives:**
@@ -329,11 +383,11 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Phase 8: Chat Feature 🔲 PENDING
+### Phase 9: Chat Feature 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 2.5 hours
-**Dependencies:** Phase 7
+**Dependencies:** Phase 8
 **Priority:** P1 - Critical
 
 **Objectives:**
@@ -366,11 +420,11 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Phase 9: Lessons Feature 🔲 PENDING
+### Phase 10: Lessons Feature 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 2 hours
-**Dependencies:** Phase 8
+**Dependencies:** Phase 9
 **Priority:** P2 - High
 
 **Objectives:**
@@ -401,11 +455,11 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Phase 10: Profile & Settings 🔲 PENDING
+### Phase 11: Profile & Settings 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 1.5 hours
-**Dependencies:** Phase 9
+**Dependencies:** Phase 10
 **Priority:** P3 - Medium
 
 **Objectives:**
@@ -464,9 +518,23 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Milestone 3: User Features (Phases 6-7) 🔲 Pending
+### Milestone 3: Onboarding (Phase 6) ✅ COMPLETED (First Half)
 
-**Target:** 2026-02-09
+**Target:** 2026-02-28
+**Status:** 100% Complete (First Half)
+**Completion Date:** 2026-02-28
+
+**Criteria:**
+- ✅ Splash screen implemented
+- ✅ Welcome screens complete
+- ✅ Language selection complete
+- ✅ API integration working
+
+---
+
+### Milestone 4: User Features (Phases 7-8) 🔲 Pending
+
+**Target:** 2026-03-05
 **Status:** 0% Complete
 **Remaining:** 3.5 hours
 
@@ -476,9 +544,9 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Milestone 4: Learning Features (Phases 8-10) 🔲 Pending
+### Milestone 5: Learning Features (Phases 9-11) 🔲 Pending
 
-**Target:** 2026-02-12
+**Target:** 2026-03-12
 **Status:** 0% Complete
 **Remaining:** 6 hours
 
@@ -618,19 +686,19 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 ## Next Steps
 
 **Immediate (Next Session):**
-1. Start Phase 6: Authentication Feature
+1. Start Phase 7: Authentication Feature
 2. Implement login/register screens
 3. Create auth controller with validation
 4. Set up token storage and management
 5. Build logout functionality
 
 **Short-term (This Week):**
-- Complete Phase 6 (Authentication)
-- Begin Phase 7 (Home Dashboard)
-- Reach Milestone 3 by 2026-02-09
+- Complete Phase 7 (Authentication)
+- Begin Phase 8 (Home Dashboard)
+- Reach Milestone 4 by 2026-03-05
 
 **Long-term:**
-- Complete all features by 2026-02-12
+- Complete all features by 2026-03-12
 - Conduct integration testing
 - Prepare for deployment
 

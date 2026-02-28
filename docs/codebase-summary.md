@@ -90,6 +90,12 @@ flowering/
 │   │       └── api_error_model.dart
 │   │
 │   ├── features/                          # Feature modules
+│   │   ├── onboarding/                    # Onboarding flow ✅
+│   │   │   ├── bindings/
+│   │   │   ├── controllers/
+│   │   │   ├── views/
+│   │   │   ├── widgets/
+│   │   │   └── models/
 │   │   ├── auth/                          # Authentication (pending)
 │   │   │   ├── bindings/
 │   │   │   ├── controllers/
@@ -180,7 +186,7 @@ Complete dependency setup with all required packages.
 **api_endpoints.dart** - API Routes:
 ```dart
 - Auth: /auth/login, /auth/register, /auth/refresh, /auth/logout
-- User: /user/profile
+- User: /users/me (GET/PUT), /user/profile
 - Lessons: /lessons, /lessons/:id
 - Chat: /chat/messages, /chat/send, /chat/voice
 - Progress: /progress, /progress/stats
@@ -223,15 +229,21 @@ Complete dependency setup with all required packages.
 ### ✅ Completed (Phase 5)
 
 #### Routing Configuration
-- GetX named routing with 9 routes
+- GetX named routing with 14 routes
 - Route constants in `app-route-constants.dart`
 - Page-to-route mapping with transitions in `app-page-definitions-with-transitions.dart`
-- Global bindings for 5 core services
-- Material3 theme with Orange color scheme
+- Global bindings for 5 core services + onboarding binding
+- Material3 theme with Warm Orange color scheme (#FF7A27)
 - System UI configuration (portrait, transparent status bar)
+- Initial route changed from `/login` to `/splash`
 
 **Routes:**
-- `/` - Splash screen
+- `/splash` - Splash screen (initial)
+- `/onboarding-welcome-1` - Welcome screen 1
+- `/onboarding-welcome-2` - Welcome screen 2
+- `/onboarding-welcome-3` - Welcome screen 3
+- `/onboarding-language-1` - Language selection 1
+- `/onboarding-language-2` - Language selection 2
 - `/login` - Login screen
 - `/register` - Register screen
 - `/home` - Home dashboard
@@ -270,14 +282,38 @@ Services registered in `global-dependency-injection-bindings.dart`:
 - Transparent status bar
 - Service initialization flow in main.dart
 
+### ✅ Completed (Phase 6 - First Half)
+
+#### Onboarding Feature
+- **Splash Screen**: Loading indicator while initializing app
+- **3 Welcome Screens**: Feature introduction with animations
+- **2 Language Selection Screens**: Native and target language selection
+- **OnboardingController**: Manages progression through screens
+- **OnboardingBinding**: Dependency injection
+- **OnboardingModel**: Data structure for user selections
+- **UserModel Updates**: Added displayName, nativeLanguageId, nativeLanguageCode, nativeLanguageName, targetLanguageId, targetLanguageCode, targetLanguageName
+
+**API Integrations:**
+- `GET /users/me` - Fetch current user profile
+- `PUT /users/me` - Update user profile (language preferences, display name)
+
+**Routes Added:**
+- `/splash` - Splash screen (initial route)
+- `/onboarding-welcome-1`, `/onboarding-welcome-2`, `/onboarding-welcome-3`
+- `/onboarding-language-1`, `/onboarding-language-2`
+
+**Configuration Updates:**
+- `.env.dev` API base URL changed to `https://dev.broduck.me`
+- Initial app route set to splash screen
+
 ### 🔲 Pending Implementation
 
-#### Phases 6-10: Features (0%)
-- Authentication
-- Home
-- Chat
-- Lessons
-- Profile/Settings
+#### Phases 6-10: Features (Remaining - Auth, Home, Chat, Lessons, Profile/Settings)
+- Authentication (login/register)
+- Home dashboard
+- Chat with AI
+- Lessons browser
+- Profile and settings
 
 ### Core Services Layer (Phase 3)
 

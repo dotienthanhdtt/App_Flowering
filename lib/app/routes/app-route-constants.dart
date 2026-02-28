@@ -20,4 +20,11 @@ abstract class AppRoutes {
 
   // Settings routes
   static const String settings = '/settings';
+
+  // Onboarding routes
+  static const String onboardingWelcome = '/onboarding/welcome';
+  static const String onboardingWelcome2 = '/onboarding/welcome-2';
+  static const String onboardingWelcome3 = '/onboarding/welcome-3';
+  static const String onboardingNativeLanguage = '/onboarding/native-language';
+  static const String onboardingLearningLanguage = '/onboarding/learning-language';
 }

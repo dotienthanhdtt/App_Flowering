@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app-route-constants.dart';
+import '../../features/onboarding/bindings/onboarding_binding.dart';
+import '../../features/onboarding/bindings/splash_binding.dart';
+import '../../features/onboarding/views/splash_screen.dart';
+import '../../features/onboarding/views/welcome_problem_screen.dart';
+import '../../features/onboarding/views/native_language_screen.dart';
+import '../../features/onboarding/views/learning_language_screen.dart';
 
 // Placeholder screen for initial setup
 class _PlaceholderScreen extends StatelessWidget {
@@ -38,17 +44,61 @@ abstract class AppPages {
   static const Duration defaultDuration = Duration(milliseconds: 300);
   static const Curve defaultCurve = Curves.easeInOut;
 
-  /// Initial route (will be determined by auth state later)
-  static String get initialRoute => AppRoutes.login;
+  /// Initial route — splash handles auth check + routing
+  static String get initialRoute => AppRoutes.splash;
 
   /// All app pages with routes, screens, and transitions
   static final List<GetPage> pages = [
     // Splash screen with fade transition
     GetPage(
       name: AppRoutes.splash,
-      page: () => const _PlaceholderScreen('Splash'),
+      page: () => const SplashScreen(),
+      binding: SplashBinding(),
       transition: Transition.fade,
       transitionDuration: const Duration(milliseconds: 500),
+    ),
+
+    // Onboarding — welcome screens
+    GetPage(
+      name: AppRoutes.onboardingWelcome,
+      page: () => const WelcomeProblemScreen(step: 0),
+      binding: OnboardingBinding(),
+      transition: Transition.fade,
+      transitionDuration: defaultDuration,
+    ),
+    GetPage(
+      name: AppRoutes.onboardingWelcome2,
+      page: () => const WelcomeProblemScreen(step: 1),
+      binding: OnboardingBinding(),
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+    GetPage(
+      name: AppRoutes.onboardingWelcome3,
+      page: () => const WelcomeProblemScreen(step: 2),
+      binding: OnboardingBinding(),
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Onboarding — language selection
+    GetPage(
+      name: AppRoutes.onboardingNativeLanguage,
+      page: () => const NativeLanguageScreen(),
+      binding: OnboardingBinding(),
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+    GetPage(
+      name: AppRoutes.onboardingLearningLanguage,
+      page: () => const LearningLanguageScreen(),
+      binding: OnboardingBinding(),
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
     ),
 
     // Auth screens

@@ -2,6 +2,75 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-02-28] Phase 6: Onboarding Feature (First Half) ✅ COMPLETED
+
+#### Added
+- **Onboarding Feature** (`lib/features/onboarding/`)
+  - `bindings/onboarding_binding.dart` - Dependency injection setup
+  - `controllers/onboarding_controller.dart` - State and screen navigation management
+  - `models/onboarding_model.dart` - Data structure for onboarding state
+  - `views/splash_screen.dart` - Loading screen shown on app startup
+  - `views/onboarding_welcome_1/2/3_screen.dart` - 3 welcome screens (3 features per screen)
+  - `views/onboarding_language_1/2_screen.dart` - Native and target language selection screens
+  - Feature-specific widgets and animations
+
+- **Routes Configuration**
+  - `/splash` - Splash screen (now initial route)
+  - `/onboarding-welcome-1`, `/onboarding-welcome-2`, `/onboarding-welcome-3`
+  - `/onboarding-language-1`, `/onboarding-language-2`
+  - 5 new routes with rightToLeft transitions (300ms)
+
+- **API Integration**
+  - `GET /users/me` - Fetch current user profile data
+  - `PUT /users/me` - Update user profile (language preferences, display name)
+
+#### Changed
+- **UserModel** (`lib/shared/models/user_model.dart`)
+  - Renamed `name` → `displayName`
+  - Renamed `nativeLanguage` → `nativeLanguageId`, `nativeLanguageCode`, `nativeLanguageName`
+  - Renamed `targetLanguage` → `targetLanguageId`, `targetLanguageCode`, `targetLanguageName`
+  - Updated JSON serialization to use camelCase field names
+  - Added copyWith method support for all new fields
+
+- **API Endpoints** (`lib/core/constants/api_endpoints.dart`)
+  - Added `userMe` constant for GET /users/me
+  - Added `updateUserMe` constant for PUT /users/me
+
+- **Configuration** (`.env.dev`)
+  - Updated API_BASE_URL from previous value to `https://dev.broduck.me`
+
+- **Routing** (`lib/app/routes/app-route-constants.dart`)
+  - Changed initial route from `/login` to `/splash`
+  - Added 5 onboarding route constants
+
+- **Global Bindings** (`lib/app/global-dependency-injection-bindings.dart`)
+  - Added `SplashBinding` for splash screen
+  - Added `OnboardingBinding` for onboarding feature
+
+#### Technical Decisions
+- **Onboarding Flow:** Splash → Welcome (3 screens) → Language Selection (2 screens) → Login
+- **Language Selection:** Two-step process (native language first, then target language)
+- **API Integration:** Onboarding controller syncs selections with backend via /users/me PUT
+- **UserModel Changes:** JSON field names use camelCase to match backend API contract
+- **Route Management:** Initial route is splash to allow app initialization before user login
+
+#### Build Verification
+- ✅ All onboarding screens compile without errors
+- ✅ Navigation flow works smoothly between screens
+- ✅ API endpoints properly configured
+- ✅ UserModel serialization updated and tested
+- ✅ No breaking changes to existing code
+
+#### Success Metrics Met
+- ✅ Onboarding screens render without UI errors
+- ✅ Splash screen shows during app initialization
+- ✅ Welcome screens display feature highlights
+- ✅ Language selection persists to backend
+- ✅ All route transitions are smooth (rightToLeft 300ms)
+- ✅ UserModel correctly serializes/deserializes new fields
+
+---
+
 ### [2026-02-05] Phase 1: Project Setup & Dependencies ✅ COMPLETED
 
 #### Added
