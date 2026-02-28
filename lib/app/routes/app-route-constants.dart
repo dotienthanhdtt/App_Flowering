@@ -27,4 +27,13 @@ abstract class AppRoutes {
   static const String onboardingWelcome3 = '/onboarding/welcome-3';
   static const String onboardingNativeLanguage = '/onboarding/native-language';
   static const String onboardingLearningLanguage = '/onboarding/learning-language';
+  static const String onboardingScenarioGift = '/onboarding/scenario-gift';
+  // Note: Login Gate is a bottom sheet shown over ScenarioGift — no GetPage needed.
+  static const String onboardingLoginGate = '/onboarding/login-gate';
+
+  // Signup / Auth routes
+  static const String signup = '/signup';
+  static const String forgotPassword = '/forgot-password';
+  static const String otpVerification = '/otp-verification';
+  static const String newPassword = '/new-password';
 }

@@ -7,6 +7,8 @@ import '../../features/onboarding/views/splash_screen.dart';
 import '../../features/onboarding/views/welcome_problem_screen.dart';
 import '../../features/onboarding/views/native_language_screen.dart';
 import '../../features/onboarding/views/learning_language_screen.dart';
+import '../../features/chat/bindings/ai_chat_binding.dart';
+import '../../features/chat/views/ai_chat_screen.dart';
 
 // Placeholder screen for initial setup
 class _PlaceholderScreen extends StatelessWidget {
@@ -127,11 +129,11 @@ abstract class AppPages {
       transitionDuration: defaultDuration,
     ),
 
-    // Chat screen
+    // Chat screen — AI onboarding flow (Screen 3)
     GetPage(
       name: AppRoutes.chat,
-      page: () => const _PlaceholderScreen('Chat'),
-      // binding: ChatBinding(),
+      page: () => const AiChatScreen(),
+      binding: AiChatBinding(),
       transition: defaultTransition,
       transitionDuration: defaultDuration,
       curve: defaultCurve,
@@ -170,6 +172,56 @@ abstract class AppPages {
       name: AppRoutes.settings,
       page: () => const _PlaceholderScreen('Settings'),
       // binding: SettingsBinding(),
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Onboarding — scenario gift (Screen 08)
+    GetPage(
+      name: AppRoutes.onboardingScenarioGift,
+      page: () => const _PlaceholderScreen('Scenario Gift'),
+      binding: OnboardingBinding(),
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Auth — signup (Screen 10)
+    GetPage(
+      name: AppRoutes.signup,
+      page: () => const _PlaceholderScreen('Sign Up'),
+      // binding: AuthBinding(), // Uncommented in Phase 05
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Auth — forgot password (Screen 12)
+    GetPage(
+      name: AppRoutes.forgotPassword,
+      page: () => const _PlaceholderScreen('Forgot Password'),
+      // binding: AuthBinding(), // Uncommented in Phase 06
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Auth — OTP verification (Screen 13)
+    GetPage(
+      name: AppRoutes.otpVerification,
+      page: () => const _PlaceholderScreen('OTP Verification'),
+      // binding: AuthBinding(), // Uncommented in Phase 06
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Auth — new password (Screen 14)
+    GetPage(
+      name: AppRoutes.newPassword,
+      page: () => const _PlaceholderScreen('New Password'),
+      // binding: AuthBinding(), // Uncommented in Phase 06
       transition: defaultTransition,
       transitionDuration: defaultDuration,
       curve: defaultCurve,

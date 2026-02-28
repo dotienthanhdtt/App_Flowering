@@ -1,18 +1,45 @@
+/// Language model for onboarding screens 05-06.
+///
+/// Supports both API-fetched data (with [id] and [flagUrl]) and
+/// offline fallback static lists (emoji flags only).
 class OnboardingLanguage {
+  /// UUID from API; null for hardcoded fallback entries.
+  final String? id;
   final String code;
-  final String flag;
+  final String flag; // emoji flag — always available
+  final String? flagUrl; // network URL from API; takes precedence over [flag]
   final String name;
   final String subtitle;
   final bool isEnabled;
 
   const OnboardingLanguage({
+    this.id,
     required this.code,
     required this.flag,
+    this.flagUrl,
     required this.name,
     required this.subtitle,
     this.isEnabled = false,
   });
 
+  factory OnboardingLanguage.fromJson(Map<String, dynamic> json) {
+    return OnboardingLanguage(
+      id: json['id'] as String?,
+      code: json['code'] as String,
+      flag: json['flag'] as String? ?? '',
+      flagUrl: json['flagUrl'] as String?,
+      name: json['name'] as String,
+      subtitle: json['subtitle'] as String? ?? '',
+      isEnabled: json['isEnabled'] as bool? ?? true,
+    );
+  }
+
+  // ── Offline fallback lists ────────────────────────────────────────────────
+
+  // fallbackNativeLanguages / fallbackLearningLanguages are the same as the
+  // static lists below — use nativeLanguages / learningLanguages directly.
+
+  /// Hardcoded native language list — used when API is unavailable.
   static const List<OnboardingLanguage> nativeLanguages = [
     OnboardingLanguage(
       code: 'vi',
@@ -60,6 +87,7 @@ class OnboardingLanguage {
     ),
   ];
 
+  /// Hardcoded learning language list — used when API is unavailable.
   static const List<OnboardingLanguage> learningLanguages = [
     OnboardingLanguage(
       code: 'en',
