@@ -17,7 +17,7 @@ const Map<String, String> viVN = {
 
   // Auth
   'login': 'Đăng nhập',
-  'register': 'Đăng ký',
+  'register': 'Đăng ký.',
   'logout': 'Đăng xuất',
   'email': 'Email',
   'password': 'Mật khẩu',
@@ -86,6 +86,26 @@ const Map<String, String> viVN = {
   'privacy_policy': 'Chính sách bảo mật',
   'terms_of_service': 'Điều khoản sử dụng',
 
+  // Bottom Navigation
+  'nav_chat': 'Trò chuyện',
+  'nav_read': 'Đọc',
+  'nav_vocabulary': 'Từ vựng',
+  'nav_profile': 'Hồ sơ',
+
+  // Chat Home
+  'chat_home_title': 'Cuộc trò chuyện',
+  'chat_home_empty': 'Chưa có cuộc trò chuyện nào',
+  'chat_home_start': 'Bắt đầu trò chuyện mới',
+
+  // Read
+  'read_title': 'Bài đọc',
+  'read_empty': 'Chưa có bài học',
+
+  // Vocabulary
+  'vocabulary_title': 'Từ vựng',
+  'vocabulary_search': 'Tìm từ...',
+  'vocabulary_empty': 'Chưa học từ nào',
+
   // Errors
   'network_error': 'Vui lòng kiểm tra kết nối mạng',
   'server_error': 'Đã xảy ra lỗi. Vui lòng thử lại sau',
@@ -106,12 +126,19 @@ const Map<String, String> viVN = {
   'chat_leave_action': 'Rời đi',
   'chat_stay_action': 'Ở lại',
   'chat_completing': 'Đang hoàn thiện hồ sơ của bạn...',
+  'chat_skip': 'Bỏ qua',
+  'chat_translate': 'Dịch',
+  'chat_hide_translation': 'Ẩn',
+  'chat_play_audio': 'Phát',
+  'chat_type_message': 'Nhập tin nhắn...',
+  'chat_complete': 'Hoàn thành',
 
   // Onboarding — Scenario Gift (Screen 08)
-  'scenario_title': 'Kế Hoạch Học Tập',
+  'scenario_title': 'Kịch bản của bạn',
   'scenario_subtitle': 'Flora đã tạo ra những tình huống này riêng cho bạn',
-  'scenario_cta': 'Bắt Đầu Luyện Tập',
+  'scenario_cta': 'Bắt đầu luyện tập →',
   'scenario_empty': 'Các tình huống của bạn đang được chuẩn bị...',
+  'scenario_level': 'Cấp độ',
 
   // Onboarding — Login Gate (Screen 09)
   'auth_gate_title': 'Lưu tiến trình của bạn',

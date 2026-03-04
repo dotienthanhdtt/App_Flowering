@@ -5,16 +5,18 @@ import 'package:flowering/app/routes/app-route-constants.dart';
 
 void main() {
   group('Navigation Between Placeholder Screens', () {
-    testWidgets('can navigate from login to register', (tester) async {
+    // Use /home as the initial route since /login is now a real screen
+    // (LoginEmailScreen) that requires AuthController + ApiClient DI.
+    testWidgets('can navigate from home to register', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.home,
           getPages: AppPages.pages,
         ),
       );
 
-      // Verify login screen
-      expect(find.text('Login - Coming Soon'), findsOneWidget);
+      // Verify home screen
+      expect(find.text('Home - Coming Soon'), findsOneWidget);
 
       // Navigate to register
       Get.toNamed(AppRoutes.register);
@@ -24,15 +26,14 @@ void main() {
       expect(find.text('Register - Coming Soon'), findsOneWidget);
     });
 
-    testWidgets('can navigate to home screen', (tester) async {
+    testWidgets('home screen renders as placeholder', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.home,
           getPages: AppPages.pages,
         ),
       );
 
-      Get.toNamed(AppRoutes.home);
       await tester.pumpAndSettle();
 
       expect(find.text('Home - Coming Soon'), findsOneWidget);
@@ -51,7 +52,7 @@ void main() {
     testWidgets('can navigate to lessons screen', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.home,
           getPages: AppPages.pages,
         ),
       );
@@ -65,7 +66,7 @@ void main() {
     testWidgets('can navigate to lesson detail screen', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.home,
           getPages: AppPages.pages,
         ),
       );
@@ -79,7 +80,7 @@ void main() {
     testWidgets('can navigate to profile screen', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.home,
           getPages: AppPages.pages,
         ),
       );
@@ -93,7 +94,7 @@ void main() {
     testWidgets('can navigate to settings screen', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.home,
           getPages: AppPages.pages,
         ),
       );
@@ -107,7 +108,7 @@ void main() {
     testWidgets('go back button works', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.home,
           getPages: AppPages.pages,
         ),
       );
@@ -122,8 +123,8 @@ void main() {
       await tester.tap(find.text('Go Back'));
       await tester.pumpAndSettle();
 
-      // Should be back on login
-      expect(find.text('Login - Coming Soon'), findsOneWidget);
+      // Should be back on home
+      expect(find.text('Home - Coming Soon'), findsOneWidget);
     });
 
     test('splash route is registered with fade transition', () {
@@ -140,7 +141,7 @@ void main() {
     testWidgets('transition duration is correct', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.home,
           getPages: AppPages.pages,
           defaultTransition: AppPages.defaultTransition,
           transitionDuration: AppPages.defaultDuration,

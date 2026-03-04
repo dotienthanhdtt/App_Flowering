@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_sizes.dart';
 
 class OnboardingTopBar extends StatelessWidget {
   const OnboardingTopBar({super.key});
@@ -8,33 +11,34 @@ class OnboardingTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 56, left: 32, right: 32),
+      padding: const EdgeInsets.only(
+          top: AppSizes.topBarHeight, left: AppSizes.padding3XL, right: AppSizes.padding3XL),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(AppSizes.radiusS),
             child: Image.asset(
               'assets/logos/logo.png',
-              width: 24,
-              height: 24,
+              width: AppSizes.avatarS,
+              height: AppSizes.avatarS,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSizes.spacingS),
           Text(
             'Flowering',
             style: GoogleFonts.outfit(
-              fontSize: 18,
+              fontSize: AppSizes.font3XL,
               fontWeight: FontWeight.w700,
               color: AppColors.textPrimary,
             ),
           ),
           const Spacer(),
           GestureDetector(
-            onTap: () {}, // TODO: implement login navigation
+            onTap: () => Get.toNamed(AppRoutes.login),
             child: Text(
               'Log in',
               style: GoogleFonts.outfit(
-                fontSize: 15,
+                fontSize: AppSizes.fontL,
                 fontWeight: FontWeight.w600,
                 color: AppColors.accentBlue,
               ),

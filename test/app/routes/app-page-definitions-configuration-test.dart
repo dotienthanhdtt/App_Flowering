@@ -35,8 +35,6 @@ void main() {
       expect(routeNames, contains(AppRoutes.profile));
       expect(routeNames, contains(AppRoutes.settings));
       expect(routeNames, contains(AppRoutes.onboardingWelcome));
-      expect(routeNames, contains(AppRoutes.onboardingWelcome2));
-      expect(routeNames, contains(AppRoutes.onboardingWelcome3));
       expect(routeNames, contains(AppRoutes.onboardingNativeLanguage));
       expect(routeNames, contains(AppRoutes.onboardingLearningLanguage));
     });

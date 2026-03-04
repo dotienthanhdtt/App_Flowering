@@ -8,6 +8,9 @@ class Scenario {
   final String description;
   final String icon; // Lucide icon name
   final String accentColor;
+  final String? imageUrl;
+  final int level;
+  final bool learned;
 
   const Scenario({
     required this.id,
@@ -15,6 +18,9 @@ class Scenario {
     required this.description,
     required this.icon,
     required this.accentColor,
+    this.imageUrl,
+    this.level = 1,
+    this.learned = false,
   });
 
   factory Scenario.fromJson(Map<String, dynamic> json) {
@@ -24,6 +30,9 @@ class Scenario {
       description: json['description'] as String,
       icon: json['icon'] as String? ?? 'star',
       accentColor: json['accentColor'] as String? ?? 'primary',
+      imageUrl: json['imageUrl'] as String?,
+      level: json['level'] as int? ?? 1,
+      learned: json['learned'] as bool? ?? false,
     );
   }
 }

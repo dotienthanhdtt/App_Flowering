@@ -86,6 +86,26 @@ const Map<String, String> enUS = {
   'privacy_policy': 'Privacy Policy',
   'terms_of_service': 'Terms of Service',
 
+  // Bottom Navigation
+  'nav_chat': 'Chat',
+  'nav_read': 'Read',
+  'nav_vocabulary': 'Vocabulary',
+  'nav_profile': 'Profile',
+
+  // Chat Home
+  'chat_home_title': 'Conversations',
+  'chat_home_empty': 'No conversations yet',
+  'chat_home_start': 'Start a new chat',
+
+  // Read
+  'read_title': 'Reading',
+  'read_empty': 'No lessons available',
+
+  // Vocabulary
+  'vocabulary_title': 'Vocabulary',
+  'vocabulary_search': 'Search words...',
+  'vocabulary_empty': 'No words learned yet',
+
   // Errors
   'network_error': 'Please check your internet connection',
   'server_error': 'Something went wrong. Please try again later',
@@ -106,12 +126,19 @@ const Map<String, String> enUS = {
   'chat_leave_action': 'Leave',
   'chat_stay_action': 'Stay',
   'chat_completing': 'Wrapping up your profile...',
+  'chat_skip': 'Skip',
+  'chat_translate': 'Translate',
+  'chat_hide_translation': 'Hide',
+  'chat_play_audio': 'Play',
+  'chat_type_message': 'Type a message...',
+  'chat_complete': 'Chat complete',
 
   // Onboarding — Scenario Gift (Screen 08)
-  'scenario_title': 'Your Learning Plan',
+  'scenario_title': 'Your Scenarios',
   'scenario_subtitle': 'Flora created these scenarios just for you',
-  'scenario_cta': 'Start Practicing',
+  'scenario_cta': 'Start Practicing →',
   'scenario_empty': 'Your scenarios are being prepared...',
+  'scenario_level': 'Level',
 
   // Onboarding — Login Gate (Screen 09)
   'auth_gate_title': 'Save your progress',

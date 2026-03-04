@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../core/constants/app_sizes.dart';
 import 'app-route-constants.dart';
 import '../../features/onboarding/bindings/onboarding_binding.dart';
 import '../../features/onboarding/bindings/splash_binding.dart';
@@ -9,6 +10,15 @@ import '../../features/onboarding/views/native_language_screen.dart';
 import '../../features/onboarding/views/learning_language_screen.dart';
 import '../../features/chat/bindings/ai_chat_binding.dart';
 import '../../features/chat/views/ai_chat_screen.dart';
+import '../../features/auth/bindings/auth_binding.dart';
+import '../../features/auth/views/login_email_screen.dart';
+import '../../features/auth/views/signup_email_screen.dart';
+import '../../features/auth/views/forgot_password_screen.dart';
+import '../../features/auth/views/otp_verification_screen.dart';
+import '../../features/auth/views/new_password_screen.dart';
+import '../../features/onboarding/views/scenario_gift_screen.dart';
+import '../../features/home/views/main-shell-screen.dart';
+import '../../features/home/bindings/main-shell-binding.dart';
 
 // Placeholder screen for initial setup
 class _PlaceholderScreen extends StatelessWidget {
@@ -25,9 +35,9 @@ class _PlaceholderScreen extends StatelessWidget {
           children: [
             Text(
               '$title - Coming Soon',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: AppSizes.font3XL, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSizes.spacingL),
             ElevatedButton(
               onPressed: () => Get.back(),
               child: const Text('Go Back'),
@@ -60,29 +70,13 @@ abstract class AppPages {
       transitionDuration: const Duration(milliseconds: 500),
     ),
 
-    // Onboarding — welcome screens
+    // Onboarding — welcome screens (single route, internal PageView handles steps)
     GetPage(
       name: AppRoutes.onboardingWelcome,
-      page: () => const WelcomeProblemScreen(step: 0),
+      page: () => const WelcomeProblemScreen(),
       binding: OnboardingBinding(),
       transition: Transition.fade,
       transitionDuration: defaultDuration,
-    ),
-    GetPage(
-      name: AppRoutes.onboardingWelcome2,
-      page: () => const WelcomeProblemScreen(step: 1),
-      binding: OnboardingBinding(),
-      transition: defaultTransition,
-      transitionDuration: defaultDuration,
-      curve: defaultCurve,
-    ),
-    GetPage(
-      name: AppRoutes.onboardingWelcome3,
-      page: () => const WelcomeProblemScreen(step: 2),
-      binding: OnboardingBinding(),
-      transition: defaultTransition,
-      transitionDuration: defaultDuration,
-      curve: defaultCurve,
     ),
 
     // Onboarding — language selection
@@ -106,25 +100,24 @@ abstract class AppPages {
     // Auth screens
     GetPage(
       name: AppRoutes.login,
-      page: () => const _PlaceholderScreen('Login'),
-      // binding: AuthBinding(), // Will be uncommented when auth feature is ready
+      page: () => const LoginEmailScreen(),
+      binding: AuthBinding(),
       transition: Transition.fade,
       transitionDuration: defaultDuration,
     ),
     GetPage(
       name: AppRoutes.register,
       page: () => const _PlaceholderScreen('Register'),
-      // binding: AuthBinding(),
       transition: defaultTransition,
       transitionDuration: defaultDuration,
       curve: defaultCurve,
     ),
 
-    // Home screen with fade transition
+    // Home — main shell with bottom nav
     GetPage(
       name: AppRoutes.home,
-      page: () => const _PlaceholderScreen('Home'),
-      // binding: HomeBinding(),
+      page: () => const MainShellScreen(),
+      binding: MainShellBinding(),
       transition: Transition.fade,
       transitionDuration: defaultDuration,
     ),
@@ -180,7 +173,7 @@ abstract class AppPages {
     // Onboarding — scenario gift (Screen 08)
     GetPage(
       name: AppRoutes.onboardingScenarioGift,
-      page: () => const _PlaceholderScreen('Scenario Gift'),
+      page: () => const ScenarioGiftScreen(),
       binding: OnboardingBinding(),
       transition: defaultTransition,
       transitionDuration: defaultDuration,
@@ -190,8 +183,8 @@ abstract class AppPages {
     // Auth — signup (Screen 10)
     GetPage(
       name: AppRoutes.signup,
-      page: () => const _PlaceholderScreen('Sign Up'),
-      // binding: AuthBinding(), // Uncommented in Phase 05
+      page: () => const SignupEmailScreen(),
+      binding: AuthBinding(),
       transition: defaultTransition,
       transitionDuration: defaultDuration,
       curve: defaultCurve,
@@ -200,8 +193,8 @@ abstract class AppPages {
     // Auth — forgot password (Screen 12)
     GetPage(
       name: AppRoutes.forgotPassword,
-      page: () => const _PlaceholderScreen('Forgot Password'),
-      // binding: AuthBinding(), // Uncommented in Phase 06
+      page: () => const ForgotPasswordScreen(),
+      binding: AuthBinding(),
       transition: defaultTransition,
       transitionDuration: defaultDuration,
       curve: defaultCurve,
@@ -210,8 +203,8 @@ abstract class AppPages {
     // Auth — OTP verification (Screen 13)
     GetPage(
       name: AppRoutes.otpVerification,
-      page: () => const _PlaceholderScreen('OTP Verification'),
-      // binding: AuthBinding(), // Uncommented in Phase 06
+      page: () => const OtpVerificationScreen(),
+      binding: AuthBinding(),
       transition: defaultTransition,
       transitionDuration: defaultDuration,
       curve: defaultCurve,
@@ -220,8 +213,8 @@ abstract class AppPages {
     // Auth — new password (Screen 14)
     GetPage(
       name: AppRoutes.newPassword,
-      page: () => const _PlaceholderScreen('New Password'),
-      // binding: AuthBinding(), // Uncommented in Phase 06
+      page: () => const NewPasswordScreen(),
+      binding: AuthBinding(),
       transition: defaultTransition,
       transitionDuration: defaultDuration,
       curve: defaultCurve,

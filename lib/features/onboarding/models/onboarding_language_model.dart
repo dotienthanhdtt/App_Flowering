@@ -22,17 +22,53 @@ class OnboardingLanguage {
     this.isEnabled = false,
   });
 
-  factory OnboardingLanguage.fromJson(Map<String, dynamic> json) {
+  /// Parse from API response or cache.
+  ///
+  /// [type] — `'native'` or `'learning'` — selects the correct availability
+  /// flag from the real API (`isNativeAvailable` / `isLearningAvailable`).
+  /// Omit when reading back from local cache (which stores `isEnabled` directly).
+  factory OnboardingLanguage.fromJson(
+    Map<String, dynamic> json, {
+    String? type,
+  }) {
+    final bool isEnabled;
+    if (type == 'native') {
+      isEnabled = json['isNativeAvailable'] as bool? ??
+          json['isEnabled'] as bool? ??
+          false;
+    } else if (type == 'learning') {
+      isEnabled = json['isLearningAvailable'] as bool? ??
+          json['isEnabled'] as bool? ??
+          false;
+    } else {
+      // Cache format uses 'isEnabled' directly.
+      isEnabled = json['isEnabled'] as bool? ??
+          json['isNativeAvailable'] as bool? ??
+          json['isLearningAvailable'] as bool? ??
+          true;
+    }
+
     return OnboardingLanguage(
       id: json['id'] as String?,
       code: json['code'] as String,
-      flag: json['flag'] as String? ?? '',
+      flag: json['flag'] as String? ?? '', // not in API; emoji set by fallback
       flagUrl: json['flagUrl'] as String?,
       name: json['name'] as String,
-      subtitle: json['subtitle'] as String? ?? '',
-      isEnabled: json['isEnabled'] as bool? ?? true,
+      // API returns 'nativeName'; cache uses 'subtitle'.
+      subtitle: json['nativeName'] as String? ?? json['subtitle'] as String? ?? '',
+      isEnabled: isEnabled,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        if (id != null) 'id': id,
+        'code': code,
+        'flag': flag,
+        if (flagUrl != null) 'flagUrl': flagUrl,
+        'name': name,
+        'subtitle': subtitle,
+        'isEnabled': isEnabled,
+      };
 
   // ── Offline fallback lists ────────────────────────────────────────────────
 

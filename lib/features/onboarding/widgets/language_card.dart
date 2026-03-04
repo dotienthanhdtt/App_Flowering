@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_sizes.dart';
 import '../models/onboarding_language_model.dart';
 
 /// List variant card for Screen 2A (native language)
@@ -23,14 +25,14 @@ class LanguageListCard extends StatelessWidget {
       child: GestureDetector(
         onTap: language.isEnabled ? onTap : null,
         child: Container(
-          height: 68,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: AppSizes.cardHeightCompact,
+          padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.primarySoft : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppColors.radiusL),
+            borderRadius: BorderRadius.circular(AppSizes.radiusL),
             border: Border.all(
               color: isSelected ? AppColors.primary : AppColors.borderLight,
-              width: isSelected ? 2 : 1,
+              width: isSelected ? 2 : AppSizes.borderThin,
             ),
             boxShadow: isSelected
                 ? [
@@ -44,8 +46,8 @@ class LanguageListCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Text(language.flag, style: const TextStyle(fontSize: 26)),
-              const SizedBox(width: 12),
+              _LanguageFlag(language: language, size: AppSizes.avatarM),
+              const SizedBox(width: AppSizes.spacingM),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +56,7 @@ class LanguageListCard extends StatelessWidget {
                     Text(
                       language.name,
                       style: GoogleFonts.outfit(
-                        fontSize: 16,
+                        fontSize: AppSizes.fontXL,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
@@ -62,7 +64,7 @@ class LanguageListCard extends StatelessWidget {
                     Text(
                       language.subtitle,
                       style: GoogleFonts.outfit(
-                        fontSize: 13,
+                        fontSize: AppSizes.fontSM,
                         fontWeight: FontWeight.w400,
                         color: AppColors.textSecondary,
                       ),
@@ -73,15 +75,15 @@ class LanguageListCard extends StatelessWidget {
               if (!language.isEnabled)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingXS, vertical: AppSizes.spacingXS),
                   decoration: BoxDecoration(
                     color: AppColors.warningLight,
-                    borderRadius: BorderRadius.circular(AppColors.radiusS),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusS),
                   ),
                   child: Text(
                     'Soon',
                     style: GoogleFonts.outfit(
-                      fontSize: 11,
+                      fontSize: AppSizes.fontXXS,
                       fontWeight: FontWeight.w600,
                       color: AppColors.warning,
                     ),
@@ -89,19 +91,44 @@ class LanguageListCard extends StatelessWidget {
                 )
               else if (isSelected)
                 Container(
-                  width: 24,
-                  height: 24,
+                  width: AppSizes.avatarS,
+                  height: AppSizes.avatarS,
                   decoration: const BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.check, size: 14, color: Colors.white),
+                  child: const Icon(Icons.check, size: AppSizes.iconXS, color: Colors.white),
                 ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+/// Displays a language flag — network image from [flagUrl] with emoji fallback.
+class _LanguageFlag extends StatelessWidget {
+  final OnboardingLanguage language;
+  final double size;
+
+  const _LanguageFlag({required this.language, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    final url = language.flagUrl;
+    if (url != null && url.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: url,
+        width: size,
+        height: size,
+        errorWidget: (_, _, _) =>
+            Text(language.flag, style: TextStyle(fontSize: size * 0.65)),
+        placeholder: (_, _) =>
+            Text(language.flag, style: TextStyle(fontSize: size * 0.65)),
+      );
+    }
+    return Text(language.flag, style: TextStyle(fontSize: size * 0.65));
   }
 }
 
@@ -125,13 +152,13 @@ class LanguageGridCard extends StatelessWidget {
       child: GestureDetector(
         onTap: language.isEnabled ? onTap : null,
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSizes.paddingXL),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(AppColors.radiusL),
+            borderRadius: BorderRadius.circular(AppSizes.radiusL),
             border: Border.all(
               color: isSelected ? AppColors.primary : AppColors.borderLight,
-              width: isSelected ? 2 : 1,
+              width: isSelected ? 2 : AppSizes.borderThin,
             ),
             boxShadow: isSelected
                 ? [
@@ -146,22 +173,22 @@ class LanguageGridCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(language.flag, style: const TextStyle(fontSize: 48)),
-              const SizedBox(height: 12),
+              _LanguageFlag(language: language, size: AppSizes.avatarXL),
+              const SizedBox(height: AppSizes.spacingM),
               Text(
                 language.name,
                 style: GoogleFonts.outfit(
-                  fontSize: 18,
+                  fontSize: AppSizes.font3XL,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppSizes.spacingXS),
               Text(
                 language.subtitle,
                 style: GoogleFonts.outfit(
-                  fontSize: 11,
+                  fontSize: AppSizes.fontXXS,
                   fontWeight: language.isEnabled
                       ? FontWeight.w400
                       : FontWeight.w500,

@@ -11,7 +11,8 @@ void main() {
     Get.reset();
   });
 
-  // Helper: builds app with login route to avoid splash timer/service deps
+  // Helper: builds app with home route — avoids splash timer/service deps
+  // and avoids auth DI requirements of LoginEmailScreen.
   Widget buildTestApp() {
     return GetMaterialApp(
       title: 'Flowering',
@@ -27,7 +28,7 @@ void main() {
       translations: AppTranslations(),
       locale: const Locale('en', 'US'),
       fallbackLocale: const Locale('en', 'US'),
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.home,
       getPages: AppPages.pages,
       smartManagement: SmartManagement.full,
       defaultTransition: AppPages.defaultTransition,
@@ -35,12 +36,16 @@ void main() {
     );
   }
 
-  testWidgets('App renders successfully with placeholder login screen',
+  testWidgets('App renders successfully with main shell and bottom nav',
       (WidgetTester tester) async {
     await tester.pumpWidget(buildTestApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('Login - Coming Soon'), findsOneWidget);
+    // Bottom nav labels should be visible
+    expect(find.text('Chat'), findsOneWidget);
+    expect(find.text('Read'), findsOneWidget);
+    expect(find.text('Vocabulary'), findsOneWidget);
+    expect(find.text('Profile'), findsOneWidget);
   });
 
   testWidgets('App has correct theme configuration',
@@ -59,7 +64,7 @@ void main() {
     await tester.pumpWidget(buildTestApp());
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, AppRoutes.login);
+    expect(Get.currentRoute, AppRoutes.home);
   });
 
   testWidgets('App has translations configured',

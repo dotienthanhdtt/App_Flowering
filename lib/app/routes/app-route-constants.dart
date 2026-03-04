@@ -11,9 +11,13 @@ abstract class AppRoutes {
   // Chat routes
   static const String chat = '/chat';
 
-  // Lessons routes
+  // Lessons / Read routes
   static const String lessons = '/lessons';
   static const String lessonDetail = '/lessons/detail';
+  static const String read = '/read';
+
+  // Vocabulary routes
+  static const String vocabulary = '/vocabulary';
 
   // Profile routes
   static const String profile = '/profile';

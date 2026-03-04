@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_sizes.dart';
 
 class StepDotsIndicator extends StatelessWidget {
   final int activeStep;
@@ -18,12 +19,12 @@ class StepDotsIndicator extends StatelessWidget {
       children: List.generate(totalSteps, (index) {
         final isActive = index == activeStep;
         return Container(
-          margin: EdgeInsets.only(right: index < totalSteps - 1 ? 8 : 0),
-          width: isActive ? 28 : 16,
-          height: 4,
+          margin: EdgeInsets.only(right: index < totalSteps - 1 ? AppSizes.spacingS : 0),
+          width: isActive ? AppSizes.spacing3XL : AppSizes.spacingL,
+          height: AppSizes.spacingXS,
           decoration: BoxDecoration(
             color: isActive ? AppColors.textPrimary : AppColors.borderLight,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(AppSizes.radiusXS),
           ),
         );
       }),
