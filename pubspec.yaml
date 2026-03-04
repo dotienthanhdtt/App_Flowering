@@ -22,7 +22,7 @@ dependencies:
   hive_flutter: ^1.1.0
 
   # Audio
-  record: ^5.0.4
+  record: ^6.2.0
   audioplayers: ^5.2.1
 
   # Localization
@@ -46,6 +46,7 @@ dependencies:
   # Utils
   uuid: ^4.3.3
   path_provider: ^2.1.2
+  lucide_icons: ^0.257.0
 
 dev_dependencies:
   flutter_test:
