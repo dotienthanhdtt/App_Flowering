@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_sizes.dart';
 
 class AppIcon extends StatelessWidget {
   final IconData icon;
@@ -19,7 +20,7 @@ class AppIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconWidget = Icon(
       icon,
-      size: size ?? 24,
+      size: size ?? AppSizes.iconXL,
       color: color ?? AppColors.textPrimary,
     );
 
@@ -28,7 +29,7 @@ class AppIcon extends StatelessWidget {
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AppSizes.paddingXS),
           child: iconWidget,
         ),
       );
