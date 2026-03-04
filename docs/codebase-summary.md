@@ -31,6 +31,10 @@
 - **Typography:** google_fonts 6.1.0
 - **Icons:** cupertino_icons 1.0.8
 
+### Authentication
+- **Google Sign In:** google_sign_in
+- **Apple Sign In:** sign_in_with_apple
+
 ### Utilities
 - **Environment Config:** flutter_dotenv 5.1.0
 - **Network Status:** connectivity_plus 6.0.3
@@ -50,7 +54,7 @@ flowering/
 │   │   ├── flowering-app-widget-with-getx.dart              # Main app widget ✅
 │   │   ├── global-dependency-injection-bindings.dart        # Global DI (5 services) ✅
 │   │   └── routes/
-│   │       ├── app-route-constants.dart                     # Route constants (9 routes) ✅
+│   │       ├── app-route-constants.dart                     # Route constants (21 routes) ✅
 │   │       └── app-page-definitions-with-transitions.dart   # Route definitions ✅
 │   │
 │   ├── core/                              # Core infrastructure
@@ -90,21 +94,45 @@ flowering/
 │   │       └── api_error_model.dart
 │   │
 │   ├── features/                          # Feature modules
-│   │   ├── onboarding/                    # Onboarding flow ✅
-│   │   │   ├── bindings/
-│   │   │   ├── controllers/
+│   │   ├── onboarding/                    # Onboarding flow ✅ (screens 01-08)
+│   │   │   ├── bindings/                  # DI setup ✅
+│   │   │   ├── controllers/               # State management ✅
+│   │   │   ├── views/                     # Screens 01-08 ✅
+│   │   │   ├── widgets/                   # Custom widgets ✅
+│   │   │   ├── models/                    # OnboardingLanguage, Session, etc. ✅
+│   │   │   └── services/                  # Language API service ✅
+│   │   ├── auth/                          # Authentication ✅ (Screens 09-14)
+│   │   │   ├── bindings/                  # DI setup ✅
+│   │   │   ├── controllers/               # Login, signup, forgot password ✅
+│   │   │   ├── views/                     # Auth screens ✅
+│   │   │   └── widgets/                   # OTP input widget ✅
+│   │   ├── home/                          # App shell ✅
+│   │   │   ├── bindings/                  # DI setup (pending)
+│   │   │   ├── controllers/               # Shell controller (pending)
+│   │   │   └── views/
+│   │   │       └── main-shell-screen.dart # Bottom nav container ✅
+│   │   ├── chat/                          # Chat feature ✅
+│   │   │   ├── bindings/                  # DI setup (pending)
+│   │   │   ├── controllers/               # Chat logic (pending)
+│   │   │   └── views/
+│   │   │       └── chat-home-screen.dart  # Placeholder screen ✅
+│   │   ├── read/                          # Reading feature ✅
+│   │   │   ├── bindings/                  # DI setup (pending)
+│   │   │   ├── controllers/               # Read logic (pending)
+│   │   │   └── views/
+│   │   │       └── read-screen.dart       # Placeholder screen ✅
+│   │   ├── vocabulary/                    # Vocabulary feature ✅
+│   │   │   ├── bindings/                  # DI setup (pending)
+│   │   │   ├── controllers/               # Vocab management (pending)
 │   │   │   ├── views/
-│   │   │   ├── widgets/
-│   │   │   └── models/
-│   │   ├── auth/                          # Authentication (pending)
-│   │   │   ├── bindings/
-│   │   │   ├── controllers/
-│   │   │   ├── views/
-│   │   │   └── widgets/
-│   │   ├── home/                          # Home dashboard (pending)
-│   │   ├── chat/                          # AI chat (pending)
+│   │   │   │   └── vocabulary-screen.dart # Placeholder screen ✅
+│   │   │   └── widgets/                   # Vocab components (pending)
+│   │   ├── profile/                       # User profile ✅
+│   │   │   ├── bindings/                  # DI setup (pending)
+│   │   │   ├── controllers/               # Profile logic (pending)
+│   │   │   └── views/
+│   │   │       └── profile-screen.dart    # Placeholder screen ✅
 │   │   ├── lessons/                       # Lesson browser (pending)
-│   │   ├── profile/                       # User profile (pending)
 │   │   └── settings/                      # App settings (pending)
 │   │
 │   ├── l10n/                                      # Internationalization ✅
@@ -220,6 +248,10 @@ Complete dependency setup with all required packages.
 - **Shared Widgets** (`lib/shared/widgets/`):
   - AppButton (4 variants), AppTextField (with validation), AppText (8 variants)
   - AppIcon, LoadingWidget, LoadingOverlay, AppErrorWidget
+  - **BottomNavBar** - Custom 4-tab navigation bar with active/inactive states ✅ (Phase 6.5)
+    - Colors: Orange (#FF7A27) active, Gray (#9C9585) inactive
+    - Height: 80px, Corner radius: 20px (top)
+    - Integrated with MainShellScreen
 - **Shared Models** (`lib/shared/models/`):
   - UserModel, ApiErrorModel
 - **Utilities** (`lib/core/utils/`):
@@ -237,21 +269,31 @@ Complete dependency setup with all required packages.
 - System UI configuration (portrait, transparent status bar)
 - Initial route changed from `/login` to `/splash`
 
-**Routes:**
-- `/splash` - Splash screen (initial)
-- `/onboarding-welcome-1` - Welcome screen 1
-- `/onboarding-welcome-2` - Welcome screen 2
-- `/onboarding-welcome-3` - Welcome screen 3
-- `/onboarding-language-1` - Language selection 1
-- `/onboarding-language-2` - Language selection 2
-- `/login` - Login screen
-- `/register` - Register screen
-- `/home` - Home dashboard
-- `/chat` - AI chat
-- `/lessons` - Lesson browser
-- `/lessons/:id` - Lesson detail
-- `/profile` - User profile
-- `/settings` - App settings
+**Routes (21 total):**
+
+| Constant | Path | Screen |
+|---|---|---|
+| `splash` | `/` | Splash / initialization |
+| `onboardingWelcome` | `/onboarding/welcome` | Welcome screen 1 |
+| `onboardingWelcome2` | `/onboarding/welcome-2` | Welcome screen 2 |
+| `onboardingWelcome3` | `/onboarding/welcome-3` | Welcome screen 3 |
+| `onboardingNativeLanguage` | `/onboarding/native-language` | Native language selection |
+| `onboardingLearningLanguage` | `/onboarding/learning-language` | Learning language selection |
+| `onboardingScenarioGift` | `/onboarding/scenario-gift` | AI scenario gift screen (screen 08) |
+| `onboardingLoginGate` | `/onboarding/login-gate` | Login gate bottom sheet |
+| `login` | `/login` | Login screen |
+| `register` | `/register` | Register screen |
+| `signup` | `/signup` | Sign-up screen |
+| `forgotPassword` | `/forgot-password` | Forgot password |
+| `otpVerification` | `/otp-verification` | OTP verification |
+| `newPassword` | `/new-password` | New password entry |
+| `home` | `/home` | **MainShellScreen (app shell with bottom nav)** ✅ |
+| `chat` | `/home?tab=0` | ChatHomeScreen (via nav bar) |
+| `read` | `/home?tab=1` | ReadScreen (via nav bar) |
+| `vocabulary` | `/home?tab=2` | VocabularyScreen (via nav bar) |
+| `profile` | `/home?tab=3` | ProfileScreen (via nav bar) |
+| `lessons` | `/lessons` | Lesson browser (future) |
+| `settings` | `/settings` | App settings (future) |
 
 **Transitions:** All use `rightToLeft` at 300ms
 
@@ -282,34 +324,193 @@ Services registered in `global-dependency-injection-bindings.dart`:
 - Transparent status bar
 - Service initialization flow in main.dart
 
+### ✅ Completed (Phase 6.5 - Bottom Navigation Bar)
+
+#### Main App Shell & Bottom Navigation
+- **MainShellScreen** - App shell container with bottom navigation
+  - IndexedStack-based page switching
+  - Maintains screen state across tab switches
+  - Routes to 4 main feature screens
+  - Integrated with GetX routing as `/home` route
+
+- **BottomNavBar Widget** - Custom navigation bar
+  - 4-tab layout (Chat, Read, Vocabulary, Profile)
+  - Active color: #FF7A27 (Warm Orange)
+  - Inactive color: #9C9585 (Gray)
+  - Background: #FFFDF7 (Cream White)
+  - Height: 80px with 20px top corner radius
+  - lucide_icons for modern iconography
+  - Translation keys for all tab labels (EN & VI)
+
+- **Feature Placeholder Screens** - Ready for implementation
+  - `ChatHomeScreen` - `/home?tab=0` or via nav bar
+  - `ReadScreen` - `/home?tab=1` or via nav bar
+  - `VocabularyScreen` - `/home?tab=2` or via nav bar
+  - `ProfileScreen` - `/home?tab=3` or via nav bar
+
+- **Vocabulary Feature Module** - New directory structure
+  - `/lib/features/vocabulary/` with bindings, controllers, views, widgets
+  - Placeholder screen ready for feature implementation
+  - Translation keys added (EN & VI)
+
+- **Dependencies Added**
+  - `lucide_icons` - Modern icon library for navigation icons
+
+- **Translation Keys** (99+ keys updated to include navigation)
+  - `nav_chat` - Chat tab label
+  - `nav_read` - Reading tab label
+  - `nav_vocabulary` - Vocabulary tab label
+  - `nav_profile` - Profile tab label
+
+**Files Created:**
+- `/lib/shared/widgets/bottom-nav-bar.dart` (custom widget)
+- `/lib/features/home/views/main-shell-screen.dart` (app shell)
+- `/lib/features/chat/views/chat-home-screen.dart` (placeholder)
+- `/lib/features/read/views/read-screen.dart` (placeholder)
+- `/lib/features/vocabulary/views/vocabulary-screen.dart` (placeholder)
+- `/lib/features/vocabulary/bindings/`, `controllers/`, `widgets/` directories
+
+**Success Criteria Met:**
+- ✅ Bottom navigation renders with correct styling and colors
+- ✅ All 4 tabs functional and accessible
+- ✅ Tab switching smooth without memory leaks
+- ✅ Active/inactive states display correctly
+- ✅ Integration with existing routes verified
+- ✅ Screen state preserved across tab switches (IndexedStack)
+- ✅ Localization keys for all navigation labels complete
+- ✅ No breaking changes to authentication flow
+
+---
+
 ### ✅ Completed (Phase 6 - First Half)
 
-#### Onboarding Feature
+#### Onboarding Feature (Screens 01-06)
 - **Splash Screen**: Loading indicator while initializing app
 - **3 Welcome Screens**: Feature introduction with animations
-- **2 Language Selection Screens**: Native and target language selection
-- **OnboardingController**: Manages progression through screens
-- **OnboardingBinding**: Dependency injection
-- **OnboardingModel**: Data structure for user selections
+- **2 Language Selection Screens**: Native and target language selection with API integration
+- **OnboardingLanguageService**: Fetches `GET /languages?type=native|learning`, caches 24h, offline fallback
+- **OnboardingController**: Manages progression with `nativeLanguages`, `learningLanguages`, `isLoadingLanguages` observables
+- **OnboardingBinding**: Dependency injection with language service
 - **UserModel Updates**: Added displayName, nativeLanguageId, nativeLanguageCode, nativeLanguageName, targetLanguageId, targetLanguageCode, targetLanguageName
 
 **API Integrations:**
 - `GET /users/me` - Fetch current user profile
 - `PUT /users/me` - Update user profile (language preferences, display name)
+- `GET /languages?type=native|learning` - Fetch available languages with UUID and flag URLs
+- `CachedNetworkImage` with emoji fallback for language flags
 
-**Routes Added:**
-- `/splash` - Splash screen (initial route)
-- `/onboarding-welcome-1`, `/onboarding-welcome-2`, `/onboarding-welcome-3`
-- `/onboarding-language-1`, `/onboarding-language-2`
+**Service Implementation:**
+- `OnboardingLanguageService`: Parallel language loading, 24h cache via `StorageService`
+- Loading skeletons + error/retry states on screens 04-05
+- UUID-based language selection tracking
 
 **Configuration Updates:**
-- `.env.dev` API base URL changed to `https://dev.broduck.me`
-- Initial app route set to splash screen
+- `.env.dev` API base URL: `https://dev.broduck.me`
+- Initial app route: `/splash`
+
+### ✅ Completed (Phase 6 - Second Half, Phases 01-06)
+
+#### Onboarding Feature (Screens 01-08) ✅ COMPLETED
+
+**Screens 01-06 (First Half):**
+- ✅ Splash Screen - Initialization loader
+- ✅ 3 Welcome Screens (02-04) - Feature introduction
+- ✅ Native Language Screen (05) - `GET /languages?type=native` with caching
+- ✅ Learning Language Screen (06) - `GET /languages?type=learning` with UUID selection
+
+**Screens 07-08 (Phase 02 - AI Chat Integration):**
+- ✅ **Screen 07:** AI Chat introduction & real API integration - `POST /onboarding/chat`
+  - Flora AI conversation flow
+  - Real message sending to backend
+  - Streaming response handling
+  - Back button cancellation support
+- ✅ **Screen 08:** Scenario Gift screen - `POST /onboarding/start`
+  - AI-generated scenario card display
+  - Gift icon animation
+  - Scenario metadata (title, description, icon, accent color)
+
+#### Authentication Feature (Screens 09-14) ✅ COMPLETED
+
+**Screens 09-11 (Phase 05 - Auth UI):**
+- ✅ **Screen 09:** LoginGate bottom sheet - Modal overlay prompting sign-up/login
+- ✅ **Screen 10:** Signup screen - `POST /auth/register`
+  - Email + password + confirm password fields
+  - Form validation
+  - AuthResponse handling with token storage
+- ✅ **Screen 11:** Login screen - `POST /auth/login`
+  - Email + password fields
+  - Token refresh on successful auth
+  - Persistent `AuthController` for session management
+
+**Screens 12-14 (Phase 06 - Forgot Password Flow):**
+- ✅ **ForgotPasswordController** - Separate controller managing 3-screen flow
+  - `currentStep` observable (1: email, 2: OTP, 3: password)
+  - `requestForgotPassword()` - POST to `/auth/forgot-password`
+  - `verifyOtp()` - Validates OTP and advances to password screen
+  - `resetPassword()` - POST to `/auth/reset-password` with token
+- ✅ **Screen 12:** Forgot Password - Email input
+  - `POST /auth/forgot-password` to initiate flow
+  - Email validation
+  - Spinner during request
+- ✅ **Screen 13:** OTP Verification - 6-digit input
+  - `OtpInputField` widget (custom 6-box input)
+  - Auto-advance on last digit entry
+  - Paste support (extracts first 6 digits)
+  - Backspace for deletion
+  - 47-second countdown timer
+  - Resend OTP button
+- ✅ **Screen 14:** New Password
+  - Password + confirm password fields
+  - `POST /auth/reset-password` with OTP token
+  - Password validation (min 8 chars, uppercase, lowercase, number, special char)
+- ✅ **OtpInputField** widget - Reusable 6-digit OTP component
+  - Auto-advance behavior
+  - Paste handling
+  - Visual feedback per box
+  - Cursor management
+
+**New Models Added:**
+- `OnboardingSession` - `POST /onboarding/start`, `POST /onboarding/chat` response; `sessionToken`, `turnNumber`, `isLastTurn`, `floraMessage`, `quickReplies`
+- `OnboardingProfile` - `POST /onboarding/complete` response; `userId`, `scenarios`, `preferences`
+- `Scenario` - AI scenario model; `id`, `title`, `description`, `icon`, `accentColor`
+- `OnboardingLanguage` - Language API model; `id` (UUID), `flagUrl`, `name`, `code`; offline fallback
+- `AuthResponse` - Auth endpoints response; `accessToken`, `refreshToken`, `user`
+
+**API Integrations (Complete):**
+- `GET /languages?type=native|learning` - Language lists with caching
+- `POST /onboarding/chat` - Flora AI chat messages
+- `POST /onboarding/start` - Scenario generation
+- `POST /auth/register` - User signup
+- `POST /auth/login` - User login
+- `POST /auth/forgot-password` - Initiate password reset
+- `POST /auth/reset-password` - Complete password reset with OTP
+
+**Routes (14 total for onboarding + auth):**
+- `/onboarding/welcome` → splash → welcome 1-3
+- `/onboarding/native-language` → screen 05
+- `/onboarding/learning-language` → screen 06
+- `/onboarding/ai-chat-intro` → screen 07
+- `/onboarding/scenario-gift` → screen 08
+- `/onboarding/login-gate` → screen 09 (modal)
+- `/signup` → screen 10
+- `/login` → screen 11
+- `/forgot-password` → screen 12
+- `/otp-verification` → screen 13
+- `/new-password` → screen 14
+
+**Services:**
+- `OnboardingLanguageService` - Fetches languages with 24h cache, offline fallback
+- `ForgotPasswordController` - Manages 3-step password reset flow
+
+**Packages Added:**
+- `google_sign_in` - Google OAuth
+- `sign_in_with_apple` - Apple Sign In
+
+**Translation Keys:** 99+ keys per language (EN + VI) covering all screens 01-14
 
 ### 🔲 Pending Implementation
 
-#### Phases 6-10: Features (Remaining - Auth, Home, Chat, Lessons, Profile/Settings)
-- Authentication (login/register)
+#### Phase 7 onwards: Core App Features
 - Home dashboard
 - Chat with AI
 - Lessons browser
@@ -317,492 +518,74 @@ Services registered in `global-dependency-injection-bindings.dart`:
 
 ### Core Services Layer (Phase 3)
 
-#### 1. lib/core/services/storage_service.dart
+| Service | File | Purpose |
+|---|---|---|
+| `StorageService` | `lib/core/services/storage_service.dart` | Hive boxes: lessons LRU (100MB), chat FIFO (10MB), preferences (1MB) |
+| `AuthStorage` | `lib/core/services/auth_storage.dart` | Token CRUD (`saveTokens`, `getAccessToken`, `isLoggedIn`, `clearTokens`) |
+| `ConnectivityService` | `lib/core/services/connectivity_service.dart` | Reactive `isOnline` observable, stream-based detection |
+| `AudioService` | `lib/core/services/audio_service.dart` | AAC-LC recording (128kbps), file/URL playback, permission check |
 
-**Purpose:** Hive-based storage with LRU eviction for lessons and FIFO for chat
-
-**Implementation:**
-```dart
-class StorageService extends GetxService {
-  // Boxes: lessons_cache, lessons_access, chat_cache, preferences
-  // Limits: 100MB lessons, 10MB chat, 1MB preferences
-
-  Future<StorageService> init(); // Initialize all boxes
-
-  // LRU lessons cache
-  String? getLesson(String key);
-  Future<void> saveLesson(String key, String value);
-
-  // FIFO chat cache
-  String? getChatMessage(String key);
-  Future<void> saveChatMessage(String key, String value);
-
-  // Preferences
-  T? getPreference<T>(String key);
-  Future<void> setPreference<T>(String key, T value);
-
-  // Cache management
-  int get totalCacheSize;
-  Future<void> clearAllCaches();
-}
-```
-
-**Key Features:**
-- Automatic LRU eviction when lessons exceed 100MB
-- FIFO eviction for chat messages (10MB limit)
-- Size tracking via UTF-16 estimation
-- Error handling with box recreation on corruption
-
-#### 2. lib/core/services/auth_storage.dart
-
-**Purpose:** Secure token storage using Hive
-
-**Implementation:**
-```dart
-class AuthStorage extends GetxService {
-  Future<AuthStorage> init();
-
-  Future<void> saveTokens({
-    required String accessToken,
-    required String refreshToken,
-  });
-
-  Future<String?> getAccessToken();
-  Future<String?> getRefreshToken();
-  Future<void> saveUserId(String userId);
-  String? getUserId();
-
-  bool get isLoggedIn;
-  Future<void> clearTokens();
-}
-```
-
-**Security Note:** Uses Hive for token storage (acceptable for mobile per plan). Can be upgraded to flutter_secure_storage if needed.
-
-#### 3. lib/core/services/connectivity_service.dart
-
-**Purpose:** Real-time network status monitoring
-
-**Implementation:**
-```dart
-class ConnectivityService extends GetxService {
-  final _isOnline = true.obs;
-  bool get isOnline => _isOnline.value;
-
-  Future<ConnectivityService> init();
-  Future<bool> checkConnection();
-
-  // Stream subscription for connectivity changes
-  // Triggers sync when back online
-}
-```
-
-**Features:**
-- Reactive observable for connectivity status
-- Automatic reconnection detection
-- Stream subscription with proper cleanup
-
-#### 4. lib/core/services/audio_service.dart
-
-**Purpose:** Audio recording and playback with permission handling
-
-**Implementation:**
-```dart
-class AudioService extends GetxService {
-  final isRecording = false.obs;
-  final isPlaying = false.obs;
-  final recordingDuration = Duration.zero.obs;
-
-  Future<AudioService> init();
-
-  // Recording
-  Future<bool> hasRecordPermission();
-  Future<String?> startRecording();
-  Future<String?> stopRecording();
-  Future<void> cancelRecording();
-
-  // Playback
-  Future<void> playFile(String path);
-  Future<void> playUrl(String url);
-  Future<void> pause();
-  Future<void> resume();
-  Future<void> stop();
-  Future<void> seek(Duration position);
-}
-```
-
-**Features:**
-- AAC-LC encoding at 128kbps
-- Recording to temp directory with timestamp
-- Stream-based playback position tracking
-- Proper resource cleanup in onClose()
-- Memory leak fixes applied
+See `system-architecture.md` for full API signatures.
 
 ### Core Network Layer (Phase 2)
 
-#### 1. lib/core/network/api_response.dart
+| File | Purpose |
+|---|---|
+| `api_response.dart` | `ApiResponse<T>` wrapper: `{code, message, data}`, `isSuccess` (code==1) |
+| `api_exceptions.dart` | 8 typed exceptions: Network, Timeout, Unauthorized, Forbidden, NotFound, Server, Validation, ApiError |
+| `auth_interceptor.dart` | `QueuedInterceptor` — Bearer injection, 401 → token refresh → retry, logout on failure |
+| `retry_interceptor.dart` | Exponential backoff max 3 retries (1s/2s/4s) for network + 5xx; skips 4xx |
+| `api_client.dart` | Singleton Dio: timeouts (connect 15s, receive 30s), `get/post/put/delete/uploadFile` |
 
-**Purpose:** Standard API response wrapper
+See `system-architecture.md` for full interceptor flow and usage examples.
 
-**Structure:**
-```dart
-class ApiResponse<T> {
-  final int code;
-  final String message;
-  final T? data;
+### Core Constants & Config
 
-  bool get isSuccess => code == 1;
-  bool get isError => code != 1;
+| File | Purpose |
+|---|---|
+| `lib/config/env_config.dart` | `EnvConfig.apiBaseUrl`, `EnvConfig.isDev` — loaded from `.env.dev`/`.env.prod` |
+| `lib/core/constants/app_colors.dart` | Warm Orange (#FF7A27) primary, Cream White (#FFFDF7) backgrounds, accent groups (Blue/Green/Lavender/Rose) |
+| `lib/core/constants/app_text_styles.dart` | Outfit font, h1-h3, bodyLarge/Medium/Small, button/caption/label |
+| `lib/core/constants/api_endpoints.dart` | Static route constants; auth, user, lessons, chat, progress, onboarding |
 
-  factory ApiResponse.fromJson(Map<String, dynamic> json, T Function(dynamic)? fromJsonT);
-  factory ApiResponse.success({T? data, String message = 'Success'});
-  factory ApiResponse.error({int code = 0, required String message});
-}
-```
-
-**Response Codes:**
-- 1: Success
-- 0: General error
-- -1: Validation error
-- 401: Unauthorized
-- 403: Forbidden
-- 404: Not found
-- 500: Server error
-
-#### 2. lib/core/network/api_exceptions.dart
-
-**Purpose:** Custom exception types with user-friendly messages
-
-**Exception Hierarchy:**
-- `ApiException` (base class)
-  - `NetworkException` - Connection failed
-  - `TimeoutException` - Request timeout
-  - `UnauthorizedException` - 401 errors
-  - `ForbiddenException` - 403 errors
-  - `NotFoundException` - 404 errors
-  - `ServerException` - 5xx errors
-  - `ValidationException` - 422 with field errors
-  - `ApiErrorException` - Generic API errors
-
-**Key Function:**
-```dart
-ApiException mapDioException(DioException error)
-```
-Maps Dio exceptions to typed API exceptions with appropriate user messages.
-
-#### 3. lib/core/network/auth_interceptor.dart
-
-**Purpose:** JWT token injection and automatic refresh
-
-**Implementation:**
-- Extends `QueuedInterceptor` for thread-safe token refresh
-- Injects Bearer token on all requests (except refresh endpoint)
-- On 401: refreshes token, retries original request
-- Uses separate Dio instance for refresh to avoid interceptor loops
-- Prevents concurrent refresh with `_isRefreshing` flag
-- Triggers logout on refresh failure
-
-**Token Refresh Flow:**
-1. Request fails with 401
-2. Check if already refreshing
-3. Call refresh endpoint with refresh token
-4. Save new tokens via AuthStorage
-5. Retry original request with new access token
-6. On failure: clear tokens and redirect to login
-
-#### 4. lib/core/network/retry_interceptor.dart
-
-**Purpose:** Automatic retry with exponential backoff
-
-**Configuration:**
-- Max retries: 3
-- Initial delay: 1s
-- Backoff: exponential (1s, 2s, 4s)
-
-**Retry Conditions:**
-- Connection timeout
-- Send timeout
-- Receive timeout
-- Connection errors
-- 5xx server errors
-
-**Skip Retry:**
-- 4xx client errors (except handled by auth interceptor)
-- Request cancellation
-
-#### 5. lib/core/network/api_client.dart
-
-**Purpose:** Singleton Dio HTTP client with configured interceptors
-
-**Configuration:**
-```dart
-BaseOptions(
-  baseUrl: EnvConfig.apiBaseUrl,
-  connectTimeout: Duration(seconds: 15),
-  receiveTimeout: Duration(seconds: 30),
-  sendTimeout: Duration(seconds: 15),
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-)
-```
-
-**Interceptor Chain:**
-1. RetryInterceptor (handles network/server errors)
-2. AuthInterceptor (handles token refresh)
-3. LoggingInterceptor (dev builds only)
-
-**Available Methods:**
-- `get<T>()` - GET request
-- `post<T>()` - POST request
-- `put<T>()` - PUT request
-- `delete<T>()` - DELETE request
-- `uploadFile<T>()` - Multipart file upload
-
-**Usage Pattern:**
-```dart
-final apiClient = Get.find<ApiClient>();
-try {
-  final response = await apiClient.get<UserModel>(
-    ApiEndpoints.profile,
-    fromJson: (data) => UserModel.fromJson(data),
-  );
-  if (response.isSuccess) {
-    final user = response.data;
-  }
-} on ApiException catch (e) {
-  // Handle typed exceptions
-  print(e.userMessage);
-}
-```
-
-### Legacy Files
-
-#### 1. lib/config/env_config.dart
-
-**Purpose:** Environment configuration wrapper
-
-**Implementation:**
-```dart
-class EnvConfig {
-  static String get apiBaseUrl => dotenv.env['API_BASE_URL'] ?? '';
-  static String get env => dotenv.env['ENV'] ?? 'development';
-  static bool get isDev => env == 'development';
-  static bool get isProd => env == 'production';
-}
-```
-
-**Usage:** Access via `EnvConfig.apiBaseUrl`, `EnvConfig.isDev`
-
-#### 2. lib/core/constants/app_colors.dart
-
-**Purpose:** Centralized color definitions
-
-**Key Colors:**
-- Primary Vibrant Orange for branding and primary actions
-- Secondary Sage Green for growth/nature theme
-- Cream White backgrounds for warm, Gen Z aesthetic
-- Mint Green and Peach for success/warning states
-- Full complementary palette (Sky Blue, Soft Pink)
-- Chat-specific colors for message bubbles
-
-**Pattern:** Private constructor prevents instantiation, static const for compile-time constants
-
-#### 3. lib/core/constants/app_text_styles.dart
-
-**Purpose:** Typography system
-
-**Design System:**
-- Hierarchical headings (h1, h2, h3)
-- Body text variants (large, medium, small)
-- Component-specific styles (button, caption, label)
-- Consistent font family (Inter)
-- Proper font weights and sizes
-
-**Integration:** Uses `AppColors` for text colors
-
-#### 4. lib/core/constants/api_endpoints.dart
-
-**Purpose:** API route definitions
-
-**Categories:**
-- Authentication endpoints
-- User management
-- Lesson operations
-- Chat functionality
-- Progress tracking
-
-**Pattern:** Static const for routes, static method for parameterized routes
-
-#### 5. lib/main.dart
-
-**Purpose:** App entry point
-
-**Current Implementation:**
-- Initializes Flutter bindings
-- Loads environment-specific .env file
-- Initializes Hive
-- Launches GetMaterialApp
-
-**Note:** Minimal implementation, will be expanded in Phase 5
-
-## Environment Configuration
-
-### Development (.env.dev)
-```
-API_BASE_URL=https://dev-api.flowering.app
-ENV=development
-```
-
-### Production (.env.prod)
-```
-API_BASE_URL=https://api.flowering.app
-ENV=production
-```
-
-**Usage:** Load via `flutter run --dart-define=ENV=dev`
+**Environment:**
+- Dev: `API_BASE_URL=https://dev.broduck.me` — run with `--dart-define=ENV=dev`
+- Prod: `API_BASE_URL=https://api.flowering.app` — run with `--dart-define=ENV=prod`
 
 ## Architecture Patterns
 
-### State Management
-- **Pattern:** GetX reactive state management
-- **Controllers:** Extend `GetxController`
-- **Reactive State:** `.obs` variables for simple state
-- **Complex State:** `GetBuilder` for lists/complex objects
-- **DI:** GetX bindings for dependency injection
+**Data Flow:** `View → Controller → Service → API/Storage → (back)`
 
-### Data Flow
-```
-View → Controller → Service → API/Storage
-     ← Controller ← Service ← Response
-```
+**State:** `.obs` for simple reactive values; `GetBuilder` for lists/complex objects.
 
-### Feature Structure
-Each feature module contains:
-- **bindings/**: Dependency injection setup
-- **controllers/**: Business logic and state
-- **views/**: UI screens
-- **widgets/**: Feature-specific components
+**Offline:** Hive cache (LRU lessons 100MB / FIFO chat 10MB); sync on reconnect.
 
-### Offline Strategy
-- **Cache:** Hive for offline data persistence
-- **Sync:** Background sync when online
-- **Queue:** Offline action queue for API calls
-- **Strategy:** LRU for lessons, FIFO for chat
+**Security:** HTTPS-only; tokens in `AuthStorage`; never log sensitive data.
+
+See `system-architecture.md` for full patterns and `code-standards.md` for conventions.
 
 ## Design System
 
-### Color Scheme - Pencil Warm Neutral Palette
-- **Brand Primary:** Warm Orange (#FF7A27)
-- **Neutral:** Cream White (#FFFDF7) for backgrounds/surfaces, Charcoal (#292F36) for primary text, Tertiary text (#A3A9AA)
-- **Semantic:** Mint Green (#CAFFBF) for success, Peach (#FFD6A5) for warning, Red (#FF4444) for error, Sky Blue (#A0C4FF) for info
-- **Accent Groups:** Blue, Green, Lavender, Rose (new)
-- **Light Variants:** Success light, Error light (new)
-- **Surface Variants:** Surface variant for secondary backgrounds (new)
-
-### Typography
-- **Font Family:** Outfit (sans-serif, changed from Inter)
-- **Scale:** 12px to 32px
-- **Weights:** 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
-- **Usage:** Consistent application via `AppTextStyles`
-
-### Component Design Specs
-- **Buttons:** 48px height (down from 56px), pill radius (updated), 15px text (down from 18px), orange shadow on primary, new secondary (primarySoft bg), new outline (borderStrong border)
-- **Text Fields:** 12px border radius (down from 16px), 16px horizontal padding (down from 20px), 1.5px border width (down from 2px)
-- **Touch Targets:** Minimum 44x44
-
-### Layout Principles
-- **Spacing:** 4px base unit (8, 12, 16, 24, 32)
-- **Touch Targets:** Minimum 44x44
-- **Max Width:** 600px for content areas
-- **Padding:** Consistent edge padding (16-24px)
-
-## API Integration Strategy
-
-### Authentication Flow
-1. Login → Receive access + refresh tokens
-2. Store tokens in flutter_secure_storage
-3. Inject access token via AuthInterceptor
-4. On 401 → Refresh token → Retry request
-5. On refresh failure → Logout
-
-### Endpoint Categories
-
-**Auth Endpoints:**
-- `POST /auth/login` - User authentication
-- `POST /auth/register` - User registration
-- `POST /auth/refresh` - Token refresh
-- `POST /auth/logout` - Session termination
-
-**User Endpoints:**
-- `GET /user/profile` - Fetch user data
-- `PUT /user/profile` - Update user data
-
-**Lesson Endpoints:**
-- `GET /lessons` - List all lessons
-- `GET /lessons/:id` - Get lesson details
-
-**Chat Endpoints:**
-- `GET /chat/messages` - Fetch chat history
-- `POST /chat/send` - Send text message
-- `POST /chat/voice` - Send voice message
-
-**Progress Endpoints:**
-- `GET /progress` - User learning progress
-- `GET /progress/stats` - Learning statistics
-
-## Performance Considerations
-
-### Memory Management
-- **Controllers:** Dispose in `onClose()`
-- **Workers:** Cleanup reactive listeners
-- **Images:** Use cached_network_image
-- **Lists:** ListView.builder for efficiency
-
-### Build Optimization
-- **const:** Use const constructors where possible
-- **Tree Shaking:** Enabled in release builds
-- **Code Splitting:** Feature-based lazy loading
-- **Asset Optimization:** Compress images, use SVG
-
-### Storage Limits
-- **Lessons Cache:** 100MB (LRU eviction)
-- **Chat Messages:** 10MB (FIFO eviction)
-- **User Data:** 1MB
-- **Settings:** 100KB
-
-## Security Measures
-
-### Data Protection
-- **Tokens:** flutter_secure_storage (OS keychain)
-- **Cache:** Hive for non-sensitive data only
-- **Communication:** HTTPS-only
-- **Validation:** Server-side + client-side
-
-### Storage Security
-- **DO NOT** store tokens in Hive
-- **DO NOT** log sensitive data
-- **DO** validate all API responses
-- **DO** sanitize user inputs
+| Token | Value |
+|---|---|
+| Primary | #FF7A27 Warm Orange |
+| Background | #FFFDF7 Cream White |
+| Text Primary | #292F36 Charcoal |
+| Text Secondary | #699A6B Sage Green |
+| Border | #A3A9AA |
+| Success | #CAFFBF Mint Green |
+| Warning | #FFD6A5 Peach |
+| Error | #FF4444 |
+| Font | Outfit 12-32px |
+| Button height | 48px, pill radius |
+| Min touch target | 44x44 |
 
 ## Testing Strategy (Planned)
 
-### Unit Tests
-- Controller business logic
-- Service layer operations
-- Utility functions
-- Model serialization
-
-### Widget Tests
-- UI component rendering
-- User interaction handling
-- State updates
-
-### Integration Tests
-- API communication
-- Storage operations
-- Feature workflows
+- **Unit:** Controller logic, service operations, model serialization
+- **Widget:** Rendering, state updates, user interactions
+- **Integration:** API communication, storage operations, feature workflows
+- **Target:** >70% coverage
 
 ## Build Configuration
 
@@ -844,16 +627,23 @@ flutter build apk --release --dart-define=ENV=prod
 
 ## Next Implementation Steps
 
-1. **Immediate (Phase 5):**
-   - Configure GetX routing
-   - Define app routes and pages
-   - Implement EN/VI localization
-   - Set up navigation transitions
+1. **Immediate (Phase 7 - Home Dashboard):**
+   - Create home dashboard screen with user stats
+   - Implement quick action cards
+   - Add navigation to chat, lessons, profile
+   - Display learning progress
 
-2. **Short-term (Phase 5):**
-   - Configure GetX routing
-   - Set up EN/VI localization
-   - Define app routes
+2. **Short-term (Phase 8 - Chat Feature):**
+   - Implement AI chat interface
+   - Add voice input/output support
+   - Create message persistence
+   - Build offline message queue
+
+3. **Medium-term (Phase 9-10):**
+   - Implement lessons browser with offline caching
+   - Create profile and settings screens
+   - Add vocabulary management features
+   - Implement reading comprehension tools
 
 ## Code Quality Metrics
 

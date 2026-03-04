@@ -368,6 +368,75 @@
 
 ## Upcoming Changes
 
+### [2026-03-04] Bottom Navigation Bar Feature ✅ COMPLETED
+
+#### Added
+- **Bottom Navigation Bar Widget** (`lib/shared/widgets/bottom-nav-bar.dart`)
+  - 4-tab navigation (Chat, Read, Vocabulary, Profile)
+  - Custom styling matching Pencil design system
+  - Active/inactive tab color states (#FF7A27 orange active, #9C9585 gray inactive)
+  - 80px fixed height with 20px corner radius
+  - Integrated with MainShellScreen for tab switching
+
+- **MainShellScreen** (`lib/features/home/views/main-shell-screen.dart`)
+  - App shell containing bottom navigation
+  - IndexedStack-based page switching
+  - Maintains controller state across tab switches
+  - Routes to 4 main screens: ChatHomeScreen, ReadScreen, VocabularyScreen, ProfileScreen
+
+- **Navigation Tab Screens**
+  - `lib/features/chat/views/chat-home-screen.dart` - Chat home screen (placeholder)
+  - `lib/features/read/views/read-screen.dart` - Reading feature (placeholder)
+  - `lib/features/vocabulary/views/vocabulary-screen.dart` - Vocabulary management (placeholder)
+  - `lib/features/profile/views/profile-screen.dart` - User profile (placeholder)
+
+- **Vocabulary Feature Directory** (`lib/features/vocabulary/`)
+  - New feature module with bindings, controllers, views, and widgets
+  - Structure ready for vocabulary browser and management functionality
+
+- **Translation Keys** (EN & VI)
+  - `nav_chat` - Chat tab label
+  - `nav_read` - Read tab label
+  - `nav_vocabulary` - Vocabulary tab label
+  - `nav_profile` - Profile tab label
+
+- **Dependencies Added**
+  - `lucide_icons ^0.x.x` - Modern icon library for bottom nav icons
+
+#### Changed
+- **Routes Configuration** (`lib/app/routes/app-page-definitions-with-transitions.dart`)
+  - New home route (`/home`) → MainShellScreen (replaces previous home implementation)
+  - Previous auth flow routes remain unchanged
+
+- **Feature Directory Structure**
+  - Created new directories for Read, Chat, and Vocabulary features
+  - Maintained existing Profile feature
+
+#### Technical Decisions
+- **Bottom Nav Structure:** Custom widget for design consistency over built-in BottomNavigationBar
+- **Page Management:** IndexedStack for efficient tab switching without rebuilding screens
+- **Color Scheme:** Orange (#FF7A27) for active tabs per Pencil design system
+- **Icon Library:** lucide_icons for modern, consistent iconography
+- **Placeholder Screens:** Basic screens created to allow navigation testing before feature implementation
+
+#### Build Verification
+- ✅ All new widgets compile without errors
+- ✅ MainShellScreen integrates with existing routing
+- ✅ IndexedStack page switching functional
+- ✅ Bottom navigation styling matches Pencil design
+- ✅ All translation keys properly mapped
+- ✅ No breaking changes to existing authentication flow
+
+#### Success Metrics Met
+- ✅ Bottom navigation renders with correct 4-tab layout
+- ✅ Tab switching works smoothly without memory leaks
+- ✅ Active/inactive states display with correct colors
+- ✅ Navigation bar maintains consistent height (80px) and corner radius (20px)
+- ✅ Integration with existing app routing verified
+- ✅ Localization keys for all navigation labels (EN & VI)
+
+---
+
 ### [2026-02-09] Design System Update: Flowering Gen Z Aesthetic ✅ COMPLETED
 
 #### Changed

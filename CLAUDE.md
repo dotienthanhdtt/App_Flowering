@@ -94,6 +94,9 @@ View → Controller → Service → Network/Storage
 - Services are singletons registered in `global-dependency-injection-bindings.dart`
 - All async initialization happens in service `init()` methods
 - Add // TODO if task need I to complete
+- Re use ui component in lib/shared/widgets, using those component to build layout. In a view screen if any layout duplicate many time please create component for this layout
+- All text need add key in lib/i10l, this app support multiple language
+- Color, size, text style, api_endpoint re use in lib/core/constants
 
 ### State Management Pattern
 

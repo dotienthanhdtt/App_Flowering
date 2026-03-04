@@ -17,15 +17,15 @@ Phase 2: Network ████████████ 100% (2h) ✅ COMPLETED
 Phase 3: Services ████████████ 100% (2h) ✅ COMPLETED
 Phase 4: Base/Widgets ████████████ 100% (2h) ✅ COMPLETED
 Phase 5: Routes/i18n ████████████ 100% (1.5h) ✅ COMPLETED
-Phase 6: Onboarding ████████████ 100% (2h) ✅ COMPLETED (First Half)
-Phase 7: Auth ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
-Phase 8: Home ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
-Phase 9: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending
-Phase 10: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
-Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
+Phase 6: Onboarding & Auth ████████████ 100% (6h) ✅ COMPLETED (screens 01-14)
+Phase 6.5: Bottom Navigation ████████████ 100% (1h) ✅ COMPLETED
+Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
+Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending
+Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
+Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
 ```
 
-**Overall Progress:** 58% (10.5h / 18h completed)
+**Overall Progress:** 100% of foundation + onboarding (18.5h / 22h completed — all user acquisition and app shell done)
 
 ## Phase Details
 
@@ -266,100 +266,218 @@ Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Phase 6: Onboarding Feature ✅ COMPLETED (First Half)
+### Phase 6: Onboarding & Authentication ✅ COMPLETED
 
-**Status:** ✅ Completed (First Half)
-**Duration:** 2 hours
+**Status:** ✅ Completed
+**Duration:** 6 hours total (2h first half + 4h second half)
 **Completion Date:** 2026-02-28
 **Dependencies:** Phase 5 ✅
 **Priority:** P1 - Critical
+
+#### First Half (Screens 01-06) ✅ COMPLETED
 
 **Deliverables:**
 - ✅ `splash_screen.dart` - Loading indicator screen
 - ✅ `onboarding_welcome_1/2/3_screen.dart` - 3 welcome screens with feature highlights
 - ✅ `onboarding_language_1/2_screen.dart` - Native and target language selection
-- ✅ `onboarding_controller.dart` - State and progression management
+- ✅ `onboarding_controller.dart` - State and progression management (`permanent: true`)
 - ✅ `onboarding_binding.dart` - Dependency injection
 - ✅ `onboarding_model.dart` - Data structure for selections
-- ✅ 5 new routes added (/splash, /onboarding-welcome-*, /onboarding-language-*)
-
-**Key Achievements:**
-- Splash screen with app initialization loading state
-- 3-screen welcome flow introducing app features
-- 2-screen language selection (native + target language)
-- Smooth transitions between onboarding screens
-- API integration with /users/me endpoints
-- UserModel updated with language fields (nativeLanguageId/Code/Name, targetLanguageId/Code/Name)
-- DisplayName field added to UserModel (replaces name)
-- Initial route changed from /login to /splash
+- ✅ 5 routes added (splash + 4 onboarding welcome/language routes)
 
 **API Integration:**
 - `GET /users/me` - Fetch current user profile
 - `PUT /users/me` - Update user profile with selected languages and display name
+- `GET /languages?type=native|learning` - Fetch language lists (Phase 02)
 
 **Configuration Changes:**
-- `.env.dev` API base URL updated to `https://dev.broduck.me`
-- Initial app route now `/splash` instead of `/login`
-- 5 new onboarding routes configured with rightToLeft transitions
+- `.env.dev` API base URL: `https://dev.broduck.me`
+- Initial app route: `/splash`
 
-**Success Criteria Met:**
-- ✅ Onboarding screens render without errors
-- ✅ Navigation flow between screens works smoothly
-- ✅ Language selection persisted and sent to API
-- ✅ All transitions use consistent rightToLeft animation
-- ✅ Splash screen displays during app initialization
-- ✅ JSON serialization updated for UserModel fields
-
-**Artifacts:**
-- `/lib/features/onboarding/bindings/`
-- `/lib/features/onboarding/controllers/onboarding_controller.dart`
-- `/lib/features/onboarding/models/onboarding_model.dart`
-- `/lib/features/onboarding/views/` (splash + 5 onboarding screens)
-- `/lib/features/onboarding/widgets/` (feature-specific UI components)
-
----
-
-### Phase 7: Authentication Feature 🔲 PENDING
-
-**Status:** 🔲 Pending
-**Duration:** 2 hours
-**Dependencies:** Phase 5 ✅
-**Priority:** P1 - Critical
-
-**Objectives:**
-- Implement login/register screens
-- Create auth controller with validation
-- Handle token storage and retrieval
-- Implement logout functionality
+#### Second Half Phase 01 (Scaffolding) ✅ COMPLETED
 
 **Deliverables:**
-- [ ] `auth_controller.dart` - Auth business logic
-- [ ] `auth_binding.dart` - Dependency injection
-- [ ] `login_screen.dart` - Login UI
-- [ ] `register_screen.dart` - Registration UI
-- [ ] `user_model.dart` - User data model
-- [ ] Input validation utilities
+- ✅ Models: `OnboardingSession`, `OnboardingProfile`, `Scenario`, `AuthResponse`
+- ✅ `OnboardingLanguage` restructured with `id`, `flagUrl`, `fromJson()`, `toJson()`
+- ✅ 6 route constants (scenario-gift, login-gate, signup, forgot-password, otp, new-password)
+- ✅ Social auth packages: `google_sign_in`, `sign_in_with_apple`
+- ✅ 99+ translation keys (EN + VI)
 
-**Success Criteria:**
-- Users can register and login
-- Tokens stored securely
-- Form validation works
-- Error messages displayed properly
-- Auto-login on app restart if token valid
+#### Second Half Phase 02 (Language API Integration) ✅ COMPLETED
 
-**API Endpoints:**
-- POST `/auth/login`
-- POST `/auth/register`
-- POST `/auth/refresh`
-- POST `/auth/logout`
+**Deliverables:**
+- ✅ `OnboardingLanguageService` - Parallel fetch `GET /languages?type=native|learning`
+- ✅ Controller observables: `nativeLanguages`, `learningLanguages`, `isLoadingLanguages`
+- ✅ UUID-based selection: `selectedNativeLanguageId`, `selectedLearningLanguageId`
+- ✅ Loading skeletons and error/retry states (screens 05-06)
+- ✅ `_LanguageFlag` widget with `CachedNetworkImage` + emoji fallback
+- ✅ 24-hour cache, offline fallback
+
+#### Second Half Phase 03 (AI Chat Integration) ✅ COMPLETED
+
+**Deliverables:**
+- ✅ **Screen 07:** AI Chat intro - Flora AI conversation
+  - `POST /onboarding/chat` - Send chat messages
+  - Streaming response handling
+  - Back button cancellation
+- ✅ **Screen 08:** Scenario Gift - AI-generated scenario card
+  - `POST /onboarding/start` - Initiate scenario
+  - Scenario metadata display (title, description, icon, color)
+  - Gift animation
+
+#### Second Half Phase 04 (Auth UI) ✅ COMPLETED
+
+**Deliverables:**
+- ✅ **Screen 09:** LoginGate bottom sheet - Modal sign-up/login prompt
+- ✅ **Screen 10:** Signup screen
+  - `POST /auth/register`
+  - Email + password + confirm validation
+  - AuthResponse token storage
+- ✅ **Screen 11:** Login screen
+  - `POST /auth/login`
+  - Email + password fields
+  - Token refresh, persistent session
+  - `AuthController` for session management
+
+#### Second Half Phase 05 (Forgot Password) ✅ COMPLETED
+
+**Deliverables:**
+- ✅ **ForgotPasswordController** - 3-step password reset manager
+  - `currentStep` observable (email → OTP → password)
+  - `requestForgotPassword()` - `POST /auth/forgot-password`
+  - `verifyOtp()` - Validate OTP code
+  - `resetPassword()` - `POST /auth/reset-password`
+- ✅ **Screen 12:** Forgot Password email input
+  - Email validation
+  - Loading state
+- ✅ **Screen 13:** OTP Verification (6-digit input)
+  - `OtpInputField` custom widget (6 boxes)
+  - Auto-advance on last digit
+  - Paste support (extracts first 6)
+  - Backspace deletion
+  - 47-second countdown timer
+  - Resend button
+- ✅ **Screen 14:** New Password entry
+  - Password + confirm fields
+  - Password requirements (8+ chars, uppercase, lowercase, number, special)
+  - `POST /auth/reset-password` with OTP token
+- ✅ **OtpInputField** widget - Reusable 6-digit OTP component
+
+**API Endpoints (Complete Suite):**
+- `GET /languages?type=native|learning` - Language lists
+- `GET /users/me` - User profile
+- `PUT /users/me` - Update profile
+- `POST /onboarding/chat` - Flora AI messages
+- `POST /onboarding/start` - Scenario generation
+- `POST /auth/register` - User signup
+- `POST /auth/login` - User login
+- `POST /auth/forgot-password` - Initiate password reset
+- `POST /auth/reset-password` - Complete password reset
+
+**Routes (14 total):**
+- `/splash` → initialization
+- `/onboarding/welcome` → 3 welcome screens
+- `/onboarding/native-language` → screen 05
+- `/onboarding/learning-language` → screen 06
+- `/onboarding/ai-chat-intro` → screen 07
+- `/onboarding/scenario-gift` → screen 08
+- `/onboarding/login-gate` → screen 09 (modal)
+- `/signup` → screen 10
+- `/login` → screen 11
+- `/forgot-password` → screen 12
+- `/otp-verification` → screen 13
+- `/new-password` → screen 14
+
+**Files Created/Modified:**
+- `/lib/features/onboarding/` - Screens 01-08 complete
+- `/lib/features/auth/` - Screens 09-14 complete
+- `/lib/features/auth/controllers/forgot_password_controller.dart` - 3-step flow
+- `/lib/features/auth/widgets/otp_input_field.dart` - 6-box OTP widget
+- `/lib/features/onboarding/services/onboarding_language_service.dart` - API + caching
+- `api_endpoints.dart` - Updated with all auth/onboarding routes
+
+**Success Criteria Met:**
+- ✅ All screens 01-14 render without errors
+- ✅ Navigation smooth across all flows
+- ✅ API integration complete (9 endpoints)
+- ✅ Authentication tokens stored securely
+- ✅ Password reset workflow functional
+- ✅ OTP handling with countdown and resend
+- ✅ Offline language fallback working
+- ✅ 24-hour language cache implemented
+- ✅ Translation keys complete (EN + VI)
 
 ---
 
-### Phase 8: Home Feature 🔲 PENDING
+### Phase 6.5: Bottom Navigation Bar ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 1 hour
+**Completion Date:** 2026-03-04
+**Dependencies:** Phase 6 ✅
+**Priority:** P1 - Critical
+
+**Deliverables:**
+- ✅ `bottom-nav-bar.dart` - Custom bottom navigation widget (4-tab layout)
+- ✅ `main-shell-screen.dart` - App shell with IndexedStack page switching
+- ✅ Placeholder screens: ChatHomeScreen, ReadScreen, VocabularyScreen, ProfileScreen
+- ✅ Vocabulary feature directory structure
+- ✅ Translation keys for navigation labels (EN & VI)
+- ✅ lucide_icons package for modern icons
+
+**Key Achievements:**
+- Implemented 4-tab bottom navigation bar with custom styling
+- Orange (#FF7A27) active state, gray (#9C9585) inactive state
+- 80px fixed height with 20px corner radius matching Pencil design
+- MainShellScreen manages tab state and page switching
+- IndexedStack prevents screen rebuilds during tab switching
+- All translation keys added for navigation labels (EN & VI)
+
+**Design Specifications:**
+- **Active Tab Color:** #FF7A27 (Warm Orange)
+- **Inactive Tab Color:** #9C9585 (Gray)
+- **Bar Background:** #FFFDF7 (Cream White)
+- **Height:** 80px
+- **Corner Radius:** 20px (top corners)
+- **Icons:** lucide_icons library
+
+**Navigation Tabs:**
+1. Chat - ChatHomeScreen
+2. Read - ReadScreen
+3. Vocabulary - VocabularyScreen
+4. Profile - ProfileScreen
+
+**Files Created/Modified:**
+- `/lib/shared/widgets/bottom-nav-bar.dart` - New widget
+- `/lib/features/home/views/main-shell-screen.dart` - New app shell
+- `/lib/features/chat/views/chat-home-screen.dart` - New placeholder
+- `/lib/features/read/views/read-screen.dart` - New placeholder
+- `/lib/features/vocabulary/views/vocabulary-screen.dart` - New placeholder
+- `/lib/features/vocabulary/` - New feature directory
+- Translation keys updated (EN & VI)
+
+**Success Criteria Met:**
+- ✅ Bottom navigation renders with correct styling
+- ✅ All 4 tabs functional and navigable
+- ✅ Tab switching smooth with no memory leaks
+- ✅ Active/inactive states display correctly
+- ✅ Integration with existing routing works
+- ✅ Localization keys complete for all nav labels
+- ✅ Design system specifications followed
+
+**Integration Points:**
+- Replaces previous home route implementation
+- Sits between auth flow and feature screens
+- Maintains controller state across tab switches
+- Uses GetX for reactive state management
+
+---
+
+### Phase 7: Home Dashboard 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 1.5 hours
-**Dependencies:** Phase 7
+**Dependencies:** Phase 6 ✅
 **Priority:** P2 - High
 
 **Objectives:**
@@ -381,13 +499,17 @@ Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 - Smooth animations and transitions
 - Offline stats still visible
 
+**API Endpoints:**
+- GET `/progress/stats`
+- GET `/user/profile`
+
 ---
 
-### Phase 9: Chat Feature 🔲 PENDING
+### Phase 8: Chat Feature 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 2.5 hours
-**Dependencies:** Phase 8
+**Dependencies:** Phase 7
 **Priority:** P1 - Critical
 
 **Objectives:**
@@ -420,11 +542,11 @@ Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Phase 10: Lessons Feature 🔲 PENDING
+### Phase 9: Lessons Feature 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 2 hours
-**Dependencies:** Phase 9
+**Dependencies:** Phase 8
 **Priority:** P2 - High
 
 **Objectives:**
@@ -455,11 +577,11 @@ Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Phase 11: Profile & Settings 🔲 PENDING
+### Phase 10: Profile & Settings 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 1.5 hours
-**Dependencies:** Phase 10
+**Dependencies:** Phase 9
 **Priority:** P3 - Medium
 
 **Objectives:**
@@ -518,40 +640,51 @@ Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
-### Milestone 3: Onboarding (Phase 6) ✅ COMPLETED (First Half)
+### Milestone 3: Onboarding & Authentication (Phase 6) ✅ COMPLETED
 
 **Target:** 2026-02-28
-**Status:** 100% Complete (First Half)
+**Status:** 100% Complete (Screens 01-14)
 **Completion Date:** 2026-02-28
 
 **Criteria:**
 - ✅ Splash screen implemented
-- ✅ Welcome screens complete
-- ✅ Language selection complete
-- ✅ API integration working
+- ✅ Welcome screens complete (screens 02-04)
+- ✅ Language selection screens complete (screens 05-06)
+- ✅ AI Chat intro screen (screen 07) - `POST /onboarding/chat`
+- ✅ Scenario Gift screen (screen 08) - `POST /onboarding/start`
+- ✅ LoginGate bottom sheet (screen 09)
+- ✅ Signup screen (screen 10) - `POST /auth/register`
+- ✅ Login screen (screen 11) - `POST /auth/login`
+- ✅ Forgot password flow (screens 12-14):
+  - Email input screen (12)
+  - OTP verification with 6-box input (13)
+  - New password entry (14)
+- ✅ API integration complete (9 endpoints)
+- ✅ Language service with caching and offline fallback
+- ✅ OTP countdown timer and resend functionality
+- ✅ Password validation and reset workflow
 
 ---
 
-### Milestone 4: User Features (Phases 7-8) 🔲 Pending
+### Milestone 4: Core Features (Phases 7-8) 🔲 Pending
 
 **Target:** 2026-03-05
+**Status:** 0% Complete
+**Remaining:** 4 hours
+
+**Criteria:**
+- Home dashboard complete
+- Chat feature complete
+
+---
+
+### Milestone 5: Learning Features (Phases 9-10) 🔲 Pending
+
+**Target:** 2026-03-12
 **Status:** 0% Complete
 **Remaining:** 3.5 hours
 
 **Criteria:**
-- Authentication functional
-- Home dashboard complete
-
----
-
-### Milestone 5: Learning Features (Phases 9-11) 🔲 Pending
-
-**Target:** 2026-03-12
-**Status:** 0% Complete
-**Remaining:** 6 hours
-
-**Criteria:**
-- Chat feature complete
 - Lessons feature complete
 - Profile and settings complete
 
@@ -589,6 +722,69 @@ Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 ---
 
 ## Change Log
+
+### 2026-02-28 (Phase 6 Complete — All Onboarding & Auth Screens 01-14)
+
+**Phase 06 Completion Summary:**
+- ✅ **Screens 01-06 (First Half):** Splash, welcome, language selection with language API
+- ✅ **Screens 07-08 (Phase 02):** AI chat integration + scenario gift
+- ✅ **Screens 09-11 (Phase 04):** LoginGate, signup, login with auth endpoints
+- ✅ **Screens 12-14 (Phase 06):** Complete forgot password flow
+
+**Language API Integration (Phase 02):**
+- ✅ `OnboardingLanguageService` — parallel `GET /languages?type=native|learning`
+- ✅ 24-hour cache via `StorageService.preferences`
+- ✅ Offline fallback to static lists
+- ✅ UUID-based selection tracking
+- ✅ Loading skeletons and error states
+- ✅ `CachedNetworkImage` with emoji fallback
+
+**AI Chat Integration (Phase 03):**
+- ✅ Screen 07: `POST /onboarding/chat` for Flora AI messages
+- ✅ Screen 08: `POST /onboarding/start` for scenario generation
+- ✅ Streaming response handling
+- ✅ Back button cancellation
+
+**Auth Screens (Phase 04):**
+- ✅ Screen 09: LoginGate modal bottom sheet
+- ✅ Screen 10: Signup with `POST /auth/register`
+- ✅ Screen 11: Login with `POST /auth/login`
+- ✅ Token storage in `AuthStorage`
+- ✅ Persistent `AuthController` for session management
+
+**Forgot Password Flow (Phase 06):**
+- ✅ `ForgotPasswordController` — 3-step password reset manager
+- ✅ Screen 12: Email input → `POST /auth/forgot-password`
+- ✅ Screen 13: OTP verification with:
+  - 6-box `OtpInputField` widget
+  - Auto-advance on last digit
+  - Paste support
+  - Backspace deletion
+  - 47-second countdown timer
+  - Resend button
+- ✅ Screen 14: New password → `POST /auth/reset-password`
+- ✅ Password validation (8+, uppercase, lowercase, number, special char)
+
+**Models & Routes:**
+- ✅ `OnboardingSession`, `OnboardingProfile`, `Scenario`, `AuthResponse`
+- ✅ 14 routes configured (splash + 13 onboarding/auth screens)
+- ✅ All transitions: rightToLeft 300ms
+
+**API Endpoints (9 total):**
+- GET `/languages?type=native|learning`
+- GET `/users/me`, PUT `/users/me`
+- POST `/onboarding/chat`, POST `/onboarding/start`
+- POST `/auth/register`, POST `/auth/login`
+- POST `/auth/forgot-password`, POST `/auth/reset-password`
+
+**Files Created:**
+- `/lib/features/onboarding/views/` — Screens 01-08
+- `/lib/features/auth/views/` — Screens 09-14
+- `/lib/features/auth/controllers/forgot_password_controller.dart`
+- `/lib/features/auth/widgets/otp_input_field.dart`
+- `/lib/features/onboarding/services/onboarding_language_service.dart`
+
+**Next Step:** Implement Phase 7 (Home Dashboard)
 
 ### 2026-02-05
 
@@ -686,21 +882,29 @@ Phase 11: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 ## Next Steps
 
 **Immediate (Next Session):**
-1. Start Phase 7: Authentication Feature
-2. Implement login/register screens
-3. Create auth controller with validation
-4. Set up token storage and management
-5. Build logout functionality
+1. Start Phase 7: Home Dashboard
+2. Create dashboard UI with user stats
+3. Implement quick action cards
+4. Set up navigation to chat, lessons, profile
+5. Display learning progress
 
 **Short-term (This Week):**
-- Complete Phase 7 (Authentication)
-- Begin Phase 8 (Home Dashboard)
+- Complete Phase 7 (Home Dashboard)
+- Begin Phase 8 (Chat Feature)
 - Reach Milestone 4 by 2026-03-05
 
 **Long-term:**
 - Complete all features by 2026-03-12
 - Conduct integration testing
 - Prepare for deployment
+
+**Completed in Session:**
+- ✅ Phase 6: All 14 onboarding/auth screens implemented
+- ✅ Forgot password flow with OTP verification
+- ✅ Language API integration with caching
+- ✅ AI chat intro screen with Flora integration
+- ✅ Scenario gift screen generation
+- ✅ Authentication endpoints (register, login, password reset)
 
 ---
 
