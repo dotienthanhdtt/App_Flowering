@@ -249,11 +249,14 @@ Complete dependency setup with all required packages.
   - AppButton (4 variants), AppTextField (with validation), AppText (8 variants)
   - AppIcon, LoadingWidget, LoadingOverlay, AppErrorWidget
   - **BottomNavBar** - Custom 4-tab navigation bar with active/inactive states ✅ (Phase 6.5)
+  - **WordTranslationSheet**, **WordTranslationSheetLoader** - Translation UI components (Chat Translate Feature)
+  - **AppTappablePhrase** - Converted to StatefulWidget (memory leak fix)
     - Colors: Orange (#FF7A27) active, Gray (#9C9585) inactive
     - Height: 80px, Corner radius: 20px (top)
     - Integrated with MainShellScreen
 - **Shared Models** (`lib/shared/models/`):
   - UserModel, ApiErrorModel
+  - WordTranslationModel, SentenceTranslationModel (Chat Translation Feature)
 - **Utilities** (`lib/core/utils/`):
   - Validators (email, password, required, minLength)
   - Extensions (String, DateTime, Duration)
@@ -524,6 +527,7 @@ Services registered in `global-dependency-injection-bindings.dart`:
 | `AuthStorage` | `lib/core/services/auth_storage.dart` | Token CRUD (`saveTokens`, `getAccessToken`, `isLoggedIn`, `clearTokens`) |
 | `ConnectivityService` | `lib/core/services/connectivity_service.dart` | Reactive `isOnline` observable, stream-based detection |
 | `AudioService` | `lib/core/services/audio_service.dart` | AAC-LC recording (128kbps), file/URL playback, permission check |
+| `TranslationService` | `lib/core/services/translation_service.dart` | Word translation fetching via `POST /ai/translate`, caching, error handling |
 
 See `system-architecture.md` for full API signatures.
 

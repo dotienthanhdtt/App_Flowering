@@ -8,7 +8,7 @@
 
 ## Overview
 - **Priority:** High
-- **Status:** Pending
+- **Status:** Complete
 - **Description:** Replace plain `Text()` in AI bubble with `AppTappablePhrase`, wire word tap to show bottom sheet via controller, wire sentence translate to call API on first tap.
 
 ## Key Insights
@@ -212,17 +212,17 @@ class _State extends State<WordTranslationSheetLoader> {
 ```
 
 ## Todo List
-- [ ] Make `ChatMessage.translatedText` mutable (remove `final`)
-- [ ] Add `onWordTap` callback to `AiMessageBubble` constructor
-- [ ] Replace `Text()` with `AppTappablePhrase` in bubble
-- [ ] Create `WordTranslationSheetLoader` stateful wrapper
-- [ ] Add `onWordTap()` method to `AiChatController`
-- [ ] Update `toggleTranslation()` to call API on first tap
-- [ ] Pass `onWordTap` in chat view where bubble is constructed
-- [ ] Add `TranslationService` import to controller
-- [ ] Verify compilation with `flutter analyze`
-- [ ] Manual test: tap word → sheet appears with loading → data populates
-- [ ] Manual test: tap Translate → API call → translation shows → tap again → hides
+- [x] Make `ChatMessage.translatedText` mutable (remove `final`)
+- [x] Add `onWordTap` callback to `AiMessageBubble` constructor
+- [x] Replace `Text()` with `AppTappablePhrase` in bubble
+- [x] Create `WordTranslationSheetLoader` stateful wrapper
+- [x] Add `onWordTap()` method to `AiChatController`
+- [x] Update `toggleTranslation()` to call API on first tap
+- [x] Pass `onWordTap` in chat view where bubble is constructed
+- [x] Add `TranslationService` import to controller
+- [x] Verify compilation with `flutter analyze`
+- [x] Manual test: tap word → sheet appears with loading → data populates
+- [x] Manual test: tap Translate → API call → translation shows → tap again → hides
 
 ## Success Criteria
 - Tapping any word in AI bubble opens bottom sheet with correct translation

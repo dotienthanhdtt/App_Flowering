@@ -8,7 +8,7 @@
 
 ## Overview
 - **Priority:** High
-- **Status:** Pending
+- **Status:** Complete
 - **Description:** Build the word translation bottom sheet (design 08a) as a shared widget. Includes loading, error, and populated states.
 
 ## Key Insights
@@ -143,11 +143,11 @@ static void show(BuildContext context, {required String word, ...}) {
 ```
 
 ## Todo List
-- [ ] Add l10n keys to both language files
-- [ ] Create `WordTranslationSheet` widget with loading/error/populated states
-- [ ] Match design 08a exactly (colors, sizes, spacing)
-- [ ] Add static `show()` method for easy invocation
-- [ ] Verify compilation with `flutter analyze`
+- [x] Add l10n keys to both language files
+- [x] Create `WordTranslationSheet` widget with loading/error/populated states
+- [x] Match design 08a exactly (colors, sizes, spacing)
+- [x] Add static `show()` method for easy invocation
+- [x] Verify compilation with `flutter analyze`
 
 ## Success Criteria
 - Sheet renders correctly in all 3 states (loading, error, populated)

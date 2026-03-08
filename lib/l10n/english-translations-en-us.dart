@@ -187,4 +187,13 @@ const Map<String, String> enUS = {
   'new_password_confirm_label': 'Confirm New Password',
   'new_password_cta': 'Reset Password',
   'password_reset_success': 'Password reset successfully',
+
+  // Word Translation (Screen 08a)
+  'word_translation_title': 'Translation',
+  'word_definition_label': 'Definition',
+  'word_examples_label': 'Examples',
+  'word_translation_error': 'Could not load translation',
+  'sentence_translation_unavailable': 'Sentence translation is not available during onboarding',
+  'word_translation_retry': 'Retry',
+  'translation_target_language': 'Vietnamese',
 };

@@ -9,7 +9,7 @@
 
 ## Overview
 - **Priority:** High (blocks Phase 2 and 3)
-- **Status:** Pending
+- **Status:** Complete
 - **Description:** Create the data model for word translation responses, build `TranslationService` with API calls + in-memory caching, add endpoint constant, register service in DI.
 
 ## Key Insights
@@ -151,13 +151,13 @@ Get.put(TranslationService(), permanent: true);
 ```
 
 ## Todo List
-- [ ] Add `translate` endpoint to `api_endpoints.dart`
-- [ ] Create `WordTranslationModel`
-- [ ] Create `SentenceTranslationModel`
-- [ ] Add `backendMessageId` to `ChatMessage`
-- [ ] Create `TranslationService` with caching
-- [ ] Register `TranslationService` in DI bindings
-- [ ] Verify compilation with `flutter analyze`
+- [x] Add `translate` endpoint to `api_endpoints.dart`
+- [x] Create `WordTranslationModel`
+- [x] Create `SentenceTranslationModel`
+- [x] Add `backendMessageId` to `ChatMessage`
+- [x] Create `TranslationService` with caching
+- [x] Register `TranslationService` in DI bindings
+- [x] Verify compilation with `flutter analyze`
 
 ## Success Criteria
 - Models parse sample JSON correctly

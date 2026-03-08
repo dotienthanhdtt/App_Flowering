@@ -536,6 +536,80 @@
 
 ---
 
+### [2026-03-08] Chat Translate Feature ✅ COMPLETED
+
+#### Added
+- **Word Translation Models** (`lib/shared/models/`)
+  - `WordTranslationModel` - Single word translation with transliterations
+  - `SentenceTranslationModel` - Sentence-level translation with word-by-word mapping
+
+- **Translation Service** (`lib/core/services/translation_service.dart`)
+  - `toggleTranslation()` - Async fetch/cache word translations
+  - Caches translations in StorageService (LRU eviction)
+  - Handles translation errors gracefully
+
+- **Word Translation UI Widgets** (`lib/shared/widgets/`)
+  - `WordTranslationSheet` - Bottom sheet displaying translation details
+  - `WordTranslationSheetLoader` - Loading state with skeleton
+  - Displays translated text with phonetic pronunciation
+
+- **Message Interactivity**
+  - `ChatMessage` model: added `backendMessageId`, mutable `translatedText` fields
+  - `AiMessageBubble`: added `onWordTap` callback for tap handling
+  - Integrated `AppTappablePhrase` widget for interactive word highlighting
+
+- **API Integration**
+  - `POST /ai/translate` - Backend endpoint for word translation
+  - Request: `{messageId, word}` → Response: `{translations, phoneticSimilar, phoneticOriginal}`
+
+- **Localization Keys** (EN & VI)
+  - Translation sheet labels and buttons
+  - Loading states and error messages
+
+#### Changed
+- **AppTappablePhrase Widget** (`lib/shared/widgets/app_tappable_phrase.dart`)
+  - Converted from StatelessWidget to StatefulWidget
+  - Fixes memory leak in gesture detector
+  - Maintains proper lifecycle cleanup
+
+- **ChatMessage Model** (`lib/shared/models/chat_message_model.dart`)
+  - Added `backendMessageId` field (UUID from API)
+  - Added `translatedText` (mutable) for caching translations
+
+- **AiMessageBubble Widget** (`lib/features/chat/widgets/ai_message_bubble.dart`)
+  - Added `onWordTap` callback parameter
+  - Integrated `AppTappablePhrase` with translation callback
+
+- **AiChatController** (`lib/features/chat/controllers/ai_chat_controller.dart`)
+  - Added `onWordTap(word)` handler
+  - Added `toggleTranslation(word, messageId)` async method
+  - Manages translation loading/error states
+
+#### Technical Decisions
+- **Translation Caching:** Uses existing StorageService to cache frequent translations (reduces API calls)
+- **Lazy Loading:** Translations fetched on-demand when user taps word
+- **Memory Safety:** AppTappablePhrase fixed to use StatefulWidget for proper cleanup
+- **Backend Integration:** Leverages new POST /ai/translate endpoint
+- **UX Pattern:** Bottom sheet provides immersive translation detail view
+
+#### Build Verification
+- ✅ New models compile without errors
+- ✅ TranslationService integrates with StorageService
+- ✅ Word translation sheet renders without UI issues
+- ✅ AppTappablePhrase memory leak fixed (StatefulWidget lifecycle)
+- ✅ ChatMessage serialization handles new fields
+- ✅ AiMessageBubble tap handling functional
+- ✅ No breaking changes to existing chat flow
+
+#### Success Metrics Met
+- ✅ Users can tap words in AI messages to see translations
+- ✅ Translations display with phonetic information
+- ✅ Translation data cached to reduce API load
+- ✅ Memory leak fixed in AppTappablePhrase
+- ✅ All new l10n keys added for EN and VI
+
+---
+
 ### Phase 6: Authentication Feature (Next)
 - Login/register screens with validation
 - Auth controller and bindings

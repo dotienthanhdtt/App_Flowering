@@ -225,6 +225,12 @@ class AuthController extends BaseController {
 
 ## File Organization Rules
 
+### One Class Per File (Strict)
+Each `.dart` file must contain **exactly one public class**. Never put multiple widgets, controllers, or models in the same file.
+- Extract every widget (even small/private ones) into its own file
+- Name the file after the class: `AiAvatar` → `ai_avatar.dart`
+- Private helper widgets (`_Foo`) must become public classes in separate files
+
 ### Maximum File Size
 Keep individual files under **200 lines**. When exceeded:
 - Extract widgets to separate files in `widgets/` directory

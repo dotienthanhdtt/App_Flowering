@@ -4,7 +4,7 @@ import '../../core/constants/app_text_styles.dart';
 import '../../core/constants/app_colors.dart';
 import 'app_text.dart';
 
-class AppTappablePhrase extends StatelessWidget {
+class AppTappablePhrase extends StatefulWidget {
   final String text;
   final AppTextVariant variant;
   final Color? color;
@@ -33,9 +33,31 @@ class AppTappablePhrase extends StatelessWidget {
   });
 
   @override
+  State<AppTappablePhrase> createState() => _AppTappablePhraseState();
+}
+
+class _AppTappablePhraseState extends State<AppTappablePhrase> {
+  final List<TapGestureRecognizer> _recognizers = [];
+
+  @override
+  void dispose() {
+    _disposeRecognizers();
+    super.dispose();
+  }
+
+  void _disposeRecognizers() {
+    for (final r in _recognizers) {
+      r.dispose();
+    }
+    _recognizers.clear();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _disposeRecognizers();
+
     final baseStyle = _getBaseStyle();
-    final words = text.split(' ');
+    final words = widget.text.split(' ');
     final spans = <InlineSpan>[];
 
     for (var i = 0; i < words.length; i++) {
@@ -44,39 +66,41 @@ class AppTappablePhrase extends StatelessWidget {
       }
 
       final word = words[i];
-      final isHighlighted = highlightedWordIndices?.contains(i) ?? false;
-      final customStyle = wordStyleBuilder?.call(word, i);
+      final isHighlighted =
+          widget.highlightedWordIndices?.contains(i) ?? false;
+      final customStyle = widget.wordStyleBuilder?.call(word, i);
 
       TextStyle wordStyle = customStyle ?? baseStyle;
       if (isHighlighted) {
         wordStyle = wordStyle.copyWith(
-          color: highlightColor ?? AppColors.primary,
-          backgroundColor: highlightBackground,
+          color: widget.highlightColor ?? AppColors.primary,
+          backgroundColor: widget.highlightBackground,
           fontWeight: FontWeight.w600,
         );
       }
 
+      TapGestureRecognizer? recognizer;
+      if (widget.onWordTap != null) {
+        recognizer = TapGestureRecognizer()
+          ..onTap = () => widget.onWordTap!(word, i);
+        _recognizers.add(recognizer);
+      }
+
       spans.add(
-        TextSpan(
-          text: word,
-          style: wordStyle,
-          recognizer: onWordTap != null
-              ? (TapGestureRecognizer()..onTap = () => onWordTap!(word, i))
-              : null,
-        ),
+        TextSpan(text: word, style: wordStyle, recognizer: recognizer),
       );
     }
 
     return RichText(
       text: TextSpan(children: spans),
-      textAlign: textAlign ?? TextAlign.start,
-      maxLines: maxLines,
-      overflow: overflow ?? TextOverflow.clip,
+      textAlign: widget.textAlign ?? TextAlign.start,
+      maxLines: widget.maxLines,
+      overflow: widget.overflow ?? TextOverflow.clip,
     );
   }
 
   TextStyle _getBaseStyle() {
-    final style = switch (variant) {
+    final style = switch (widget.variant) {
       AppTextVariant.h1 => AppTextStyles.h1,
       AppTextVariant.h2 => AppTextStyles.h2,
       AppTextVariant.h3 => AppTextStyles.h3,
@@ -86,6 +110,6 @@ class AppTappablePhrase extends StatelessWidget {
       AppTextVariant.caption => AppTextStyles.caption,
       AppTextVariant.label => AppTextStyles.label,
     };
-    return color != null ? style.copyWith(color: color) : style;
+    return widget.color != null ? style.copyWith(color: widget.color) : style;
   }
 }
