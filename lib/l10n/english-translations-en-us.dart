@@ -147,6 +147,7 @@ const Map<String, String> enUS = {
   'auth_continue_google': 'Continue with Google',
   'auth_continue_email': 'Sign up with Email',
   'auth_social_coming_soon': 'Coming soon',
+  'auth_social_coming_soon_message': 'Social login will be available soon.',
 
   // Auth — Signup (Screen 10)
   'signup_title': 'Create Account',
@@ -187,6 +188,8 @@ const Map<String, String> enUS = {
   'new_password_confirm_label': 'Confirm New Password',
   'new_password_cta': 'Reset Password',
   'password_reset_success': 'Password reset successfully',
+  'password_reset_title': 'Password Reset',
+  'password_reset_message': 'Your password has been reset. Please log in.',
 
   // Word Translation (Screen 08a)
   'word_translation_title': 'Translation',
@@ -217,6 +220,11 @@ const Map<String, String> enUS = {
 
   // Onboarding — Top Bar
   'login_action': 'Log in',
+  'signup_action': 'Sign up',
+  'go_back': 'Go Back',
+  'coming_soon_suffix': 'Coming Soon',
+  'otp_didnt_receive': "Didn't receive the code?",
+  'otp_resend_in_timer': 'Resend in',
 
   // Onboarding — Splash
   'splash_subtitle': 'Bloom in your own way',

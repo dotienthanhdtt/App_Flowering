@@ -147,6 +147,7 @@ const Map<String, String> viVN = {
   'auth_continue_google': 'Tiếp tục với Google',
   'auth_continue_email': 'Đăng ký bằng Email',
   'auth_social_coming_soon': 'Sắp ra mắt',
+  'auth_social_coming_soon_message': 'Đăng nhập mạng xã hội sẽ sớm được hỗ trợ.',
 
   // Auth — Signup (Screen 10)
   'signup_title': 'Tạo Tài Khoản',
@@ -187,6 +188,8 @@ const Map<String, String> viVN = {
   'new_password_confirm_label': 'Xác Nhận Mật Khẩu Mới',
   'new_password_cta': 'Đặt Lại Mật Khẩu',
   'password_reset_success': 'Đặt lại mật khẩu thành công',
+  'password_reset_title': 'Đặt Lại Mật Khẩu',
+  'password_reset_message': 'Mật khẩu đã được đặt lại. Vui lòng đăng nhập.',
 
   // Word Translation (Screen 08a)
   'word_translation_title': 'Bản dịch',
@@ -217,6 +220,11 @@ const Map<String, String> viVN = {
 
   // Onboarding — Top Bar
   'login_action': 'Đăng nhập',
+  'signup_action': 'Đăng ký',
+  'go_back': 'Quay lại',
+  'coming_soon_suffix': 'Sắp ra mắt',
+  'otp_didnt_receive': 'Không nhận được mã?',
+  'otp_resend_in_timer': 'Gửi lại sau',
 
   // Onboarding — Splash
   'splash_subtitle': 'Nở rộ theo cách của bạn',
