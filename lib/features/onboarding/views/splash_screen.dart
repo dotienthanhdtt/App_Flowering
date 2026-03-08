@@ -25,22 +25,34 @@ class SplashScreen extends StatelessWidget {
                 width: 180,
                 height: 180,
               ),
-              const SizedBox(height: AppSizes.spacingL),
-              Text(
-                'Flowering',
-                style: GoogleFonts.outfit(
-                  fontSize: AppSizes.font10XL,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: AppSizes.spacingS),
-              Text(
-                'Bloom in your own way',
-                style: GoogleFonts.outfit(
-                  fontSize: AppSizes.fontL,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white.withValues(alpha: 0.8),
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.0, end: 1.0),
+                duration: const Duration(milliseconds: 600),
+                curve: Curves.easeIn,
+                builder: (context, opacity, child) {
+                  return Opacity(opacity: opacity, child: child);
+                },
+                child: Column(
+                  children: [
+                    const SizedBox(height: AppSizes.spacingL),
+                    Text(
+                      'Flowering',
+                      style: GoogleFonts.outfit(
+                        fontSize: AppSizes.font10XL,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: AppSizes.spacingS),
+                    Text(
+                      'Bloom in your own way',
+                      style: GoogleFonts.outfit(
+                        fontSize: AppSizes.fontL,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

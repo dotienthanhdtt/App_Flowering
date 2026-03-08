@@ -368,6 +368,50 @@
 
 ## Upcoming Changes
 
+### [2026-03-08] Native Splash Screen Logo Polish ✅ COMPLETED
+
+#### Added
+- **Android Native Splash Logo**
+  - Added app logo to `launch_background.xml` using density-specific `splash_logo.png` drawables
+  - Density variants: mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi
+  - Centered logo display via `android:gravity="center"`
+
+- **iOS Native Splash Logo**
+  - Replaced generic LaunchImage assets with app logo at proper scales (180x180)
+  - Fixed storyboard centering with proper constraints:
+    - `centerX` and `centerY` constraints ensure centered logo
+    - LaunchScreen.storyboard properly configured with LaunchImage
+
+- **Flutter Text Animation**
+  - Added TweenAnimationBuilder for "Flowering" text and tagline
+  - 600ms fade-in animation with easeIn curve
+  - Text opacity transitions from 0.0 → 1.0
+
+#### Changed
+- **SplashScreen Widget** (`lib/features/onboarding/views/splash_screen.dart`)
+  - Logo now displays with app name and tagline
+  - Added animated text fade-in effect during app initialization
+  - Maintained existing primary color background
+
+#### Technical Decisions
+- **Platform-specific Assets:** Native splash uses density-specific Android drawables and iOS LaunchImage for proper scaling across devices
+- **Animation Timing:** 600ms fade-in chosen to match typical app initialization duration
+- **UI Consistency:** App logo and colors unified across native splash and Flutter UI
+
+#### Build Verification
+- ✅ Android native splash renders with centered logo
+- ✅ iOS storyboard displays centered LaunchImage with proper constraints
+- ✅ Flutter SplashScreen animation compiles without errors
+- ✅ No breaking changes to existing flows
+
+#### Success Metrics Met
+- ✅ Native splash screens display app logo professionally
+- ✅ Logo centered on both Android and iOS platforms
+- ✅ Text animation provides visual polish during initialization
+- ✅ Loading experience improved with branded native splash
+
+---
+
 ### [2026-03-04] Bottom Navigation Bar Feature ✅ COMPLETED
 
 #### Added

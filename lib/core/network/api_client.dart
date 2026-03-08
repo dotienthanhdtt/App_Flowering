@@ -5,6 +5,7 @@ import '../services/auth_storage.dart';
 import 'api_exceptions.dart';
 import 'api_response.dart';
 import 'auth_interceptor.dart';
+import 'http_logger_interceptor.dart';
 import 'retry_interceptor.dart';
 
 /// Singleton API client with Dio
@@ -28,41 +29,14 @@ class ApiClient extends GetxService {
       ),
     );
 
-    // Order matters: retry first, then auth
+    // Order matters: retry first, then auth, then logging
     _dio.interceptors.addAll([
       RetryInterceptor(maxRetries: 3),
       AuthInterceptor(authStorage),
-      _loggingInterceptor(),
+      HttpLoggerInterceptor(),
     ]);
 
     return this;
-  }
-
-  /// Logging interceptor for debug builds
-  Interceptor _loggingInterceptor() {
-    return InterceptorsWrapper(
-      onRequest: (options, handler) {
-        if (EnvConfig.isDev) {
-          // ignore: avoid_print
-          print('→ ${options.method} ${options.path}');
-        }
-        handler.next(options);
-      },
-      onResponse: (response, handler) {
-        if (EnvConfig.isDev) {
-          // ignore: avoid_print
-          print('← ${response.statusCode} ${response.requestOptions.path}');
-        }
-        handler.next(response);
-      },
-      onError: (error, handler) {
-        if (EnvConfig.isDev) {
-          // ignore: avoid_print
-          print('✗ ${error.response?.statusCode} ${error.requestOptions.path}');
-        }
-        handler.next(error);
-      },
-    );
   }
 
   // ─────────────────────────────────────────────────────────────────
@@ -146,6 +120,53 @@ class ApiClient extends GetxService {
         options: options,
       );
       return _handleResponse(response, fromJson);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
+
+  /// POST request returning an SSE stream of raw `data:` payloads.
+  ///
+  /// Each yielded [String] is the content after `data: ` (already trimmed).
+  /// The caller is responsible for JSON-decoding individual events.
+  Stream<String> postStream(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async* {
+    try {
+      final response = await _dio.post(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: Options(
+          responseType: ResponseType.stream,
+          headers: {'Accept': 'text/event-stream'},
+        ),
+      );
+      final stream = response.data?.stream as Stream<List<int>>?;
+      if (stream == null) return;
+
+      String buffer = '';
+      await for (final chunk in stream) {
+        buffer += String.fromCharCodes(chunk);
+        // Split on double-newline (SSE event boundary) or single newlines
+        final lines = buffer.split('\n');
+        // Keep last incomplete line in buffer
+        buffer = lines.removeLast();
+        for (final line in lines) {
+          final trimmed = line.trim();
+          if (trimmed.startsWith('data:')) {
+            final payload = trimmed.substring(5).trim();
+            if (payload.isNotEmpty) yield payload;
+          }
+        }
+      }
+      // Process any remaining data in buffer
+      if (buffer.trim().startsWith('data:')) {
+        final payload = buffer.trim().substring(5).trim();
+        if (payload.isNotEmpty) yield payload;
+      }
     } on DioException catch (e) {
       throw mapDioException(e);
     }

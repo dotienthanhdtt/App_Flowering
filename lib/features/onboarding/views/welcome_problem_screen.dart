@@ -56,16 +56,17 @@ class WelcomeProblemScreen extends StatefulWidget {
 
 class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
   final _pageController = PageController();
-  int _currentStep = 0;
+  final _currentStep = ValueNotifier<int>(0);
 
   @override
   void dispose() {
     _pageController.dispose();
+    _currentStep.dispose();
     super.dispose();
   }
 
   void _onTap() {
-    if (_currentStep < _welcomeSteps.length - 1) {
+    if (_currentStep.value < _welcomeSteps.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -77,79 +78,6 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final data = _welcomeSteps[_currentStep];
-
-    Widget body = Padding(
-      padding: const EdgeInsets.only(
-          left: AppSizes.padding3XL,
-          right: AppSizes.padding3XL,
-          top: AppSizes.spacing5XL,
-          bottom: AppSizes.spacing6XL),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Fixed: step dots indicator
-          StepDotsIndicator(activeStep: _currentStep),
-          const SizedBox(height: AppSizes.spacing4XL),
-
-          // Sliding: only headline + subtext
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              onPageChanged: (index) {
-                setState(() => _currentStep = index);
-              },
-              itemCount: _welcomeSteps.length,
-              itemBuilder: (context, index) {
-                final step = _welcomeSteps[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      step.headline,
-                      style: GoogleFonts.outfit(
-                        fontSize: AppSizes.font9XL,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
-                        letterSpacing: AppSizes.trackingTight,
-                        height: AppSizes.lineHeightTight,
-                      ),
-                    ),
-                    const SizedBox(height: AppSizes.spacingXL),
-                    Text(
-                      step.subtext,
-                      style: GoogleFonts.outfit(
-                        fontSize: AppSizes.fontXL,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textSecondary,
-                        height: AppSizes.lineHeightXLoose,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-
-          // Fixed: bottom tap hint or CTA button
-          if (data.showCta)
-            _buildCtaButton(data.ctaLabel!)
-          else
-            _buildTapHint(),
-        ],
-      ),
-    );
-
-    // Wrap in GestureDetector for non-CTA steps
-    if (!data.showCta) {
-      body = GestureDetector(
-        onTap: _onTap,
-        behavior: HitTestBehavior.opaque,
-        child: body,
-      );
-    }
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -157,15 +85,86 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
       ),
       child: Scaffold(
         backgroundColor: AppColors.background,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Fixed: top bar
-            const OnboardingTopBar(),
-            Expanded(child: body),
-          ],
+        body: ValueListenableBuilder<int>(
+          valueListenable: _currentStep,
+          builder: (context, step, _) {
+            final data = _welcomeSteps[step];
+
+            Widget body = Padding(
+              padding: const EdgeInsets.only(
+                  left: AppSizes.padding3XL,
+                  right: AppSizes.padding3XL,
+                  top: AppSizes.spacing5XL,
+                  bottom: AppSizes.spacing6XL),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  StepDotsIndicator(activeStep: step),
+                  const SizedBox(height: AppSizes.spacing4XL),
+                  Expanded(child: _buildPageView()),
+                  if (data.showCta)
+                    _buildCtaButton(data.ctaLabel!)
+                  else
+                    _buildTapHint(),
+                ],
+              ),
+            );
+
+            if (!data.showCta) {
+              body = GestureDetector(
+                onTap: _onTap,
+                behavior: HitTestBehavior.opaque,
+                child: body,
+              );
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const OnboardingTopBar(),
+                Expanded(child: body),
+              ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget _buildPageView() {
+    return PageView.builder(
+      controller: _pageController,
+      physics: const NeverScrollableScrollPhysics(),
+      onPageChanged: (index) => _currentStep.value = index,
+      itemCount: _welcomeSteps.length,
+      itemBuilder: (context, index) {
+        final step = _welcomeSteps[index];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              step.headline,
+              style: GoogleFonts.outfit(
+                fontSize: AppSizes.font9XL,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+                letterSpacing: AppSizes.trackingTight,
+                height: AppSizes.lineHeightTight,
+              ),
+            ),
+            const SizedBox(height: AppSizes.spacingXL),
+            Text(
+              step.subtext,
+              style: GoogleFonts.outfit(
+                fontSize: AppSizes.fontXL,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textSecondary,
+                height: AppSizes.lineHeightXLoose,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
