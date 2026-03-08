@@ -368,6 +368,74 @@
 
 ## Upcoming Changes
 
+### [2026-03-09] Text→AppText Refactoring: Unified Typography System ✅ COMPLETED
+
+#### Added
+- **Base Widget Rule** (CLAUDE.md)
+  - Documented requirement to use `AppText` instead of raw `Text` widgets
+  - Extends to `AppButton` and `AppTextField` for consistency
+  - Ensures all future text rendering uses design system
+
+#### Changed
+- **AppText Widget** (`lib/shared/widgets/app_text.dart`)
+  - Added `button` variant to `AppTextVariant` enum
+  - Added optional override parameters: `fontWeight`, `fontSize`, `style`, `decoration`, `fontStyle`, `height`
+  - Updated build logic to merge overrides correctly
+  - Maintains backward compatibility with existing usages
+
+- **Text Widget Replacement** (30 files across codebase)
+  - 100+ raw `Text(` widgets replaced with `AppText(`
+  - Affected files:
+    - Shared widgets (4 files): app_button, app_text_field, word-translation-sheet, loading_widget
+    - Auth feature (8 files): All auth screens and widgets
+    - Chat feature (9 files): All chat screens, bubbles, and widgets
+    - Onboarding feature (8 files): All onboarding screens
+    - Other features (4 files): Profile, vocabulary, home, lessons
+  - All `.tr` translation calls preserved
+  - All color overrides correctly applied
+
+#### Technical Decisions
+- **Selective Replacement:** Intentionally skipped:
+  - `Text` inside `RichText`/`SelectableText` children (TextSpan usage)
+  - Emoji-only Text widgets (flag emojis in `_LanguageFlag`) - no Outfit font needed
+  - `Text` inside `AppText.build()` itself
+- **Style Merging:** Used variant + override approach for flexibility without bloating enum
+- **Import Consistency:** All relative imports updated per project convention
+- **Backward Compatibility:** All new params optional, existing code unaffected
+
+#### Quality Assurance
+- ✅ `flutter analyze` passes with zero errors/warnings
+- ✅ All tests passing (5/5)
+- ✅ Code review complete - all issues fixed:
+  - Style merge logic corrected
+  - Logout button color fixed
+  - Semantic variant applied correctly
+  - Unused GoogleFonts import removed
+- ✅ No visual regressions detected
+- ✅ All typography consistent across app
+
+#### Files Modified
+- `lib/shared/widgets/app_text.dart` - Enhanced with new params
+- 30 feature and shared widget files - Text→AppText replacement
+- `CLAUDE.md` - Added base widget rule
+- Multiple auth, chat, onboarding, and profile files
+
+#### Success Metrics Met
+- ✅ Consistent Outfit font usage enforced across 100+ text widgets
+- ✅ Centralized typography control via AppText variants
+- ✅ Design system compliance improved
+- ✅ Future text widgets guided toward base widget pattern
+- ✅ Codebase maintainability improved
+
+#### Build Verification
+- ✅ All modified files compile without errors
+- ✅ No new warnings introduced
+- ✅ Test suite passes (5/5)
+- ✅ Code review approved
+- ✅ No breaking changes to existing functionality
+
+---
+
 ### [2026-03-08] Native Splash Screen Logo Polish ✅ COMPLETED
 
 #### Added
