@@ -6,7 +6,6 @@ import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
 import '../../../core/services/storage_service.dart';
-import '../../../core/services/translation-service.dart';
 import '../../onboarding/controllers/onboarding_controller.dart';
 import '../../onboarding/models/onboarding_profile_model.dart';
 import '../../onboarding/models/onboarding_session_model.dart';
@@ -19,7 +18,7 @@ class AiChatController extends GetxController {
   final ApiClient _apiClient = Get.find();
   final OnboardingController _onboardingCtrl = Get.find();
   final StorageService _storageService = Get.find();
-  final TranslationService _translationService = Get.find();
+
 
   final messages = <ChatMessage>[].obs;
   final isLoading = false.obs;
@@ -101,7 +100,7 @@ class AiChatController extends GetxController {
         final session = response.data!;
         progress.value = (session.turnNumber / 10).clamp(0.0, 1.0);
 
-        _addAiMessage(session.reply ?? '');
+        _addAiMessage(session.reply ?? '', messageId: session.messageId);
         if (session.quickReplies.isNotEmpty) {
           _addQuickReplies(session.quickReplies);
         }
@@ -134,22 +133,26 @@ class AiChatController extends GetxController {
       return;
     }
 
-    // No backend ID — cannot translate (onboarding messages)
-    if (msg.backendMessageId == null) {
-      Get.snackbar('', 'word_translation_error'.tr,
-          snackPosition: SnackPosition.BOTTOM);
-      return;
-    }
-
-    // First tap — call API
     try {
-      final result = await _translationService.translateSentence(
-        msg.backendMessageId!,
-        sessionToken: _sessionToken,
+      final response = await _apiClient.post<Map<String, dynamic>>(
+        ApiEndpoints.translate,
+        data: {
+          'type': 'sentence',
+          'messageId': messageId,
+          'sourceLang': _onboardingCtrl.selectedLearningLanguage.value,
+          'targetLang': _onboardingCtrl.selectedNativeLanguage.value,
+          'sessionToken': _sessionToken,
+        },
+        fromJson: (data) => data as Map<String, dynamic>,
       );
-      msg.translatedText = result.translation;
-      msg.showTranslation = true;
-      messages.refresh();
+      if (response.isSuccess && response.data != null) {
+        msg.translatedText = response.data!['translation'] as String?;
+        msg.showTranslation = true;
+        messages.refresh();
+      } else {
+        Get.snackbar('', response.message,
+            snackPosition: SnackPosition.BOTTOM);
+      }
     } on ApiException catch (e) {
       Get.snackbar('', e.userMessage,
           snackPosition: SnackPosition.BOTTOM);
@@ -224,13 +227,12 @@ class AiChatController extends GetxController {
     }
   }
 
-  void _addAiMessage(String text, {String? backendMessageId}) {
+  void _addAiMessage(String text, {String? messageId}) {
     messages.add(ChatMessage(
-      id: 'ai_${DateTime.now().millisecondsSinceEpoch}',
+      id: messageId ?? 'ai_${DateTime.now().millisecondsSinceEpoch}',
       type: ChatMessageType.aiText,
       text: text,
       timestamp: DateTime.now(),
-      backendMessageId: backendMessageId,
     ));
     _scrollToBottom();
   }
