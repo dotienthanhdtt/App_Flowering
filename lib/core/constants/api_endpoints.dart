@@ -37,6 +37,9 @@ class ApiEndpoints {
   static const String chatSend = '/chat/send';
   static const String chatVoice = '/chat/voice';
 
+  // AI
+  static const String translate = '/ai/translate'; // POST
+
   // Progress
   static const String progress = '/progress';
   static const String stats = '/progress/stats';
