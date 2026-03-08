@@ -164,15 +164,15 @@ class LoginEmailScreen extends StatelessWidget {
                         child: Center(
                           child: RichText(
                             text: TextSpan(
-                              style: GoogleFonts.outfit(
+                              style: GoogleFonts.inter(
                                 fontSize: AppSizes.fontM,
                                 color: AppColors.textSecondary,
                               ),
-                              children: const [
-                                TextSpan(text: "Don't have an account? "),
+                              children: [
+                                TextSpan(text: '${'dont_have_account'.tr} '),
                                 TextSpan(
-                                  text: 'Sign up',
-                                  style: TextStyle(
+                                  text: 'signup_action'.tr,
+                                  style: const TextStyle(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,
                                   ),

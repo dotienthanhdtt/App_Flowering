@@ -46,11 +46,11 @@ class AuthTextField extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           validator: validator,
-          style: GoogleFonts.outfit(fontSize: AppSizes.fontL, color: AppColors.textPrimary),
+          style: GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle:
-                GoogleFonts.outfit(fontSize: AppSizes.fontL, color: AppColors.textTertiary),
+                GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textTertiary),
             filled: true,
             fillColor: AppColors.surface,
             contentPadding:

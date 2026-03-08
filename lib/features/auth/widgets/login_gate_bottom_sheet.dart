@@ -14,8 +14,8 @@ class LoginGateBottomSheet extends StatelessWidget {
 
   void _onSocialTap() {
     Get.snackbar(
-      'Coming Soon',
-      'Social login will be available soon.',
+      'auth_social_coming_soon'.tr,
+      'auth_social_coming_soon_message'.tr,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(AppSizes.paddingL),
       backgroundColor: AppColors.surface,
@@ -112,15 +112,15 @@ class LoginGateBottomSheet extends StatelessWidget {
             },
             child: RichText(
               text: TextSpan(
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   fontSize: AppSizes.fontM,
                   color: AppColors.textSecondary,
                 ),
-                children: const [
-                  TextSpan(text: 'Already have an account? '),
+                children: [
+                  TextSpan(text: '${'already_have_account'.tr} '),
                   TextSpan(
-                    text: 'Log in',
-                    style: TextStyle(
+                    text: 'login_action'.tr,
+                    style: const TextStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
                     ),

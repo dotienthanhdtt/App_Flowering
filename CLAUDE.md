@@ -98,7 +98,7 @@ View → Controller → Service → Network/Storage
 - All user-facing text in `AppText` must use `.tr` for translation (e.g., `AppText('key'.tr)`) — add keys to `lib/l10n/english-translations-en-us.dart` and `lib/l10n/vietnamese-translations-vi-vn.dart`
 - Color, size, text style, api_endpoint re use in lib/core/constants
 - Always use base widgets from `lib/shared/widgets/` instead of raw Flutter widgets:
-  - `AppText` instead of `Text` (ensures consistent Outfit font typography)
+  - `AppText` instead of `Text` (ensures consistent Inter font typography)
   - `AppButton` instead of `ElevatedButton`/`TextButton`
   - `AppTextField` instead of `TextField`
 

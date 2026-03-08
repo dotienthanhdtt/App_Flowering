@@ -123,7 +123,7 @@ class _OtpBox extends StatelessWidget {
         maxLength: 1,
         onChanged: onChanged,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        style: GoogleFonts.outfit(
+        style: GoogleFonts.inter(
           fontSize: AppSizes.font4XL,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,

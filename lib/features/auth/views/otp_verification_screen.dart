@@ -44,7 +44,7 @@ class OtpVerificationScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSizes.spacingSM),
                     Obx(() => AppText(
-                          'We sent a 6-digit code to ${ctrl.maskedEmail}',
+                          '${'otp_subtitle'.tr} ${ctrl.maskedEmail}',
                           variant: AppTextVariant.bodyMedium,
                           color: AppColors.textSecondary,
                           height: AppSizes.lineHeightNormal,
@@ -98,13 +98,13 @@ class OtpVerificationScreen extends StatelessWidget {
                       final minutes = seconds ~/ 60;
                       final secs = seconds % 60;
                       final label = canResend
-                          ? "Didn't receive the code? "
-                          : 'Resend in $minutes:${secs.toString().padLeft(2, '0')} — ';
+                          ? '${'otp_didnt_receive'.tr} '
+                          : '${'otp_resend_in_timer'.tr} $minutes:${secs.toString().padLeft(2, '0')} — ';
 
                       return Center(
                         child: RichText(
                           text: TextSpan(
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               fontSize: AppSizes.fontM,
                               color: AppColors.textSecondary,
                             ),
