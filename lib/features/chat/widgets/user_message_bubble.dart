@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 
 /// Orange user text bubble, right-aligned, rounded [16,16,0,16].
 class UserMessageBubble extends StatelessWidget {
@@ -25,13 +25,10 @@ class UserMessageBubble extends StatelessWidget {
             bottomLeft: Radius.circular(AppSizes.radiusL),
           ),
         ),
-        child: Text(
+        child: AppText(
           text,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.fontM,
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
+          variant: AppTextVariant.label,
+          color: Colors.white,
         ),
       ),
     );

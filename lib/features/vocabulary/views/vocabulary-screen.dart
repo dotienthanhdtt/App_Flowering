@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/vocabulary-controller.dart';
 
 /// Vocabulary tab — search bar + word list or empty state
@@ -35,7 +36,7 @@ class VocabularyScreen extends StatelessWidget {
         top: AppSizes.paddingL,
         bottom: AppSizes.paddingXS,
       ),
-      child: Text('vocabulary_title'.tr, style: AppTextStyles.h2),
+      child: AppText('vocabulary_title'.tr, variant: AppTextVariant.h2),
     );
   }
 
@@ -83,11 +84,10 @@ class VocabularyScreen extends StatelessWidget {
                 color: AppColors.textTertiary,
               ),
               const SizedBox(height: AppSizes.spacingL),
-              Text(
+              AppText(
                 'vocabulary_empty'.tr,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textTertiary,
-                ),
+                variant: AppTextVariant.bodyMedium,
+                color: AppColors.textTertiary,
               ),
             ],
           ),
@@ -100,8 +100,8 @@ class VocabularyScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final word = words[index];
           return ListTile(
-            title: Text(word['term'] ?? '', style: AppTextStyles.label),
-            subtitle: Text(word['translation'] ?? '', style: AppTextStyles.caption),
+            title: AppText(word['term'] ?? '', variant: AppTextVariant.label),
+            subtitle: AppText(word['translation'] ?? '', variant: AppTextVariant.caption),
           );
         },
       );

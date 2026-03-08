@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/ai_chat_controller.dart';
 import 'chat_waveform_bars.dart';
 
@@ -47,13 +47,10 @@ class ChatRecordingBar extends StatelessWidget {
         ),
         const SizedBox(width: AppSizes.spacingS),
         // Timer
-        Obx(() => Text(
+        Obx(() => AppText(
               _formatDuration(controller.recordingDuration.value),
-              style: GoogleFonts.outfit(
-                fontSize: AppSizes.fontM,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
-              ),
+              variant: AppTextVariant.label,
+              color: AppColors.textPrimary,
             )),
         const SizedBox(width: AppSizes.spacingM),
         // Waveform bars

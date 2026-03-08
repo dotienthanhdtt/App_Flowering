@@ -41,19 +41,19 @@ class ForgotPasswordController extends GetxController {
   // ── Validators ──────────────────────────────────────────────────
 
   String? validateEmail(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Email is required';
-    if (!GetUtils.isEmail(v.trim())) return 'Enter a valid email address';
+    if (v == null || v.trim().isEmpty) return 'email_required'.tr;
+    if (!GetUtils.isEmail(v.trim())) return 'email_invalid'.tr;
     return null;
   }
 
   String? validateNewPassword(String? v) {
-    if (v == null || v.isEmpty) return 'Password is required';
-    if (v.length < 8) return 'Password must be at least 8 characters';
+    if (v == null || v.isEmpty) return 'password_required'.tr;
+    if (v.length < 8) return 'password_min_length'.tr;
     return null;
   }
 
   String? validateConfirmNewPassword(String? v) {
-    if (v != newPasswordController.text) return 'Passwords do not match';
+    if (v != newPasswordController.text) return 'passwords_not_match'.tr;
     return null;
   }
 
@@ -79,7 +79,7 @@ class ForgotPasswordController extends GetxController {
     } on ApiException catch (e) {
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'unknown_error'.tr;
     } finally {
       isLoading.value = false;
     }
@@ -102,7 +102,7 @@ class ForgotPasswordController extends GetxController {
     } on ApiException catch (e) {
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'unknown_error'.tr;
     } finally {
       isLoading.value = false;
     }
@@ -126,7 +126,7 @@ class ForgotPasswordController extends GetxController {
     } on ApiException catch (e) {
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'unknown_error'.tr;
     } finally {
       isLoading.value = false;
     }
@@ -148,8 +148,8 @@ class ForgotPasswordController extends GetxController {
         _resetToken = null;
         Get.offNamedUntil(AppRoutes.login, (_) => false);
         Get.snackbar(
-          'Password Reset',
-          'Your password has been reset. Please log in.',
+          'password_reset_title'.tr,
+          'password_reset_message'.tr,
           snackPosition: SnackPosition.BOTTOM,
         );
       } else {
@@ -158,7 +158,7 @@ class ForgotPasswordController extends GetxController {
     } on ApiException catch (e) {
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'unknown_error'.tr;
     } finally {
       isLoading.value = false;
     }

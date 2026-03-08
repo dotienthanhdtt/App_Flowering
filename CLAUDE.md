@@ -95,8 +95,12 @@ View → Controller → Service → Network/Storage
 - All async initialization happens in service `init()` methods
 - Add // TODO if task need I to complete
 - Re use ui component in lib/shared/widgets, using those component to build layout. In a view screen if any layout duplicate many time please create component for this layout
-- All text need add key in lib/i10l, this app support multiple language
+- All user-facing text in `AppText` must use `.tr` for translation (e.g., `AppText('key'.tr)`) — add keys to `lib/l10n/english-translations-en-us.dart` and `lib/l10n/vietnamese-translations-vi-vn.dart`
 - Color, size, text style, api_endpoint re use in lib/core/constants
+- Always use base widgets from `lib/shared/widgets/` instead of raw Flutter widgets:
+  - `AppText` instead of `Text` (ensures consistent Inter font typography)
+  - `AppButton` instead of `ElevatedButton`/`TextButton`
+  - `AppTextField` instead of `TextField`
 
 ### State Management Pattern
 

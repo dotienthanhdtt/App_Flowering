@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import 'social_auth_button.dart';
 
 /// Screen 09 — Login Gate shown as a bottom sheet over the Scenario Gift screen.
@@ -13,8 +14,8 @@ class LoginGateBottomSheet extends StatelessWidget {
 
   void _onSocialTap() {
     Get.snackbar(
-      'Coming Soon',
-      'Social login will be available soon.',
+      'auth_social_coming_soon'.tr,
+      'auth_social_coming_soon_message'.tr,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(AppSizes.paddingL),
       backgroundColor: AppColors.surface,
@@ -48,22 +49,17 @@ class LoginGateBottomSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSizes.spacingXXL),
-          Text(
-            'Save Your Progress',
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.font4XL,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
+          AppText(
+            'auth_gate_title'.tr,
+            variant: AppTextVariant.h3,
+            fontWeight: FontWeight.w700,
           ),
           const SizedBox(height: AppSizes.spacingSM),
-          Text(
-            'Create an account to keep your personalised plan',
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.fontM,
-              color: AppColors.textSecondary,
-              height: AppSizes.lineHeightNormal,
-            ),
+          AppText(
+            'auth_gate_subtitle'.tr,
+            variant: AppTextVariant.bodyMedium,
+            color: AppColors.textSecondary,
+            height: AppSizes.lineHeightNormal,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSizes.spacingXXL),
@@ -77,12 +73,10 @@ class LoginGateBottomSheet extends StatelessWidget {
               const Expanded(child: Divider(color: AppColors.borderLight)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingSM),
-                child: Text(
-                  'or',
-                  style: GoogleFonts.outfit(
-                    fontSize: AppSizes.fontSM,
-                    color: AppColors.textTertiary,
-                  ),
+                child: AppText(
+                  'login_or_divider'.tr,
+                  variant: AppTextVariant.caption,
+                  fontSize: AppSizes.fontSM,
                 ),
               ),
               const Expanded(child: Divider(color: AppColors.borderLight)),
@@ -102,13 +96,10 @@ class LoginGateBottomSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppSizes.radiusPill),
               ),
               alignment: Alignment.center,
-              child: Text(
-                'Sign up with Email',
-                style: GoogleFonts.outfit(
-                  fontSize: AppSizes.fontL,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+              child: AppText(
+                'auth_continue_email'.tr,
+                variant: AppTextVariant.button,
+                fontSize: AppSizes.fontL,
               ),
             ),
           ),
@@ -121,15 +112,15 @@ class LoginGateBottomSheet extends StatelessWidget {
             },
             child: RichText(
               text: TextSpan(
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   fontSize: AppSizes.fontM,
                   color: AppColors.textSecondary,
                 ),
-                children: const [
-                  TextSpan(text: 'Already have an account? '),
+                children: [
+                  TextSpan(text: '${'already_have_account'.tr} '),
                   TextSpan(
-                    text: 'Log in',
-                    style: TextStyle(
+                    text: 'login_action'.tr,
+                    style: const TextStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
                     ),

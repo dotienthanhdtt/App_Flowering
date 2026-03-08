@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 
 enum SocialProvider { apple, google }
 
@@ -42,13 +43,12 @@ class SocialAuthButton extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            Text(
-              isApple ? 'Continue with Apple' : 'Continue with Google',
-              style: GoogleFonts.outfit(
-                fontSize: AppSizes.fontL,
-                fontWeight: FontWeight.w600,
-                color: isApple ? Colors.white : AppColors.textPrimary,
-              ),
+            AppText(
+              isApple ? 'continue_with_apple'.tr : 'continue_with_google'.tr,
+              variant: AppTextVariant.bodyLarge,
+              fontSize: AppSizes.fontL,
+              fontWeight: FontWeight.w600,
+              color: isApple ? Colors.white : AppColors.textPrimary,
             ),
           ],
         ),

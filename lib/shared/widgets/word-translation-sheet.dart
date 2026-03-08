@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../models/word-translation-model.dart';
+import 'app_text.dart';
 
 /// Bottom sheet displaying word translation details (design 08a).
 /// States: loading (data==null, error==null), error, populated.
@@ -77,13 +77,10 @@ class WordTranslationSheet extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Text(
+          child: AppText(
             word,
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.font6XL,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
+            variant: AppTextVariant.h2,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(width: AppSizes.spacingS),
@@ -111,23 +108,19 @@ class WordTranslationSheet extends StatelessWidget {
   Widget _buildError() {
     return Column(
       children: [
-        Text(
+        AppText(
           'word_translation_error'.tr,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.fontM,
-            color: AppColors.textSecondary,
-          ),
+          variant: AppTextVariant.bodyMedium,
+          color: AppColors.textSecondary,
         ),
         const SizedBox(height: AppSizes.spacingM),
         GestureDetector(
           onTap: onRetry,
-          child: Text(
+          child: AppText(
             'word_translation_retry'.tr,
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.fontM,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
-            ),
+            variant: AppTextVariant.label,
+            fontWeight: FontWeight.w600,
+            color: AppColors.primary,
           ),
         ),
       ],
@@ -167,12 +160,10 @@ class WordTranslationSheet extends StatelessWidget {
     return Row(
       children: [
         if (model.pronunciation != null)
-          Text(
+          AppText(
             model.pronunciation!,
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.fontM,
-              color: AppColors.textTertiary,
-            ),
+            variant: AppTextVariant.bodyMedium,
+            color: AppColors.textTertiary,
           ),
         if (model.pronunciation != null && model.partOfSpeech != null)
           const SizedBox(width: AppSizes.spacingS),
@@ -186,13 +177,12 @@ class WordTranslationSheet extends StatelessWidget {
               color: AppColors.accentBlueLight,
               borderRadius: BorderRadius.circular(AppSizes.radiusPill),
             ),
-            child: Text(
+            child: AppText(
               model.partOfSpeech!,
-              style: GoogleFonts.outfit(
-                fontSize: AppSizes.fontXXS,
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentBlueDark,
-              ),
+              variant: AppTextVariant.caption,
+              fontSize: AppSizes.fontXXS,
+              fontWeight: FontWeight.w600,
+              color: AppColors.accentBlueDark,
             ),
           ),
       ],
@@ -207,24 +197,20 @@ class WordTranslationSheet extends StatelessWidget {
           children: [
             const Icon(Icons.language, size: AppSizes.iconXS, color: AppColors.accentBlue),
             const SizedBox(width: AppSizes.spacingXS),
-            Text(
+            AppText(
               'word_translation_title'.tr,
-              style: GoogleFonts.outfit(
-                fontSize: AppSizes.fontXS,
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentBlue,
-              ),
+              variant: AppTextVariant.bodySmall,
+              fontWeight: FontWeight.w600,
+              color: AppColors.accentBlue,
             ),
           ],
         ),
         const SizedBox(height: AppSizes.spacingXS),
-        Text(
+        AppText(
           translation,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.font3XL,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
+          variant: AppTextVariant.bodyLarge,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
         ),
       ],
     );
@@ -234,22 +220,17 @@ class WordTranslationSheet extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AppText(
           'word_definition_label'.tr,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.fontXS,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textTertiary,
-          ),
+          variant: AppTextVariant.caption,
+          fontWeight: FontWeight.w600,
         ),
         const SizedBox(height: AppSizes.spacingXS),
-        Text(
+        AppText(
           definition,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.fontM,
-            color: AppColors.textSecondary,
-            height: AppSizes.lineHeightLoose,
-          ),
+          variant: AppTextVariant.bodyMedium,
+          color: AppColors.textSecondary,
+          height: AppSizes.lineHeightLoose,
         ),
       ],
     );
@@ -259,13 +240,10 @@ class WordTranslationSheet extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AppText(
           'word_examples_label'.tr,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.fontXS,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textTertiary,
-          ),
+          variant: AppTextVariant.caption,
+          fontWeight: FontWeight.w600,
         ),
         const SizedBox(height: AppSizes.spacingS),
         Container(
@@ -282,14 +260,13 @@ class WordTranslationSheet extends StatelessWidget {
                       padding: EdgeInsets.only(
                         bottom: ex != examples.last ? AppSizes.spacingS : 0,
                       ),
-                      child: Text(
+                      child: AppText(
                         ex,
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.fontSM,
-                          color: AppColors.textSecondary,
-                          fontStyle: FontStyle.italic,
-                          height: AppSizes.lineHeightLoose,
-                        ),
+                        variant: AppTextVariant.bodySmall,
+                        fontSize: AppSizes.fontSM,
+                        color: AppColors.textSecondary,
+                        fontStyle: FontStyle.italic,
+                        height: AppSizes.lineHeightLoose,
                       ),
                     ))
                 .toList(),

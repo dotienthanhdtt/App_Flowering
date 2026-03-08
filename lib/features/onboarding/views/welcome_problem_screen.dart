@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../widgets/onboarding_top_bar.dart';
 import '../widgets/step_dots_indicator.dart';
 
@@ -24,26 +25,23 @@ class _WelcomeStepData {
   });
 }
 
-const _welcomeSteps = [
+List<_WelcomeStepData> get _welcomeSteps => [
   _WelcomeStepData(
-    headline: "Your brain\nwasn't built\nto memorize.",
-    subtext:
-        "It was built to speak. Flowering works with your brain — not against it.",
+    headline: 'welcome_headline_1'.tr,
+    subtext: 'welcome_body_1'.tr,
     activeStep: 0,
   ),
   _WelcomeStepData(
-    headline: "You forget\nbecause nothing\nwas built for you.",
-    subtext:
-        "Generic apps give everyone the same lesson. Flowering remembers what you struggled with — and brings it back at the right moment.",
+    headline: 'welcome_headline_2'.tr,
+    subtext: 'welcome_body_2'.tr,
     activeStep: 1,
   ),
   _WelcomeStepData(
-    headline: "Finally, an app\nthat knows\nonly you.",
-    subtext:
-        "Your pace. Your interests. Your goals. Flowering builds a living path that evolves as you do — nobody else gets the same one.",
+    headline: 'welcome_headline_3'.tr,
+    subtext: 'welcome_body_3'.tr,
     activeStep: 2,
     showCta: true,
-    ctaLabel: "Make it mine",
+    ctaLabel: 'welcome_cta'.tr,
   ),
 ];
 
@@ -142,25 +140,21 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            AppText(
               step.headline,
-              style: GoogleFonts.outfit(
+              style: AppTextStyles.h1.copyWith(
                 fontSize: AppSizes.font9XL,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
                 letterSpacing: AppSizes.trackingTight,
                 height: AppSizes.lineHeightTight,
               ),
             ),
             const SizedBox(height: AppSizes.spacingXL),
-            Text(
+            AppText(
               step.subtext,
-              style: GoogleFonts.outfit(
-                fontSize: AppSizes.fontXL,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textSecondary,
-                height: AppSizes.lineHeightXLoose,
-              ),
+              variant: AppTextVariant.bodyLarge,
+              color: AppColors.textSecondary,
+              height: AppSizes.lineHeightXLoose,
             ),
           ],
         );
@@ -170,13 +164,11 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
 
   Widget _buildTapHint() {
     return Center(
-      child: Text(
-        'Tap anywhere to continue',
-        style: GoogleFonts.outfit(
-          fontSize: AppSizes.fontL,
-          fontWeight: FontWeight.w400,
-          color: AppColors.textTertiary,
-        ),
+      child: AppText(
+        'welcome_tap_continue'.tr,
+        variant: AppTextVariant.bodyLarge,
+        fontSize: AppSizes.fontL,
+        color: AppColors.textTertiary,
       ),
     );
   }
@@ -195,13 +187,11 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
             borderRadius: BorderRadius.circular(AppSizes.radiusPill),
           ),
         ),
-        child: Text(
+        child: AppText(
           label,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.fontXXL,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
+          variant: AppTextVariant.button,
+          fontSize: AppSizes.fontXXL,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );

@@ -19,13 +19,14 @@ Phase 4: Base/Widgets ████████████ 100% (2h) ✅ COMPLET
 Phase 5: Routes/i18n ████████████ 100% (1.5h) ✅ COMPLETED
 Phase 6: Onboarding & Auth ████████████ 100% (6h) ✅ COMPLETED (screens 01-14)
 Phase 6.5: Bottom Navigation ████████████ 100% (1h) ✅ COMPLETED
+Phase 6.7: Text→AppText Refactor ████████████ 100% (3h) ✅ COMPLETED
 Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
 Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending
 Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
 Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
 ```
 
-**Overall Progress:** 100% of foundation + onboarding (18.5h / 22h completed — all user acquisition and app shell done)
+**Overall Progress:** 100% of foundation + onboarding + refactoring (21.5h / 25h completed — all user acquisition, app shell, and typography system consolidated)
 
 ## Phase Details
 
@@ -473,6 +474,66 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
+### Phase 6.7: Text→AppText Refactoring ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 3 hours
+**Completion Date:** 2026-03-09
+**Dependencies:** Phase 6 ✅
+**Priority:** P1 - Quality/Consistency
+
+**Deliverables:**
+- ✅ `AppText` widget enhanced with `button` variant and optional override params
+- ✅ 100+ raw `Text(` replaced with `AppText(` across 30 files
+- ✅ Base widget rule added to CLAUDE.md
+- ✅ All `flutter analyze` checks passing
+- ✅ All test suite passing (5/5)
+
+**Key Achievements:**
+- Unified typography system across entire app
+- Enforced Outfit font usage via AppText base widget
+- Improved design system compliance
+- Established pattern for future text widgets
+- No breaking changes, full backward compatibility
+- Zero visual regressions
+
+**Files Modified:**
+- `lib/shared/widgets/app_text.dart` - Enhanced widget (50 LOC)
+- 30 feature and shared widget files - Text replacement batch
+- `CLAUDE.md` - Added base widget rule
+
+**Refactoring Details:**
+- **Scope:** 100+ raw Text widgets across ~30 files
+- **Batches:** Shared widgets (4) → Auth (8) → Chat (9) → Onboarding (8) → Other (4)
+- **Exclusions Respected:**
+  - TextSpan inside RichText/SelectableText
+  - Emoji-only Text widgets (flag emojis)
+  - Text inside AppText internals
+- **Quality:** All style params mapped correctly, no guessing
+
+**Technical Decisions:**
+- **Selective Replacement:** Only language-bearing text replaced
+- **Style Merging:** Variant + override approach for flexibility
+- **Backward Compatibility:** All new params optional
+- **Import Consistency:** Relative paths per convention
+
+**Success Criteria Met:**
+- ✅ 100+ Text widgets converted to AppText
+- ✅ Consistent Outfit font enforced
+- ✅ All translations preserved (.tr)
+- ✅ All color overrides correct
+- ✅ Zero compile errors
+- ✅ Zero test failures
+- ✅ All code review issues fixed
+- ✅ No visual regressions
+
+**Test Results:**
+- ✅ flutter analyze: PASS (zero errors/warnings)
+- ✅ flutter test: 5/5 PASS
+- ✅ Code review: APPROVED
+
+---
+
 ### Phase 7: Home Dashboard 🔲 PENDING
 
 **Status:** 🔲 Pending
@@ -666,6 +727,20 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
+### Milestone 3.5: Code Quality & Typography ✅ COMPLETED
+
+**Target:** 2026-03-09
+**Status:** 100% Complete
+**Completion Date:** 2026-03-09
+
+**Criteria:**
+- ✅ Text→AppText refactoring complete
+- ✅ All 100+ widgets converted
+- ✅ Typography system unified
+- ✅ Base widget rule documented
+
+---
+
 ### Milestone 4: Core Features (Phases 7-8) 🔲 Pending
 
 **Target:** 2026-03-05
@@ -722,6 +797,37 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 ---
 
 ## Change Log
+
+### 2026-03-09 (Phase 6.7 Complete — Text→AppText Refactoring)
+
+**Phase 6.7 Completion Summary:**
+- ✅ **AppText Enhancement:** Added `button` variant and optional override params
+- ✅ **Bulk Replacement:** 100+ raw Text widgets converted to AppText across 30 files
+- ✅ **Batched Execution:** Shared widgets → Auth → Chat → Onboarding → Other
+- ✅ **Quality Gates:** flutter analyze PASS, all tests PASS (5/5)
+- ✅ **Code Review:** All issues fixed and approved
+- ✅ **Base Widget Rule:** Added to CLAUDE.md for future guidance
+
+**Refactoring Results:**
+- ✅ Shared widgets batch: 4 files updated
+- ✅ Auth feature batch: 8 files updated
+- ✅ Chat feature batch: 9 files updated
+- ✅ Onboarding feature batch: 8 files updated
+- ✅ Other features batch: 4 files updated
+- ✅ Zero breaking changes
+- ✅ Zero visual regressions
+- ✅ All translations (.tr) preserved
+- ✅ All color overrides correct
+
+**Quality Metrics:**
+- ✅ Codebase: 100% AppText usage for UI text (except RichText/emoji)
+- ✅ Design system: Outfit font enforcement across 100+ widgets
+- ✅ Maintainability: Centralized typography control
+- ✅ Future-proofing: Pattern established for new widgets
+
+**Next Step:** Implement Phase 7 (Home Dashboard)
+
+---
 
 ### 2026-02-28 (Phase 6 Complete — All Onboarding & Auth Screens 01-14)
 

@@ -34,13 +34,13 @@ class _PlaceholderScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$title - Coming Soon',
+              '$title - ${'coming_soon_suffix'.tr}',
               style: const TextStyle(fontSize: AppSizes.font3XL, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: AppSizes.spacingL),
             ElevatedButton(
               onPressed: () => Get.back(),
-              child: const Text('Go Back'),
+              child: Text('go_back'.tr),
             ),
           ],
         ),

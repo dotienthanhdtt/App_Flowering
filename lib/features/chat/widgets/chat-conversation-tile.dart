@@ -3,7 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_text.dart';
 
 /// Single conversation tile in chat home list
 class ChatConversationTile extends StatelessWidget {
@@ -46,18 +46,18 @@ class ChatConversationTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: AppTextStyles.label),
+                  AppText(title, variant: AppTextVariant.label),
                   const SizedBox(height: AppSizes.spacingXXS),
-                  Text(
+                  AppText(
                     subtitle,
-                    style: AppTextStyles.caption,
+                    variant: AppTextVariant.caption,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            Text(timestamp, style: AppTextStyles.caption),
+            AppText(timestamp, variant: AppTextVariant.caption),
           ],
         ),
       ),

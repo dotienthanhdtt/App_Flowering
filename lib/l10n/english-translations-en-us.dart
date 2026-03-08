@@ -147,10 +147,11 @@ const Map<String, String> enUS = {
   'auth_continue_google': 'Continue with Google',
   'auth_continue_email': 'Sign up with Email',
   'auth_social_coming_soon': 'Coming soon',
+  'auth_social_coming_soon_message': 'Social login will be available soon.',
 
   // Auth — Signup (Screen 10)
   'signup_title': 'Create Account',
-  'signup_subtitle': 'Join Flowering and start your journey',
+  'signup_subtitle': 'Start your language journey',
   'signup_full_name': 'Full Name',
   'signup_full_name_hint': 'Your name',
   'signup_cta': 'Create Account',
@@ -158,7 +159,7 @@ const Map<String, String> enUS = {
 
   // Auth — Login (Screen 11)
   'login_title': 'Welcome Back',
-  'login_subtitle': 'Sign in to continue learning',
+  'login_subtitle': 'Log in to continue your journey',
   'login_cta': 'Sign In',
   'login_or_divider': 'or',
 
@@ -174,7 +175,7 @@ const Map<String, String> enUS = {
   'forgot_success': 'Reset code sent to',
 
   // Auth — OTP (Screen 13)
-  'otp_title': 'Enter Code',
+  'otp_title': 'Check Your Email',
   'otp_subtitle': 'We sent a 6-digit code to',
   'otp_resend': 'Resend',
   'otp_resend_in': 'Resend in',
@@ -182,11 +183,13 @@ const Map<String, String> enUS = {
 
   // Auth — New Password (Screen 14)
   'new_password_title': 'New Password',
-  'new_password_subtitle': 'Choose a strong password',
+  'new_password_subtitle': 'Create a strong password for your account',
   'new_password_label': 'New Password',
   'new_password_confirm_label': 'Confirm New Password',
   'new_password_cta': 'Reset Password',
   'password_reset_success': 'Password reset successfully',
+  'password_reset_title': 'Password Reset',
+  'password_reset_message': 'Your password has been reset. Please log in.',
 
   // Word Translation (Screen 08a)
   'word_translation_title': 'Translation',
@@ -196,4 +199,47 @@ const Map<String, String> enUS = {
   'sentence_translation_unavailable': 'Sentence translation is not available during onboarding',
   'word_translation_retry': 'Retry',
   'translation_target_language': 'Vietnamese',
+
+  // Onboarding — Welcome Problem (Screen 04)
+  'welcome_headline_1': "Your brain\nwasn't built\nto memorize.",
+  'welcome_body_1': "It was built to speak. Flowering works with your brain — not against it.",
+  'welcome_headline_2': "You forget\nbecause nothing\nwas built for you.",
+  'welcome_body_2': "Generic apps give everyone the same lesson. Flowering remembers what you struggled with — and brings it back at the right moment.",
+  'welcome_headline_3': "Finally, an app\nthat knows\nonly you.",
+  'welcome_body_3': "Your pace. Your interests. Your goals. Flowering builds a living path that evolves as you do — nobody else gets the same one.",
+  'welcome_cta': "Make it mine",
+  'welcome_tap_continue': 'Tap anywhere to continue',
+
+  // Onboarding — Language Selection (Screen 05/06)
+  'language_select_title': "What do you want\nto learn?",
+  'language_select_subtitle': "Choose a language to get started",
+  'native_language_title': "What's your native\nlanguage?",
+  'native_language_subtitle': "We'll personalize your learning experience",
+  'language_load_error': 'Failed to load languages',
+  'language_coming_soon': 'Soon',
+
+  // Onboarding — Top Bar
+  'login_action': 'Log in',
+  'signup_action': 'Sign up',
+  'go_back': 'Go Back',
+  'coming_soon_suffix': 'Coming Soon',
+  'otp_didnt_receive': "Didn't receive the code?",
+  'otp_resend_in_timer': 'Resend in',
+
+  // Onboarding — Splash
+  'splash_subtitle': 'Bloom in your own way',
+
+  // Chat
+  'ai_name': 'Flora',
+
+  // Auth — Form hints
+  'email_hint': 'you@example.com',
+  'password_hint': 'Your password',
+  'password_min_hint': 'At least 8 characters',
+  'confirm_password_hint': 'Repeat your password',
+  'confirm_new_password_hint': 'Repeat your new password',
+
+  // Auth — Social
+  'continue_with_apple': 'Continue with Apple',
+  'continue_with_google': 'Continue with Google',
 };

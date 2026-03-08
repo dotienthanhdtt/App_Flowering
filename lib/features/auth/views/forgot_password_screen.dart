@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/forgot_password_controller.dart';
 import '../widgets/auth_text_field.dart';
 
@@ -37,28 +37,22 @@ class ForgotPasswordScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'Forgot Password?',
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.font6XL,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          letterSpacing: AppSizes.trackingSnug,
-                        ),
+                      AppText(
+                        'forgot_title'.tr,
+                        variant: AppTextVariant.h2,
+                        fontWeight: FontWeight.w700,
                       ),
                       const SizedBox(height: AppSizes.spacingSM),
-                      Text(
-                        "Enter your email and we'll send a reset code",
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.fontM,
-                          color: AppColors.textSecondary,
-                          height: AppSizes.lineHeightNormal,
-                        ),
+                      AppText(
+                        'forgot_subtitle'.tr,
+                        variant: AppTextVariant.bodyMedium,
+                        color: AppColors.textSecondary,
+                        height: AppSizes.lineHeightNormal,
                       ),
                       const SizedBox(height: AppSizes.spacing4XL),
                       AuthTextField(
-                        label: 'Email',
-                        hint: 'you@example.com',
+                        label: 'email'.tr,
+                        hint: 'email_hint'.tr,
                         controller: ctrl.forgotEmailController,
                         validator: ctrl.validateEmail,
                         keyboardType: TextInputType.emailAddress,
@@ -71,12 +65,11 @@ class ForgotPasswordScreen extends StatelessWidget {
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: AppSizes.spacingM),
-                          child: Text(
+                          child: AppText(
                             ctrl.errorMessage.value,
-                            style: GoogleFonts.outfit(
-                              fontSize: AppSizes.fontSM,
-                              color: AppColors.error,
-                            ),
+                            variant: AppTextVariant.caption,
+                            fontSize: AppSizes.fontSM,
+                            color: AppColors.error,
                           ),
                         );
                       }),
@@ -100,13 +93,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                                       child: CircularProgressIndicator(
                                           color: Colors.white, strokeWidth: 2),
                                     )
-                                  : Text(
-                                      'Send Reset Code',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: AppSizes.fontXL,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                  : AppText(
+                                      'forgot_cta'.tr,
+                                      variant: AppTextVariant.button,
+                                      fontSize: AppSizes.fontXL,
                                     ),
                             ),
                           )),

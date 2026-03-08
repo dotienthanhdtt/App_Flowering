@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 
 /// Reusable form text field matching the app's design language.
 /// Supports label, hint, validation, and password visibility toggle.
@@ -32,13 +33,11 @@ class AuthTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AppText(
           label,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.fontSM,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textSecondary,
-          ),
+          variant: AppTextVariant.label,
+          fontSize: AppSizes.fontSM,
+          fontWeight: FontWeight.w600,
         ),
         const SizedBox(height: AppSizes.spacingSM),
         TextFormField(
@@ -47,11 +46,11 @@ class AuthTextField extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           validator: validator,
-          style: GoogleFonts.outfit(fontSize: AppSizes.fontL, color: AppColors.textPrimary),
+          style: GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle:
-                GoogleFonts.outfit(fontSize: AppSizes.fontL, color: AppColors.textTertiary),
+                GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textTertiary),
             filled: true,
             fillColor: AppColors.surface,
             contentPadding:

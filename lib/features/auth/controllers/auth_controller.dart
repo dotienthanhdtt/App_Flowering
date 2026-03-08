@@ -38,24 +38,24 @@ class AuthController extends GetxController {
   // ── Validators ──────────────────────────────────────────────────
 
   String? validateFullName(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Full name is required';
+    if (v == null || v.trim().isEmpty) return 'full_name_required'.tr;
     return null;
   }
 
   String? validateEmail(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Email is required';
-    if (!GetUtils.isEmail(v.trim())) return 'Enter a valid email address';
+    if (v == null || v.trim().isEmpty) return 'email_required'.tr;
+    if (!GetUtils.isEmail(v.trim())) return 'email_invalid'.tr;
     return null;
   }
 
   String? validatePassword(String? v) {
-    if (v == null || v.isEmpty) return 'Password is required';
-    if (v.length < 8) return 'Password must be at least 8 characters';
+    if (v == null || v.isEmpty) return 'password_required'.tr;
+    if (v.length < 8) return 'password_min_length'.tr;
     return null;
   }
 
   String? validateConfirmPassword(String? v, String password) {
-    if (v != password) return 'Passwords do not match';
+    if (v != password) return 'passwords_not_match'.tr;
     return null;
   }
 
@@ -86,7 +86,7 @@ class AuthController extends GetxController {
     } on ApiException catch (e) {
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'unknown_error'.tr;
     } finally {
       isLoading.value = false;
     }
@@ -114,7 +114,7 @@ class AuthController extends GetxController {
     } on ApiException catch (e) {
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'unknown_error'.tr;
     } finally {
       isLoading.value = false;
     }

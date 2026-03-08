@@ -4,7 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/chat-home-controller.dart';
 import '../widgets/chat-conversation-tile.dart';
 
@@ -35,7 +35,7 @@ class ChatHomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('chat_home_title'.tr, style: AppTextStyles.h2),
+          AppText('chat_home_title'.tr, variant: AppTextVariant.h2),
           IconButton(
             onPressed: () => Get.find<ChatHomeController>().startNewChat(),
             icon: const Icon(
@@ -80,18 +80,16 @@ class ChatHomeScreen extends StatelessWidget {
             color: AppColors.textTertiary,
           ),
           const SizedBox(height: AppSizes.spacingL),
-          Text(
+          AppText(
             'chat_home_empty'.tr,
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textTertiary,
-            ),
+            variant: AppTextVariant.bodyMedium,
+            color: AppColors.textTertiary,
           ),
           const SizedBox(height: AppSizes.spacingS),
-          Text(
+          AppText(
             'chat_home_start'.tr,
-            style: AppTextStyles.label.copyWith(
-              color: AppColors.primary,
-            ),
+            variant: AppTextVariant.label,
+            color: AppColors.primary,
           ),
         ],
       ),

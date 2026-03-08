@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 
 /// Quick-reply chip row — goal selection buttons shown under Flora's first message.
 class QuickReplyRow extends StatelessWidget {
@@ -40,12 +40,10 @@ class QuickReplyRow extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Text(
+                  child: AppText(
                     opt,
-                    style: GoogleFonts.outfit(
-                      fontSize: AppSizes.fontSM,
-                      color: AppColors.textPrimary,
-                    ),
+                    fontSize: AppSizes.fontSM,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),

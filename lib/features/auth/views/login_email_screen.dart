@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/social_auth_button.dart';
@@ -39,22 +40,16 @@ class LoginEmailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'Welcome Back',
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.font6XL,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          letterSpacing: AppSizes.trackingSnug,
-                        ),
+                      AppText(
+                        'login_title'.tr,
+                        variant: AppTextVariant.h2,
+                        fontWeight: FontWeight.w700,
                       ),
                       const SizedBox(height: AppSizes.spacingSM),
-                      Text(
-                        'Log in to continue your journey',
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.fontM,
-                          color: AppColors.textSecondary,
-                        ),
+                      AppText(
+                        'login_subtitle'.tr,
+                        variant: AppTextVariant.bodyMedium,
+                        color: AppColors.textSecondary,
                       ),
                       const SizedBox(height: AppSizes.spacing3XL),
                       // Social auth
@@ -76,12 +71,10 @@ class LoginEmailScreen extends StatelessWidget {
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: AppSizes.paddingSM),
-                            child: Text(
-                              'or',
-                              style: GoogleFonts.outfit(
-                                fontSize: AppSizes.fontSM,
-                                color: AppColors.textTertiary,
-                              ),
+                            child: AppText(
+                              'login_or_divider'.tr,
+                              variant: AppTextVariant.caption,
+                              fontSize: AppSizes.fontSM,
                             ),
                           ),
                           const Expanded(
@@ -90,16 +83,16 @@ class LoginEmailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSizes.spacingXL),
                       AuthTextField(
-                        label: 'Email',
-                        hint: 'you@example.com',
+                        label: 'email'.tr,
+                        hint: 'email_hint'.tr,
                         controller: ctrl.loginEmailController,
                         validator: ctrl.validateEmail,
                         keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: AppSizes.spacingL),
                       Obx(() => AuthTextField(
-                            label: 'Password',
-                            hint: 'Your password',
+                            label: 'password'.tr,
+                            hint: 'password_hint'.tr,
                             controller: ctrl.loginPasswordController,
                             validator: ctrl.validatePassword,
                             obscureText: ctrl.obscurePassword.value,
@@ -112,13 +105,12 @@ class LoginEmailScreen extends StatelessWidget {
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
                           onTap: () => Get.toNamed(AppRoutes.forgotPassword),
-                          child: Text(
-                            'Forgot password?',
-                            style: GoogleFonts.outfit(
-                              fontSize: AppSizes.fontSM,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primary,
-                            ),
+                          child: AppText(
+                            'forgot_password'.tr,
+                            variant: AppTextVariant.caption,
+                            fontSize: AppSizes.fontSM,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
                           ),
                         ),
                       ),
@@ -129,12 +121,11 @@ class LoginEmailScreen extends StatelessWidget {
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: AppSizes.spacingM),
-                          child: Text(
+                          child: AppText(
                             ctrl.errorMessage.value,
-                            style: GoogleFonts.outfit(
-                              fontSize: AppSizes.fontSM,
-                              color: AppColors.error,
-                            ),
+                            variant: AppTextVariant.caption,
+                            fontSize: AppSizes.fontSM,
+                            color: AppColors.error,
                           ),
                         );
                       }),
@@ -159,13 +150,10 @@ class LoginEmailScreen extends StatelessWidget {
                                         strokeWidth: 2,
                                       ),
                                     )
-                                  : Text(
-                                      'Log In',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: AppSizes.fontXL,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                  : AppText(
+                                      'login_cta'.tr,
+                                      variant: AppTextVariant.button,
+                                      fontSize: AppSizes.fontXL,
                                     ),
                             ),
                           )),
@@ -176,15 +164,15 @@ class LoginEmailScreen extends StatelessWidget {
                         child: Center(
                           child: RichText(
                             text: TextSpan(
-                              style: GoogleFonts.outfit(
+                              style: GoogleFonts.inter(
                                 fontSize: AppSizes.fontM,
                                 color: AppColors.textSecondary,
                               ),
-                              children: const [
-                                TextSpan(text: "Don't have an account? "),
+                              children: [
+                                TextSpan(text: '${'dont_have_account'.tr} '),
                                 TextSpan(
-                                  text: 'Sign up',
-                                  style: TextStyle(
+                                  text: 'signup_action'.tr,
+                                  style: const TextStyle(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,
                                   ),

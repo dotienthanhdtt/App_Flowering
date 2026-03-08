@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 
 /// Text button with leading icon for message actions.
 class TextActionButton extends StatelessWidget {
@@ -26,13 +26,11 @@ class TextActionButton extends StatelessWidget {
         children: [
           Icon(icon, size: AppSizes.iconXS, color: color),
           const SizedBox(width: AppSizes.spacingXS),
-          Text(
+          AppText(
             label,
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.fontXS,
-              fontWeight: FontWeight.w500,
-              color: color,
-            ),
+            variant: AppTextVariant.caption,
+            fontWeight: FontWeight.w500,
+            color: color,
           ),
         ],
       ),

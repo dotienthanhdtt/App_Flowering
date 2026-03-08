@@ -71,7 +71,7 @@ class AiChatController extends GetxController {
     } on ApiException catch (e) {
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'unknown_error'.tr;
     } finally {
       isLoading.value = false;
     }
@@ -114,7 +114,7 @@ class AiChatController extends GetxController {
     } on ApiException catch (e) {
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'unknown_error'.tr;
     } finally {
       isTyping.value = false;
     }

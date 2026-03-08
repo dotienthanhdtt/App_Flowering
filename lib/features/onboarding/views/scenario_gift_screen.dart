@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../../auth/widgets/login_gate_bottom_sheet.dart';
 import '../controllers/onboarding_controller.dart';
 import '../models/scenario_model.dart';
@@ -56,12 +57,11 @@ class _Header extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           AppSizes.paddingXXL, AppSizes.paddingXXL, AppSizes.paddingXXL, AppSizes.paddingL),
-      child: Text(
+      child: AppText(
         'scenario_title'.tr,
-        style: GoogleFonts.outfit(
+        style: AppTextStyles.h3.copyWith(
           fontSize: AppSizes.font5XL,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
           letterSpacing: AppSizes.trackingSnug,
         ),
         textAlign: TextAlign.center,
@@ -81,13 +81,12 @@ class _ScenarioGrid extends StatelessWidget {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding3XL),
-          child: Text(
+          child: AppText(
             'scenario_empty'.tr,
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.fontL,
-              color: AppColors.textTertiary,
-              height: AppSizes.lineHeightLoose,
-            ),
+            variant: AppTextVariant.bodyLarge,
+            fontSize: AppSizes.fontL,
+            color: AppColors.textTertiary,
+            height: AppSizes.lineHeightLoose,
             textAlign: TextAlign.center,
           ),
         ),
@@ -135,13 +134,11 @@ class _CtaButton extends StatelessWidget {
             ],
           ),
           alignment: Alignment.center,
-          child: Text(
+          child: AppText(
             'scenario_cta'.tr,
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.fontXL,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
+            variant: AppTextVariant.bodyLarge,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
           ),
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_text_styles.dart';
+import 'app_text.dart';
 
 class AppTextField extends StatefulWidget {
   final String? label;
@@ -71,13 +72,12 @@ class _AppTextFieldState extends State<AppTextField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label != null) ...[
-          Text(
+          AppText(
             widget.label!,
-            style: const TextStyle(
-              fontSize: AppSizes.fontSM,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+            variant: AppTextVariant.label,
+            fontSize: AppSizes.fontSM,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
           ),
           const SizedBox(height: AppSizes.spacingSM),
         ],
