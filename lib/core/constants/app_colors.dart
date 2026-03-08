@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_sizes.dart';
 
 /// App color palette — Flowering Warm Neutral (Pencil Design System)
 class AppColors {
@@ -64,10 +65,10 @@ class AppColors {
   static const Color userBubble = Color(0xFFFF7A27);
   static const Color aiBubble = Color(0xFFFFFFFF);
 
-  // Radius constants
-  static const double radiusS = 6;
-  static const double radiusM = 12;
-  static const double radiusL = 16;
-  static const double radiusXL = 20;
-  static const double radiusPill = 100;
+  // Radius constants (delegated to AppSizes for single source of truth)
+  static const double radiusS = AppSizes.radiusS;
+  static const double radiusM = AppSizes.radiusM;
+  static const double radiusL = AppSizes.radiusL;
+  static const double radiusXL = AppSizes.radiusXL;
+  static const double radiusPill = AppSizes.radiusPill;
 }

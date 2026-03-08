@@ -22,7 +22,7 @@ dependencies:
   hive_flutter: ^1.1.0
 
   # Audio
-  record: ^5.0.4
+  record: ^6.2.0
   audioplayers: ^5.2.1
 
   # Localization
@@ -39,9 +39,15 @@ dependencies:
   # Connectivity
   connectivity_plus: ^6.0.3
 
+  # Social Auth
+  google_sign_in: ^6.2.2
+  sign_in_with_apple: ^6.1.4
+
   # Utils
   uuid: ^4.3.3
   path_provider: ^2.1.2
+  lucide_icons: ^0.257.0
+
 
 dev_dependencies:
   flutter_test:

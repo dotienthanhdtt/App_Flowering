@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_text_styles.dart';
 
 enum AppButtonVariant { primary, secondary, text, outline }
@@ -28,14 +29,14 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonHeight = height ?? 48.0;
+    final buttonHeight = height ?? AppSizes.icon3XL;
     final buttonPadding =
-        padding ?? const EdgeInsets.symmetric(horizontal: 24);
+        padding ?? const EdgeInsets.symmetric(horizontal: AppSizes.paddingXXL);
 
     Widget child = isLoading
         ? const SizedBox(
-            width: 24,
-            height: 24,
+            width: AppSizes.iconXL,
+            height: AppSizes.iconXL,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -46,8 +47,8 @@ class AppButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 20),
-                const SizedBox(width: 8),
+                Icon(icon, size: AppSizes.iconL),
+                const SizedBox(width: AppSizes.spacingS),
               ],
               Text(text, style: _textStyle),
             ],
@@ -59,7 +60,7 @@ class AppButton extends StatelessWidget {
       case AppButtonVariant.primary:
         button = Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppColors.radiusPill),
+            borderRadius: BorderRadius.circular(AppSizes.radiusPill),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x30FF7A27),
@@ -78,7 +79,7 @@ class AppButton extends StatelessWidget {
               padding: buttonPadding,
               shape: RoundedRectangleBorder(
                 borderRadius:
-                    BorderRadius.circular(AppColors.radiusPill),
+                    BorderRadius.circular(AppSizes.radiusPill),
               ),
               elevation: 0,
             ),
@@ -98,7 +99,7 @@ class AppButton extends StatelessWidget {
             padding: buttonPadding,
             shape: RoundedRectangleBorder(
               borderRadius:
-                  BorderRadius.circular(AppColors.radiusPill),
+                  BorderRadius.circular(AppSizes.radiusPill),
             ),
             elevation: 0,
           ),
@@ -117,11 +118,11 @@ class AppButton extends StatelessWidget {
             padding: buttonPadding,
             shape: RoundedRectangleBorder(
               borderRadius:
-                  BorderRadius.circular(AppColors.radiusPill),
+                  BorderRadius.circular(AppSizes.radiusPill),
             ),
             side: const BorderSide(
               color: AppColors.borderStrong,
-              width: 1.5,
+              width: AppSizes.borderMedium,
             ),
           ),
           child: child,
@@ -147,7 +148,7 @@ class AppButton extends StatelessWidget {
 
   TextStyle get _textStyle {
     final base = AppTextStyles.button.copyWith(
-      fontSize: 15,
+      fontSize: AppSizes.fontL,
       fontWeight: FontWeight.w600,
     );
     switch (variant) {

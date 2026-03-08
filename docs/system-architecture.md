@@ -585,6 +585,62 @@ class AuthBinding extends Bindings {
 }
 ```
 
+## Navigation Architecture (Phase 5-6.5 ✅)
+
+### Bottom Navigation Bar (Phase 6.5 ✅)
+
+**Implementation:**
+- **Widget:** `BottomNavBar` in `lib/shared/widgets/bottom-nav-bar.dart`
+- **Container:** `MainShellScreen` in `lib/features/home/views/main-shell-screen.dart`
+- **Strategy:** IndexedStack for efficient tab switching
+
+**Navigation Tabs (4 total):**
+| Tab | Label | Screen | Route |
+|-----|-------|--------|-------|
+| Chat | `nav_chat` | ChatHomeScreen | `/home?tab=0` |
+| Read | `nav_read` | ReadScreen | `/home?tab=1` |
+| Vocabulary | `nav_vocabulary` | VocabularyScreen | `/home?tab=2` |
+| Profile | `nav_profile` | ProfileScreen | `/home?tab=3` |
+
+**Design Specifications:**
+```dart
+// Colors
+activeTabColor: #FF7A27 (Warm Orange)
+inactiveTabColor: #9C9585 (Gray)
+backgroundColor: #FFFDF7 (Cream White)
+
+// Dimensions
+height: 80px
+cornerRadius: 20px (top corners only)
+padding: Responsive (16-24px horizontal)
+
+// Icons
+Library: lucide_icons
+Size: 24-28px (scalable)
+```
+
+**Page Switching Logic:**
+```dart
+// MainShellScreen uses IndexedStack
+IndexedStack(
+  index: selectedTab.value,
+  children: [
+    ChatHomeScreen(),
+    ReadScreen(),
+    VocabularyScreen(),
+    ProfileScreen(),
+  ],
+)
+```
+
+**State Management:**
+- GetX controller tracks `selectedTab` observable (0-3)
+- Tab switching triggers controller update
+- Screen state preserved across tab switches (no rebuild)
+- Navigation labels localized (EN & VI)
+
+---
+
 ## Navigation Architecture (Phase 5 ✅)
 
 ### Route Management

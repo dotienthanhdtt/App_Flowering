@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../core/constants/app_sizes.dart';
 import 'loading_widget.dart';
 
 /// Loading overlay that blocks interaction
@@ -39,12 +40,12 @@ void showLoadingDialog({String? message}) {
       canPop: false,
       child: Center(
         child: Container(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(AppSizes.padding3XL),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppSizes.radiusL),
           ),
-          child: LoadingWidget(message: message, size: 60),
+          child: LoadingWidget(message: message, size: AppSizes.spacing6XL),
         ),
       ),
     ),
