@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/forgot_password_controller.dart';
 import '../widgets/auth_text_field.dart';
 
@@ -37,28 +37,22 @@ class NewPasswordScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'New Password',
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.font6XL,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          letterSpacing: AppSizes.trackingSnug,
-                        ),
+                      AppText(
+                        'new_password_title'.tr,
+                        variant: AppTextVariant.h2,
+                        fontWeight: FontWeight.w700,
                       ),
                       const SizedBox(height: AppSizes.spacingSM),
-                      Text(
-                        'Create a strong password for your account',
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.fontM,
-                          color: AppColors.textSecondary,
-                          height: AppSizes.lineHeightNormal,
-                        ),
+                      AppText(
+                        'new_password_subtitle'.tr,
+                        variant: AppTextVariant.bodyMedium,
+                        color: AppColors.textSecondary,
+                        height: AppSizes.lineHeightNormal,
                       ),
                       const SizedBox(height: AppSizes.spacing4XL),
                       Obx(() => AuthTextField(
-                            label: 'New Password',
-                            hint: 'At least 8 characters',
+                            label: 'new_password_label'.tr,
+                            hint: 'password_min_hint'.tr,
                             controller: ctrl.newPasswordController,
                             validator: ctrl.validateNewPassword,
                             obscureText: ctrl.obscureNewPassword.value,
@@ -66,8 +60,8 @@ class NewPasswordScreen extends StatelessWidget {
                           )),
                       const SizedBox(height: AppSizes.spacingL),
                       Obx(() => AuthTextField(
-                            label: 'Confirm Password',
-                            hint: 'Repeat your new password',
+                            label: 'confirm_password'.tr,
+                            hint: 'confirm_new_password_hint'.tr,
                             controller: ctrl.confirmNewPasswordController,
                             validator: ctrl.validateConfirmNewPassword,
                             obscureText: ctrl.obscureConfirmNewPassword.value,
@@ -82,12 +76,11 @@ class NewPasswordScreen extends StatelessWidget {
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: AppSizes.spacingM),
-                          child: Text(
+                          child: AppText(
                             ctrl.errorMessage.value,
-                            style: GoogleFonts.outfit(
-                              fontSize: AppSizes.fontSM,
-                              color: AppColors.error,
-                            ),
+                            variant: AppTextVariant.caption,
+                            fontSize: AppSizes.fontSM,
+                            color: AppColors.error,
                           ),
                         );
                       }),
@@ -111,13 +104,10 @@ class NewPasswordScreen extends StatelessWidget {
                                       child: CircularProgressIndicator(
                                           color: Colors.white, strokeWidth: 2),
                                     )
-                                  : Text(
-                                      'Reset Password',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: AppSizes.fontXL,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                  : AppText(
+                                      'new_password_cta'.tr,
+                                      variant: AppTextVariant.button,
+                                      fontSize: AppSizes.fontXL,
                                     ),
                             ),
                           )),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 
 class OnboardingTopBar extends StatelessWidget {
   const OnboardingTopBar({super.key});
@@ -24,24 +24,22 @@ class OnboardingTopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSizes.spacingS),
-          Text(
-            'Flowering',
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.font3XL,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
+          AppText(
+            'app_name'.tr,
+            variant: AppTextVariant.bodyMedium,
+            fontSize: AppSizes.font3XL,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
           ),
           const Spacer(),
           GestureDetector(
             onTap: () => Get.toNamed(AppRoutes.login),
-            child: Text(
-              'Log in',
-              style: GoogleFonts.outfit(
-                fontSize: AppSizes.fontL,
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentBlue,
-              ),
+            child: AppText(
+              'login_action'.tr,
+              variant: AppTextVariant.bodyMedium,
+              fontSize: AppSizes.fontL,
+              fontWeight: FontWeight.w600,
+              color: AppColors.accentBlue,
             ),
           ),
         ],

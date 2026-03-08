@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../models/scenario_model.dart';
 
 /// Lesson card matching Pencil Card3 component:
@@ -98,14 +98,11 @@ class _CardBody extends StatelessWidget {
               children: [
                 _LevelDots(level: scenario.level),
                 const SizedBox(height: 6),
-                Text(
+                AppText(
                   scenario.title,
-                  style: GoogleFonts.outfit(
-                    fontSize: AppSizes.fontM,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                    height: AppSizes.lineHeightSnug,
-                  ),
+                  variant: AppTextVariant.bodyMedium,
+                  fontWeight: FontWeight.w600,
+                  height: AppSizes.lineHeightSnug,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -155,13 +152,10 @@ class _LevelDots extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
+        AppText(
           'scenario_level'.tr,
-          style: GoogleFonts.outfit(
-            fontSize: AppSizes.fontXXS,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textTertiary,
-          ),
+          variant: AppTextVariant.caption,
+          fontWeight: FontWeight.w500,
         ),
         const SizedBox(width: 6),
         ...List.generate(5, (i) {

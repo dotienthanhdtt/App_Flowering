@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 
 /// Top bar for the AI chat onboarding screen.
 /// Shows logo + brand name + flag emoji + progress bar + skip button.
@@ -43,26 +43,21 @@ class ChatTopBar extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Text(
-                'Flowering',
-                style: GoogleFonts.outfit(
-                  fontSize: AppSizes.fontXL,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
+              AppText(
+                'app_name'.tr,
+                variant: AppTextVariant.bodyLarge,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
               ),
               const SizedBox(width: AppSizes.spacingS),
               Text(flagEmoji, style: const TextStyle(fontSize: AppSizes.fontXL)),
               const Spacer(),
               GestureDetector(
                 onTap: onSkip,
-                child: Text(
+                child: AppText(
                   'chat_skip'.tr,
-                  style: GoogleFonts.outfit(
-                    fontSize: AppSizes.fontM,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textTertiary,
-                  ),
+                  variant: AppTextVariant.label,
+                  color: AppColors.textTertiary,
                 ),
               ),
             ],

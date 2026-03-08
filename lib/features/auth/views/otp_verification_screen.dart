@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/forgot_password_controller.dart';
 import '../widgets/otp_input_field.dart';
 
@@ -36,23 +37,17 @@ class OtpVerificationScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      'Check Your Email',
-                      style: GoogleFonts.outfit(
-                        fontSize: AppSizes.font6XL,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        letterSpacing: AppSizes.trackingSnug,
-                      ),
+                    AppText(
+                      'otp_title'.tr,
+                      variant: AppTextVariant.h2,
+                      fontWeight: FontWeight.w700,
                     ),
                     const SizedBox(height: AppSizes.spacingSM),
-                    Obx(() => Text(
+                    Obx(() => AppText(
                           'We sent a 6-digit code to ${ctrl.maskedEmail}',
-                          style: GoogleFonts.outfit(
-                            fontSize: AppSizes.fontM,
-                            color: AppColors.textSecondary,
-                            height: AppSizes.lineHeightNormal,
-                          ),
+                          variant: AppTextVariant.bodyMedium,
+                          color: AppColors.textSecondary,
+                          height: AppSizes.lineHeightNormal,
                         )),
                     const SizedBox(height: AppSizes.spacing4XL),
                     Obx(() => OtpInputField(
@@ -73,12 +68,11 @@ class OtpVerificationScreen extends StatelessWidget {
                       }
                       return Padding(
                         padding: const EdgeInsets.only(top: AppSizes.spacingM),
-                        child: Text(
+                        child: AppText(
                           ctrl.errorMessage.value,
-                          style: GoogleFonts.outfit(
-                            fontSize: AppSizes.fontSM,
-                            color: AppColors.error,
-                          ),
+                          variant: AppTextVariant.caption,
+                          fontSize: AppSizes.fontSM,
+                          color: AppColors.error,
                         ),
                       );
                     }),
@@ -120,15 +114,13 @@ class OtpVerificationScreen extends StatelessWidget {
                                 alignment: PlaceholderAlignment.middle,
                                 child: GestureDetector(
                                   onTap: canResend ? ctrl.resendOtp : null,
-                                  child: Text(
-                                    'Resend',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: AppSizes.fontM,
-                                      fontWeight: FontWeight.w600,
-                                      color: canResend
-                                          ? AppColors.primary
-                                          : AppColors.textTertiary,
-                                    ),
+                                  child: AppText(
+                                    'otp_resend'.tr,
+                                    variant: AppTextVariant.bodyMedium,
+                                    fontWeight: FontWeight.w600,
+                                    color: canResend
+                                        ? AppColors.primary
+                                        : AppColors.textTertiary,
                                   ),
                                 ),
                               ),

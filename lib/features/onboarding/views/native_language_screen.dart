@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/onboarding_controller.dart';
 import '../widgets/language_card.dart';
 
@@ -50,25 +51,20 @@ class NativeLanguageScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Text(
-                    "What's your native\nlanguage?",
-                    style: GoogleFonts.outfit(
-                      fontSize: AppSizes.font6XL,
+                  AppText(
+                    'native_language_title'.tr,
+                    style: AppTextStyles.h2.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
                       letterSpacing: AppSizes.trackingSnug,
                     ),
                     textAlign: TextAlign.left,
                   ),
                   const SizedBox(height: AppSizes.spacingS),
-                  Text(
-                    "We'll personalize your learning experience",
-                    style: GoogleFonts.outfit(
-                      fontSize: AppSizes.fontM,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textSecondary,
-                      height: AppSizes.lineHeightNormal,
-                    ),
+                  AppText(
+                    'native_language_subtitle'.tr,
+                    variant: AppTextVariant.bodyMedium,
+                    color: AppColors.textSecondary,
+                    height: AppSizes.lineHeightNormal,
                     textAlign: TextAlign.left,
                   ),
                 ],
@@ -132,23 +128,18 @@ class NativeLanguageScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Failed to load languages',
-            style: GoogleFonts.outfit(
-              fontSize: AppSizes.fontM,
-              color: AppColors.textSecondary,
-            ),
+          AppText(
+            'language_load_error'.tr,
+            variant: AppTextVariant.bodyMedium,
+            color: AppColors.textSecondary,
           ),
           const SizedBox(height: AppSizes.spacingL),
           GestureDetector(
             onTap: controller.loadLanguages,
-            child: Text(
-              'Retry',
-              style: GoogleFonts.outfit(
-                fontSize: AppSizes.fontM,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
-              ),
+            child: AppText(
+              'retry'.tr,
+              variant: AppTextVariant.label,
+              color: AppColors.primary,
             ),
           ),
         ],

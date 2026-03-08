@@ -4,7 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/profile-controller.dart';
 
 /// Profile tab — user info, stats, settings, logout
@@ -48,16 +48,16 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSizes.spacingM),
-        Obx(() => Text(
+        Obx(() => AppText(
           controller.userName.value.isEmpty
               ? 'my_profile'.tr
               : controller.userName.value,
-          style: AppTextStyles.h3,
+          variant: AppTextVariant.h3,
         )),
         const SizedBox(height: AppSizes.spacingXS),
-        Obx(() => Text(
+        Obx(() => AppText(
           controller.userEmail.value,
-          style: AppTextStyles.caption,
+          variant: AppTextVariant.caption,
         )),
       ],
     );
@@ -78,7 +78,7 @@ class ProfileScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('settings'.tr, style: AppTextStyles.h3),
+        AppText('settings'.tr, variant: AppTextVariant.h3),
         const SizedBox(height: AppSizes.spacingM),
         _SettingsRow(icon: LucideIcons.globe, label: 'language'.tr),
         _SettingsRow(icon: LucideIcons.bell, label: 'notifications'.tr),
@@ -93,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: controller.logout,
         icon: const Icon(LucideIcons.logOut, size: AppSizes.iconL),
-        label: Text('logout'.tr),
+        label: AppText('logout'.tr, color: AppColors.error),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.error,
           side: const BorderSide(color: AppColors.error),
@@ -117,9 +117,9 @@ class _StatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(value, style: AppTextStyles.h3.copyWith(color: AppColors.primary)),
+        AppText(value, variant: AppTextVariant.h3, color: AppColors.primary),
         const SizedBox(height: AppSizes.spacingXS),
-        Text(label, style: AppTextStyles.caption),
+        AppText(label, variant: AppTextVariant.caption),
       ],
     );
   }
@@ -136,7 +136,7 @@ class _SettingsRow extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: AppColors.textSecondary, size: AppSizes.iconL),
-      title: Text(label, style: AppTextStyles.bodyMedium),
+      title: AppText(label, variant: AppTextVariant.bodyMedium),
       trailing: const Icon(
         LucideIcons.chevronRight,
         color: AppColors.textTertiary,

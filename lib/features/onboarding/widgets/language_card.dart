@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../models/onboarding_language_model.dart';
 
 /// List variant card for Screen 2A (native language)
@@ -53,21 +54,15 @@ class LanguageListCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    AppText(
                       language.name,
-                      style: GoogleFonts.outfit(
-                        fontSize: AppSizes.fontXL,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
+                      variant: AppTextVariant.bodyLarge,
+                      fontWeight: FontWeight.w600,
                     ),
-                    Text(
+                    AppText(
                       language.subtitle,
-                      style: GoogleFonts.outfit(
-                        fontSize: AppSizes.fontSM,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textSecondary,
-                      ),
+                      variant: AppTextVariant.bodySmall,
+                      fontSize: AppSizes.fontSM,
                     ),
                   ],
                 ),
@@ -80,13 +75,12 @@ class LanguageListCard extends StatelessWidget {
                     color: AppColors.warningLight,
                     borderRadius: BorderRadius.circular(AppSizes.radiusS),
                   ),
-                  child: Text(
-                    'Soon',
-                    style: GoogleFonts.outfit(
-                      fontSize: AppSizes.fontXXS,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.warning,
-                    ),
+                  child: AppText(
+                    'language_coming_soon'.tr,
+                    variant: AppTextVariant.caption,
+                    fontSize: AppSizes.fontXXS,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.warning,
                   ),
                 )
               else if (isSelected)
@@ -175,27 +169,20 @@ class LanguageGridCard extends StatelessWidget {
             children: [
               _LanguageFlag(language: language, size: AppSizes.avatarXL),
               const SizedBox(height: AppSizes.spacingM),
-              Text(
+              AppText(
                 language.name,
-                style: GoogleFonts.outfit(
-                  fontSize: AppSizes.font3XL,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
+                variant: AppTextVariant.bodyMedium,
+                fontSize: AppSizes.font3XL,
+                fontWeight: FontWeight.w700,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSizes.spacingXS),
-              Text(
+              AppText(
                 language.subtitle,
-                style: GoogleFonts.outfit(
-                  fontSize: AppSizes.fontXXS,
-                  fontWeight: language.isEnabled
-                      ? FontWeight.w400
-                      : FontWeight.w500,
-                  color: language.isEnabled
-                      ? AppColors.textSecondary
-                      : AppColors.textTertiary,
-                ),
+                variant: AppTextVariant.caption,
+                fontSize: AppSizes.fontXXS,
+                fontWeight: language.isEnabled ? FontWeight.w400 : FontWeight.w500,
+                color: language.isEnabled ? AppColors.textSecondary : AppColors.textTertiary,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

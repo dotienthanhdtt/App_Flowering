@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/ai_chat_controller.dart';
 import '../models/chat_message_model.dart';
 import '../widgets/ai_message_bubble.dart';
@@ -75,23 +75,21 @@ class _ErrorBanner extends StatelessWidget {
               size: AppSizes.iconSM, color: Color(0xFF856404)),
           const SizedBox(width: AppSizes.spacingS),
           Expanded(
-            child: Text(
+            child: AppText(
               message,
-              style: GoogleFonts.outfit(
-                  fontSize: AppSizes.fontXS, color: const Color(0xFF856404)),
+              variant: AppTextVariant.caption,
+              color: const Color(0xFF856404),
             ),
           ),
           if (onRetry != null) ...[
             const SizedBox(width: AppSizes.spacingS),
             GestureDetector(
               onTap: onRetry,
-              child: Text(
-                'Retry',
-                style: GoogleFonts.outfit(
-                  fontSize: AppSizes.fontXS,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF856404),
-                ),
+              child: AppText(
+                'retry'.tr,
+                variant: AppTextVariant.caption,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF856404),
               ),
             ),
           ],

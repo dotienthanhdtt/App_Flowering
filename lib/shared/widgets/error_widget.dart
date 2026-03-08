@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import 'app_button.dart';
@@ -39,7 +40,7 @@ class AppErrorWidget extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: AppSizes.spacingXXL),
               AppButton(
-                text: 'Try Again',
+                text: 'retry'.tr,
                 onPressed: onRetry,
                 isFullWidth: false,
                 variant: AppButtonVariant.outline,

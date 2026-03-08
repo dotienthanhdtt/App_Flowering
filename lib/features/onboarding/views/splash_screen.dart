@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -35,22 +36,18 @@ class SplashScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: AppSizes.spacingL),
-                    Text(
-                      'Flowering',
-                      style: GoogleFonts.outfit(
-                        fontSize: AppSizes.font10XL,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+                    AppText(
+                      'app_name'.tr,
+                      variant: AppTextVariant.h1,
+                      fontSize: AppSizes.font10XL,
+                      color: Colors.white,
                     ),
                     const SizedBox(height: AppSizes.spacingS),
-                    Text(
-                      'Bloom in your own way',
-                      style: GoogleFonts.outfit(
-                        fontSize: AppSizes.fontL,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
+                    AppText(
+                      'splash_subtitle'.tr,
+                      variant: AppTextVariant.bodyLarge,
+                      fontSize: AppSizes.fontL,
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ],
                 ),

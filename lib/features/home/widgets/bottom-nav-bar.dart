@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/main-shell-controller.dart';
 
 /// Custom bottom navigation bar matching Pencil design
@@ -95,13 +95,12 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(icon, size: AppSizes.navIconSize, color: color),
             const SizedBox(height: AppSizes.navItemGap),
-            Text(
+            AppText(
               label,
-              style: GoogleFonts.outfit(
-                fontSize: AppSizes.navFontSize,
-                fontWeight: fontWeight,
-                color: color,
-              ),
+              variant: AppTextVariant.caption,
+              fontSize: AppSizes.navFontSize,
+              fontWeight: fontWeight,
+              color: color,
             ),
           ],
         ),

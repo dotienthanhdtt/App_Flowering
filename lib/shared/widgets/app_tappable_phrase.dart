@@ -107,6 +107,7 @@ class _AppTappablePhraseState extends State<AppTappablePhrase> {
       AppTextVariant.bodyLarge => AppTextStyles.bodyLarge,
       AppTextVariant.bodyMedium => AppTextStyles.bodyMedium,
       AppTextVariant.bodySmall => AppTextStyles.bodySmall,
+      AppTextVariant.button => AppTextStyles.button,
       AppTextVariant.caption => AppTextStyles.caption,
       AppTextVariant.label => AppTextStyles.label,
     };

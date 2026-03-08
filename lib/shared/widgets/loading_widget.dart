@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
+import 'app_text.dart';
 
 /// Animated loading widget with pulsating glow
 class LoadingWidget extends StatefulWidget {
@@ -93,7 +94,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
           ),
           if (widget.message != null) ...[
             const SizedBox(height: AppSizes.spacingXXL),
-            Text(
+            AppText(
               widget.message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),

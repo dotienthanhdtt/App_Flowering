@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_tappable_phrase.dart';
@@ -55,13 +54,11 @@ class AiMessageBubble extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Flora label
-                Text(
-                  'Flora',
-                  style: GoogleFonts.outfit(
-                    fontSize: AppSizes.fontM,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
-                  ),
+                AppText(
+                  'ai_name'.tr,
+                  variant: AppTextVariant.label,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
                 ),
                 const SizedBox(height: AppSizes.spacingXS),
                 // Message text — tappable words for translation
@@ -92,25 +89,21 @@ class AiMessageBubble extends StatelessWidget {
                             const Icon(Icons.translate,
                                 size: AppSizes.iconXXS, color: AppColors.info),
                             const SizedBox(width: AppSizes.spacingXS),
-                            Text(
+                            AppText(
                               'translation_target_language'.tr,
-                              style: GoogleFonts.outfit(
-                                fontSize: AppSizes.fontXXS,
-                                color: AppColors.info,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              fontSize: AppSizes.fontXXS,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.info,
                             ),
                           ],
                         ),
                         const SizedBox(height: AppSizes.spacingXS),
-                        Text(
+                        AppText(
                           message.translatedText!,
-                          style: GoogleFonts.outfit(
-                            fontSize: AppSizes.fontM,
-                            color: AppColors.textSecondary,
-                            fontStyle: FontStyle.italic,
-                            height: AppSizes.lineHeightLoose,
-                          ),
+                          variant: AppTextVariant.bodyMedium,
+                          color: AppColors.textSecondary,
+                          fontStyle: FontStyle.italic,
+                          height: AppSizes.lineHeightLoose,
                         ),
                       ],
                     ),

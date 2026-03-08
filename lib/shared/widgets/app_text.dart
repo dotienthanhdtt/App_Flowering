@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_text_styles.dart';
 
-enum AppTextVariant { h1, h2, h3, bodyLarge, bodyMedium, bodySmall, caption, label }
+enum AppTextVariant {
+  h1,
+  h2,
+  h3,
+  bodyLarge,
+  bodyMedium,
+  bodySmall,
+  button,
+  caption,
+  label,
+}
 
 class AppText extends StatelessWidget {
   final String text;
@@ -10,6 +20,12 @@ class AppText extends StatelessWidget {
   final TextAlign? textAlign;
   final int? maxLines;
   final TextOverflow? overflow;
+  final FontWeight? fontWeight;
+  final double? fontSize;
+  final TextStyle? style;
+  final TextDecoration? decoration;
+  final FontStyle? fontStyle;
+  final double? height;
 
   const AppText(
     this.text, {
@@ -19,13 +35,28 @@ class AppText extends StatelessWidget {
     this.textAlign,
     this.maxLines,
     this.overflow,
+    this.fontWeight,
+    this.fontSize,
+    this.style,
+    this.decoration,
+    this.fontStyle,
+    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveStyle = (style ?? _getStyle()).copyWith(
+      color: color,
+      fontWeight: fontWeight,
+      fontSize: fontSize,
+      decoration: decoration,
+      fontStyle: fontStyle,
+      height: height,
+    );
+
     return Text(
       text,
-      style: _getStyle().copyWith(color: color),
+      style: effectiveStyle,
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
@@ -46,6 +77,8 @@ class AppText extends StatelessWidget {
         return AppTextStyles.bodyMedium;
       case AppTextVariant.bodySmall:
         return AppTextStyles.bodySmall;
+      case AppTextVariant.button:
+        return AppTextStyles.button;
       case AppTextVariant.caption:
         return AppTextStyles.caption;
       case AppTextVariant.label:

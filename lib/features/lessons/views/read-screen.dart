@@ -4,7 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/read-controller.dart';
 
 /// Read tab — shows reading sections or empty state
@@ -35,7 +35,7 @@ class ReadScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('read_title'.tr, style: AppTextStyles.h2),
+          AppText('read_title'.tr, variant: AppTextVariant.h2),
           IconButton(
             onPressed: () {},
             icon: const Icon(
@@ -61,11 +61,10 @@ class ReadScreen extends StatelessWidget {
               color: AppColors.textTertiary,
             ),
             const SizedBox(height: AppSizes.spacingL),
-            Text(
+            AppText(
               'read_empty'.tr,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textTertiary,
-              ),
+              variant: AppTextVariant.bodyMedium,
+              color: AppColors.textTertiary,
             ),
           ],
         ),

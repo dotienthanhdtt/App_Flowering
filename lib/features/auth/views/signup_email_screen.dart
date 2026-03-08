@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../shared/widgets/app_text.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_text_field.dart';
 
@@ -39,42 +40,36 @@ class SignupEmailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'Create Account',
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.font6XL,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          letterSpacing: AppSizes.trackingSnug,
-                        ),
+                      AppText(
+                        'signup_title'.tr,
+                        variant: AppTextVariant.h2,
+                        fontWeight: FontWeight.w700,
                       ),
                       const SizedBox(height: AppSizes.spacingSM),
-                      Text(
-                        'Start your language journey',
-                        style: GoogleFonts.outfit(
-                          fontSize: AppSizes.fontM,
-                          color: AppColors.textSecondary,
-                        ),
+                      AppText(
+                        'signup_subtitle'.tr,
+                        variant: AppTextVariant.bodyMedium,
+                        color: AppColors.textSecondary,
                       ),
                       const SizedBox(height: AppSizes.spacing3XL),
                       AuthTextField(
-                        label: 'Full Name',
-                        hint: 'Your name',
+                        label: 'signup_full_name'.tr,
+                        hint: 'signup_full_name_hint'.tr,
                         controller: ctrl.fullNameController,
                         validator: ctrl.validateFullName,
                       ),
                       const SizedBox(height: AppSizes.spacingL),
                       AuthTextField(
-                        label: 'Email',
-                        hint: 'you@example.com',
+                        label: 'email'.tr,
+                        hint: 'email_hint'.tr,
                         controller: ctrl.emailController,
                         validator: ctrl.validateEmail,
                         keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: AppSizes.spacingL),
                       Obx(() => AuthTextField(
-                            label: 'Password',
-                            hint: 'At least 8 characters',
+                            label: 'password'.tr,
+                            hint: 'password_min_hint'.tr,
                             controller: ctrl.passwordController,
                             validator: ctrl.validatePassword,
                             obscureText: ctrl.obscurePassword.value,
@@ -82,8 +77,8 @@ class SignupEmailScreen extends StatelessWidget {
                           )),
                       const SizedBox(height: AppSizes.spacingL),
                       Obx(() => AuthTextField(
-                            label: 'Confirm Password',
-                            hint: 'Repeat your password',
+                            label: 'confirm_password'.tr,
+                            hint: 'confirm_password_hint'.tr,
                             controller: ctrl.confirmPasswordController,
                             validator: (v) => ctrl.validateConfirmPassword(
                               v,
@@ -100,12 +95,11 @@ class SignupEmailScreen extends StatelessWidget {
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: AppSizes.spacingM),
-                          child: Text(
+                          child: AppText(
                             ctrl.errorMessage.value,
-                            style: GoogleFonts.outfit(
-                              fontSize: AppSizes.fontSM,
-                              color: AppColors.error,
-                            ),
+                            variant: AppTextVariant.caption,
+                            fontSize: AppSizes.fontSM,
+                            color: AppColors.error,
                           ),
                         );
                       }),
@@ -130,13 +124,10 @@ class SignupEmailScreen extends StatelessWidget {
                                         strokeWidth: 2,
                                       ),
                                     )
-                                  : Text(
-                                      'Create Account',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: AppSizes.fontXL,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                  : AppText(
+                                      'signup_cta'.tr,
+                                      variant: AppTextVariant.button,
+                                      fontSize: AppSizes.fontXL,
                                     ),
                             ),
                           )),
