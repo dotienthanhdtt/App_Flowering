@@ -11,7 +11,7 @@ class ChatMessage {
   final String id;
   final ChatMessageType type;
   final String? text;
-  final String? translatedText;
+  String? translatedText;
   bool showTranslation;
   final List<String>? quickReplies;
   final DateTime timestamp;

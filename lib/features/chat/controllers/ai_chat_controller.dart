@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/api_endpoints.dart';
@@ -10,6 +10,7 @@ import '../../onboarding/controllers/onboarding_controller.dart';
 import '../../onboarding/models/onboarding_profile_model.dart';
 import '../../onboarding/models/onboarding_session_model.dart';
 import '../models/chat_message_model.dart';
+import '../widgets/word-translation-sheet-loader.dart';
 
 /// Manages the AI onboarding chat flow using real /onboarding/* endpoints.
 /// Session lifecycle: start → chat turns → complete → navigate to scenario gift.
@@ -17,6 +18,7 @@ class AiChatController extends GetxController {
   final ApiClient _apiClient = Get.find();
   final OnboardingController _onboardingCtrl = Get.find();
   final StorageService _storageService = Get.find();
+
 
   final messages = <ChatMessage>[].obs;
   final isLoading = false.obs;
@@ -98,7 +100,7 @@ class AiChatController extends GetxController {
         final session = response.data!;
         progress.value = (session.turnNumber / 10).clamp(0.0, 1.0);
 
-        _addAiMessage(session.reply ?? '');
+        _addAiMessage(session.reply ?? '', messageId: session.messageId);
         if (session.quickReplies.isNotEmpty) {
           _addQuickReplies(session.quickReplies);
         }
@@ -118,12 +120,59 @@ class AiChatController extends GetxController {
     }
   }
 
-  /// Toggle translation visibility for a specific message
-  void toggleTranslation(String messageId) {
+  /// Toggle sentence translation. First tap calls API; subsequent taps toggle.
+  Future<void> toggleTranslation(String messageId) async {
     final index = messages.indexWhere((m) => m.id == messageId);
     if (index == -1) return;
-    messages[index].showTranslation = !messages[index].showTranslation;
-    messages.refresh();
+    final msg = messages[index];
+
+    // Already has translation — just toggle visibility
+    if (msg.translatedText != null) {
+      msg.showTranslation = !msg.showTranslation;
+      messages.refresh();
+      return;
+    }
+
+    try {
+      final response = await _apiClient.post<Map<String, dynamic>>(
+        ApiEndpoints.translate,
+        data: {
+          'type': 'sentence',
+          'messageId': messageId,
+          'sourceLang': _onboardingCtrl.selectedLearningLanguage.value,
+          'targetLang': _onboardingCtrl.selectedNativeLanguage.value,
+          'sessionToken': _sessionToken,
+        },
+        fromJson: (data) => data as Map<String, dynamic>,
+      );
+      if (response.isSuccess && response.data != null) {
+        msg.translatedText = response.data!['translation'] as String?;
+        msg.showTranslation = true;
+        messages.refresh();
+      } else {
+        Get.snackbar('', response.message,
+            snackPosition: SnackPosition.BOTTOM);
+      }
+    } on ApiException catch (e) {
+      Get.snackbar('', e.userMessage,
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  /// Open word translation bottom sheet for tapped word
+  void onWordTap(String word, BuildContext context) {
+    final cleanWord = word.replaceAll(RegExp(r"[^\w'\-]"), '').trim();
+    if (cleanWord.isEmpty) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => WordTranslationSheetLoader(
+        word: cleanWord,
+        sessionToken: _sessionToken,
+      ),
+    );
   }
 
   /// Placeholder for TTS playback
@@ -178,9 +227,9 @@ class AiChatController extends GetxController {
     }
   }
 
-  void _addAiMessage(String text) {
+  void _addAiMessage(String text, {String? messageId}) {
     messages.add(ChatMessage(
-      id: 'ai_${DateTime.now().millisecondsSinceEpoch}',
+      id: messageId ?? 'ai_${DateTime.now().millisecondsSinceEpoch}',
       type: ChatMessageType.aiText,
       text: text,
       timestamp: DateTime.now(),

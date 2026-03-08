@@ -4,6 +4,7 @@ import '../core/services/auth_storage.dart';
 import '../core/services/connectivity_service.dart';
 import '../core/services/audio_service.dart';
 import '../core/network/api_client.dart';
+import '../core/services/translation-service.dart';
 
 /// Global dependency injection for core services
 ///
@@ -67,4 +68,7 @@ Future<void> initializeServices() async {
   // API client last (depends on auth storage)
   final apiClient = Get.put(ApiClient());
   await apiClient.init(authStorage);
+
+  // Translation service (depends on API client)
+  Get.put(TranslationService(), permanent: true);
 }

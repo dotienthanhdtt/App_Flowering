@@ -5,6 +5,7 @@
 /// [reply] — AI message text (field name varies: `floraMessage` or `reply`).
 class OnboardingSession {
   final String? sessionToken;
+  final String? messageId;
   final int turnNumber;
   final bool isLastTurn;
   final String? reply;
@@ -12,6 +13,7 @@ class OnboardingSession {
 
   const OnboardingSession({
     this.sessionToken,
+    this.messageId,
     required this.turnNumber,
     required this.isLastTurn,
     this.reply,
@@ -21,6 +23,7 @@ class OnboardingSession {
   factory OnboardingSession.fromJson(Map<String, dynamic> json) {
     return OnboardingSession(
       sessionToken: json['sessionToken'] as String?,
+      messageId: json['messageId'] as String?,
       turnNumber: json['turnNumber'] as int? ?? 0,
       isLastTurn: json['isLastTurn'] as bool? ?? false,
       reply: json['reply'] as String? ?? json['floraMessage'] as String?,

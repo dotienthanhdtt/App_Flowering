@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../controllers/ai_chat_controller.dart';
 import '../models/chat_message_model.dart';
 import '../widgets/ai_message_bubble.dart';
+import '../widgets/ai_typing_bubble.dart';
+import '../widgets/quick_reply_row.dart';
 import '../widgets/chat_input_bar.dart';
 import '../widgets/chat_top_bar.dart';
 import '../widgets/user_message_bubble.dart';
@@ -132,10 +134,13 @@ class _ChatList extends StatelessWidget {
   Widget _buildMessageItem(ChatMessage message) {
     switch (message.type) {
       case ChatMessageType.aiText:
-        return AiMessageBubble(
-          message: message,
-          onTranslate: () => controller.toggleTranslation(message.id),
-          onPlayAudio: () => controller.playAudio(message.id),
+        return Builder(
+          builder: (context) => AiMessageBubble(
+            message: message,
+            onTranslate: () => controller.toggleTranslation(message.id),
+            onPlayAudio: () => controller.playAudio(message.id),
+            onWordTap: (word) => controller.onWordTap(word, context),
+          ),
         );
 
       case ChatMessageType.userText:

@@ -145,6 +145,14 @@ features/auth/
 
 **Pattern:** Plain Dart classes with JSON serialization
 
+**Key Models:**
+- `UserModel` - User profile data
+- `ChatMessage` - Message data with optional translation caching
+- `WordTranslationModel` - Translation data for individual words (translations, phonetics)
+- `SentenceTranslationModel` - Sentence-level translation with word mappings
+- `ApiErrorModel` - API error response parsing
+- `ApiResponse<T>` - Generic response wrapper with code/message/data structure
+
 ### 3. Data Layer (Core Services)
 
 **Purpose:** Manage data sources and external integrations.
@@ -283,6 +291,40 @@ Future<void> setPlaybackRate(double rate);
 - Proper disposal of recorder and player
 - Stream subscription cleanup
 - Memory leak fixes applied
+
+#### TranslationService
+Word and sentence translation via backend API with caching.
+
+**Observable State:**
+```dart
+final isTranslating = false.obs;
+final lastTranslatedWord = ''.obs;
+```
+
+**Key Methods:**
+```dart
+// Word translation
+Future<WordTranslationModel?> toggleTranslation({
+  required String messageId,
+  required String word,
+});
+
+// Cache management
+Future<WordTranslationModel?> getTranslation(String word);
+Future<void> saveTranslation(String word, WordTranslationModel translation);
+Future<void> clearTranslationCache();
+```
+
+**Caching Strategy:**
+- Translations cached in StorageService with LRU eviction
+- Cache key: word hash (lowercase)
+- Reduces repeated API calls for same word
+- 24-hour cache expiration (implementation may vary)
+
+**API Contract:**
+- Endpoint: `POST /ai/translate`
+- Request: `{messageId: UUID, word: String}`
+- Response: `{translations: [String], phoneticSimilar: String, phoneticOriginal: String}`
 
 ### 4. Infrastructure Layer
 

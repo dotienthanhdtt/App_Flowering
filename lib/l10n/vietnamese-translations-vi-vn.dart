@@ -187,4 +187,13 @@ const Map<String, String> viVN = {
   'new_password_confirm_label': 'Xác Nhận Mật Khẩu Mới',
   'new_password_cta': 'Đặt Lại Mật Khẩu',
   'password_reset_success': 'Đặt lại mật khẩu thành công',
+
+  // Word Translation (Screen 08a)
+  'word_translation_title': 'Bản dịch',
+  'word_definition_label': 'Định nghĩa',
+  'word_examples_label': 'Ví dụ',
+  'word_translation_error': 'Không thể tải bản dịch',
+  'sentence_translation_unavailable': 'Dịch câu không khả dụng trong quá trình giới thiệu',
+  'word_translation_retry': 'Thử lại',
+  'translation_target_language': 'Tiếng Việt',
 };
