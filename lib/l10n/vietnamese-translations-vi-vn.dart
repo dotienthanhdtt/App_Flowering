@@ -150,7 +150,7 @@ const Map<String, String> viVN = {
 
   // Auth — Signup (Screen 10)
   'signup_title': 'Tạo Tài Khoản',
-  'signup_subtitle': 'Tham gia Flowering và bắt đầu hành trình của bạn',
+  'signup_subtitle': 'Bắt đầu hành trình ngôn ngữ của bạn',
   'signup_full_name': 'Họ và Tên',
   'signup_full_name_hint': 'Tên của bạn',
   'signup_cta': 'Tạo Tài Khoản',
@@ -158,7 +158,7 @@ const Map<String, String> viVN = {
 
   // Auth — Login (Screen 11)
   'login_title': 'Chào Mừng Trở Lại',
-  'login_subtitle': 'Đăng nhập để tiếp tục học',
+  'login_subtitle': 'Đăng nhập để tiếp tục hành trình',
   'login_cta': 'Đăng Nhập',
   'login_or_divider': 'hoặc',
 
@@ -174,7 +174,7 @@ const Map<String, String> viVN = {
   'forgot_success': 'Mã đặt lại đã được gửi đến',
 
   // Auth — OTP (Screen 13)
-  'otp_title': 'Nhập Mã',
+  'otp_title': 'Kiểm Tra Email',
   'otp_subtitle': 'Chúng tôi đã gửi mã 6 chữ số đến',
   'otp_resend': 'Gửi lại',
   'otp_resend_in': 'Gửi lại sau',
@@ -182,7 +182,7 @@ const Map<String, String> viVN = {
 
   // Auth — New Password (Screen 14)
   'new_password_title': 'Mật Khẩu Mới',
-  'new_password_subtitle': 'Chọn một mật khẩu mạnh',
+  'new_password_subtitle': 'Tạo mật khẩu mạnh cho tài khoản của bạn',
   'new_password_label': 'Mật Khẩu Mới',
   'new_password_confirm_label': 'Xác Nhận Mật Khẩu Mới',
   'new_password_cta': 'Đặt Lại Mật Khẩu',
@@ -196,4 +196,42 @@ const Map<String, String> viVN = {
   'sentence_translation_unavailable': 'Dịch câu không khả dụng trong quá trình giới thiệu',
   'word_translation_retry': 'Thử lại',
   'translation_target_language': 'Tiếng Việt',
+
+  // Onboarding — Welcome Problem (Screen 04)
+  'welcome_headline_1': "Não bạn\nkhông được tạo ra\nđể ghi nhớ.",
+  'welcome_body_1': "Nó được tạo ra để nói. Flowering hoạt động cùng não bạn — không chống lại nó.",
+  'welcome_headline_2': "Bạn quên\nvì không có gì\nđược tạo ra cho bạn.",
+  'welcome_body_2': "Các ứng dụng thông thường cho mọi người cùng một bài học. Flowering ghi nhớ những gì bạn gặp khó khăn — và đưa nó trở lại đúng lúc.",
+  'welcome_headline_3': "Cuối cùng, một ứng dụng\nhiểu\nchỉ riêng bạn.",
+  'welcome_body_3': "Tốc độ của bạn. Sở thích của bạn. Mục tiêu của bạn. Flowering xây dựng con đường sống động phát triển cùng bạn — không ai khác có được điều tương tự.",
+  'welcome_cta': "Bắt đầu ngay",
+  'welcome_tap_continue': 'Chạm bất kỳ đâu để tiếp tục',
+
+  // Onboarding — Language Selection (Screen 05/06)
+  'language_select_title': "Bạn muốn\nhọc gì?",
+  'language_select_subtitle': "Chọn một ngôn ngữ để bắt đầu",
+  'native_language_title': "Ngôn ngữ\nmẹ đẻ của bạn?",
+  'native_language_subtitle': "Chúng tôi sẽ cá nhân hóa trải nghiệm học tập",
+  'language_load_error': 'Không thể tải danh sách ngôn ngữ',
+  'language_coming_soon': 'Sắp có',
+
+  // Onboarding — Top Bar
+  'login_action': 'Đăng nhập',
+
+  // Onboarding — Splash
+  'splash_subtitle': 'Nở rộ theo cách của bạn',
+
+  // Chat
+  'ai_name': 'Flora',
+
+  // Auth — Form hints
+  'email_hint': 'ban@example.com',
+  'password_hint': 'Mật khẩu của bạn',
+  'password_min_hint': 'Ít nhất 8 ký tự',
+  'confirm_password_hint': 'Nhập lại mật khẩu',
+  'confirm_new_password_hint': 'Nhập lại mật khẩu mới',
+
+  // Auth — Social
+  'continue_with_apple': 'Tiếp tục với Apple',
+  'continue_with_google': 'Tiếp tục với Google',
 };
