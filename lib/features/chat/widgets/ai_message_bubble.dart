@@ -29,7 +29,6 @@ class AiMessageBubble extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AiAvatar(),
         const SizedBox(width: AppSizes.spacingS),
         Flexible(
           child: Container(

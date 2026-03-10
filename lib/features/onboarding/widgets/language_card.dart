@@ -129,13 +129,11 @@ class _LanguageFlag extends StatelessWidget {
 /// Grid variant card for Screen 2B (learning language)
 class LanguageGridCard extends StatelessWidget {
   final OnboardingLanguage language;
-  final bool isSelected;
   final VoidCallback? onTap;
 
   const LanguageGridCard({
     super.key,
     required this.language,
-    required this.isSelected,
     this.onTap,
   });
 
@@ -151,18 +149,9 @@ class LanguageGridCard extends StatelessWidget {
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.borderLight,
-              width: isSelected ? 2 : AppSizes.borderThin,
+              color: AppColors.borderLight,
+              width: AppSizes.borderThin,
             ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.15),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

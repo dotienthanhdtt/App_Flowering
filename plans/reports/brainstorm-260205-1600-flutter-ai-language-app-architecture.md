@@ -9,7 +9,7 @@
 
 Create a Flutter codebase for an AI-powered language learning app that:
 - Enables personalized learning content
-- Supports voice and text chat with AI (via backend API)
+- Supports voice and text ab chat with AI (via backend API)
 - Targets intermediate learners
 - Supports Vietnamese and English
 - Uses GetX state management

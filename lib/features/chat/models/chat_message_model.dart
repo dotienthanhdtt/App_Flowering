@@ -15,6 +15,8 @@ class ChatMessage {
   bool showTranslation;
   final List<String>? quickReplies;
   final DateTime timestamp;
+  String? correctedText;
+  bool showCorrection;
 
   ChatMessage({
     required this.id,
@@ -24,5 +26,7 @@ class ChatMessage {
     this.showTranslation = false,
     this.quickReplies,
     required this.timestamp,
+    this.correctedText,
+    this.showCorrection = true,
   });
 }

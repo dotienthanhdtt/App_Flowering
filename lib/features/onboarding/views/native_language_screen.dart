@@ -50,6 +50,7 @@ class NativeLanguageScreen extends StatelessWidget {
                 bottom: AppSizes.paddingL,
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppText(
                     'native_language_title'.tr,

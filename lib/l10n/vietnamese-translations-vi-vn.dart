@@ -211,9 +211,9 @@ const Map<String, String> viVN = {
   'welcome_tap_continue': 'Chạm bất kỳ đâu để tiếp tục',
 
   // Onboarding — Language Selection (Screen 05/06)
-  'language_select_title': "Bạn muốn\nhọc gì?",
+  'language_select_title': "Bạn muốn học gì?",
   'language_select_subtitle': "Chọn một ngôn ngữ để bắt đầu",
-  'native_language_title': "Ngôn ngữ\nmẹ đẻ của bạn?",
+  'native_language_title': "Ngôn ngữ mẹ đẻ của bạn?",
   'native_language_subtitle': "Chúng tôi sẽ cá nhân hóa trải nghiệm học tập",
   'language_load_error': 'Không thể tải danh sách ngôn ngữ',
   'language_coming_soon': 'Sắp có',
@@ -242,4 +242,9 @@ const Map<String, String> viVN = {
   // Auth — Social
   'continue_with_apple': 'Tiếp tục với Apple',
   'continue_with_google': 'Tiếp tục với Google',
+
+  // Grammar Correction
+  'corrected': 'Đã sửa',
+  'hide': 'Ẩn',
+  'show': 'Hiện',
 };
