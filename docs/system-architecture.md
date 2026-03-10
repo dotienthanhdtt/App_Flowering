@@ -117,21 +117,27 @@ lib/
 **Purpose:** Handle UI rendering and user interactions.
 
 **Components:**
-- **Views:** Stateless/Stateful widgets rendering UI
-- **Controllers:** GetX controllers managing state and business logic
+- **Views:** Screens extend `BaseScreen<T>` (provides Scaffold, SafeArea, loading overlay). Tab child screens and StatefulWidget screens are exempt.
+- **Controllers:** All extend `BaseController` (provides `isLoading`, `errorMessage`, `apiCall()`, `showSuccess()`)
 - **Bindings:** Dependency injection for controllers and services
-- **Widgets:** Feature-specific reusable components
+- **Widgets:** Feature-specific reusable components (do NOT extend base classes)
 
 **Pattern:** MVC with GetX reactive state management
+
+**Base Class Inheritance (Mandatory):**
+- Controllers: `BaseController` → never `GetxController` directly
+- Screens with controller: `BaseScreen<T>` → override `buildContent()` instead of `build()`
+- Tab child screens in IndexedStack: plain `StatelessWidget` (avoids nested Scaffold)
+- StatefulWidget screens: exempt, add explanatory comment
 
 **Example:**
 ```dart
 // Feature structure
 features/auth/
   ├── bindings/auth_binding.dart      # Inject AuthController
-  ├── controllers/auth_controller.dart # Handle login/register
-  ├── views/login_screen.dart          # Login UI
-  └── widgets/auth_text_field.dart     # Custom input field
+  ├── controllers/auth_controller.dart # extends BaseController
+  ├── views/login_screen.dart          # extends BaseScreen<AuthController>
+  └── widgets/auth_text_field.dart     # Custom input field (no base class)
 ```
 
 ### 2. Domain Layer (Shared Models)

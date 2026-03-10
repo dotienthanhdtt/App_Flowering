@@ -8,7 +8,8 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../controllers/vocabulary-controller.dart';
 
-/// Vocabulary tab — search bar + word list or empty state
+/// Vocabulary tab — search bar + word list or empty state.
+/// Tab child screen — exempt from BaseScreen to avoid nested Scaffold.
 class VocabularyScreen extends StatelessWidget {
   const VocabularyScreen({super.key});
 

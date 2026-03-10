@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import '../../../app/routes/app-route-constants.dart';
+import '../../../core/base/base_controller.dart';
 import '../models/onboarding_language_model.dart';
 import '../models/onboarding_profile_model.dart';
 import '../services/onboarding_language_service.dart';
 
-class OnboardingController extends GetxController {
+class OnboardingController extends BaseController {
   final selectedNativeLanguage = 'vi'.obs;
   final selectedLearningLanguage = 'en'.obs;
   final nativeLanguages = <OnboardingLanguage>[].obs;

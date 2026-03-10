@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../../../core/base/base_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -12,12 +13,17 @@ import '../widgets/scenario_card.dart';
 
 /// Displays AI-generated learning scenarios in a 2-column grid.
 /// Navigates to Login Gate (bottom sheet) via CTA.
-class ScenarioGiftScreen extends StatelessWidget {
+class ScenarioGiftScreen extends BaseScreen<OnboardingController> {
   const ScenarioGiftScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<OnboardingController>();
+  bool get showLoadingOverlay => false;
+
+  @override
+  Color? get backgroundColor => AppColors.background;
+
+  @override
+  Widget buildContent(BuildContext context) {
     final scenarios = controller.onboardingProfile?.scenarios ?? [];
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -25,18 +31,13 @@ class ScenarioGiftScreen extends StatelessWidget {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
       ),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _Header(),
-              Expanded(child: _ScenarioGrid(scenarios: scenarios)),
-              _CtaButton(onTap: () => _showLoginGate(context)),
-            ],
-          ),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _Header(),
+          Expanded(child: _ScenarioGrid(scenarios: scenarios)),
+          _CtaButton(onTap: () => _showLoginGate(context)),
+        ],
       ),
     );
   }

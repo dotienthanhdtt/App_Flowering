@@ -8,7 +8,8 @@ import '../../../shared/widgets/app_text.dart';
 import '../controllers/chat-home-controller.dart';
 import '../widgets/chat-conversation-tile.dart';
 
-/// Chat home tab — shows conversation list or empty state
+/// Chat home tab — shows conversation list or empty state.
+/// Tab child screen — exempt from BaseScreen to avoid nested Scaffold.
 class ChatHomeScreen extends StatelessWidget {
   const ChatHomeScreen({super.key});
 

@@ -77,8 +77,8 @@ flowering/
 │   │   │   ├── extensions.dart            # Dart extensions (pending)
 │   │   │   └── validators.dart            # Input validation (pending)
 │   │   └── base/
-│   │       ├── base_controller.dart       # Controller template (pending)
-│   │       └── base_screen.dart           # Screen template (pending)
+│   │       ├── base_controller.dart       # Controller template ✅ (enforced)
+│   │       └── base_screen.dart           # Screen template ✅ (enforced)
 │   │
 │   ├── shared/                            # Shared resources
 │   │   ├── widgets/                       # Reusable UI components (pending)
@@ -243,8 +243,8 @@ Complete dependency setup with all required packages.
 ### ✅ Completed (Phase 4)
 
 #### Base Classes & Shared Widgets
-- **BaseController** (`lib/core/base/base_controller.dart`) - Controller template with apiCall wrapper
-- **BaseScreen** (`lib/core/base/base_screen.dart`) - Screen wrapper with loading overlay
+- **BaseController** (`lib/core/base/base_controller.dart`) - Controller template with apiCall wrapper (**enforced**: all 6 feature controllers now extend BaseController)
+- **BaseScreen** (`lib/core/base/base_screen.dart`) - Screen wrapper with loading overlay (**enforced**: 10 screens migrated, 4 tab-child + 1 StatefulWidget exempt)
 - **Shared Widgets** (`lib/shared/widgets/`):
   - AppButton (4 variants), AppTextField (with validation), AppText (8 variants)
   - AppIcon, LoadingWidget, LoadingOverlay, AppErrorWidget

@@ -2,17 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/routes/app-route-constants.dart';
+import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
 
 /// Manages the 3-screen forgot-password flow: email → OTP → new password.
 /// resetToken held in memory only; never persisted.
-class ForgotPasswordController extends GetxController {
+class ForgotPasswordController extends BaseController {
   final ApiClient _apiClient = Get.find();
 
-  final isLoading = false.obs;
-  final errorMessage = ''.obs;
   final forgotEmail = ''.obs;
   final otpCountdown = 0.obs;
   final obscureNewPassword = true.obs;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/routes/app-route-constants.dart';
+import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
@@ -10,13 +11,11 @@ import '../models/auth_response_model.dart';
 
 /// Manages email/password auth + social auth stubs.
 /// Reads sessionToken from StorageService to link onboarding with account.
-class AuthController extends GetxController {
+class AuthController extends BaseController {
   final ApiClient _apiClient = Get.find();
   final AuthStorage _authStorage = Get.find();
   final StorageService _storageService = Get.find();
 
-  final isLoading = false.obs;
-  final errorMessage = ''.obs;
   final obscurePassword = true.obs;
   final obscureConfirmPassword = true.obs;
 

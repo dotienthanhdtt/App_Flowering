@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/base/base_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -7,103 +8,102 @@ import '../../../shared/widgets/app_text.dart';
 import '../controllers/onboarding_controller.dart';
 import '../widgets/language_card.dart';
 
-class NativeLanguageScreen extends StatelessWidget {
+class NativeLanguageScreen extends BaseScreen<OnboardingController> {
   const NativeLanguageScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<OnboardingController>();
+  bool get showLoadingOverlay => false;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Back button
-            Padding(
-              padding: const EdgeInsets.only(top: AppSizes.paddingL, left: AppSizes.paddingXXL),
-              child: GestureDetector(
-                onTap: () => Get.back(),
-                child: Container(
-                  width: AppSizes.inputHeight,
-                  height: AppSizes.inputHeight,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                    border: Border.all(color: AppColors.borderLight),
-                  ),
-                  child: const Icon(
-                    Icons.chevron_left,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
+  @override
+  Color? get backgroundColor => AppColors.background;
+
+  @override
+  Widget buildContent(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Back button
+        Padding(
+          padding: const EdgeInsets.only(top: AppSizes.paddingL, left: AppSizes.paddingXXL),
+          child: GestureDetector(
+            onTap: () => Get.back(),
+            child: Container(
+              width: AppSizes.inputHeight,
+              height: AppSizes.inputHeight,
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                border: Border.all(color: AppColors.borderLight),
+              ),
+              child: const Icon(
+                Icons.chevron_left,
+                color: AppColors.textPrimary,
               ),
             ),
-
-            // Header
-            Padding(
-              padding: const EdgeInsets.only(
-                top: AppSizes.paddingXXL,
-                left: AppSizes.paddingXXL,
-                right: AppSizes.paddingXXL,
-                bottom: AppSizes.paddingL,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText(
-                    'native_language_title'.tr,
-                    style: AppTextStyles.h2.copyWith(
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: AppSizes.trackingSnug,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                  const SizedBox(height: AppSizes.spacingS),
-                  AppText(
-                    'native_language_subtitle'.tr,
-                    variant: AppTextVariant.bodyMedium,
-                    color: AppColors.textSecondary,
-                    height: AppSizes.lineHeightNormal,
-                    textAlign: TextAlign.left,
-                  ),
-                ],
-              ),
-            ),
-
-            // Language list
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoadingLanguages.value) {
-                  return _buildSkeleton();
-                }
-                if (controller.nativeLanguages.isEmpty) {
-                  return _buildError(controller);
-                }
-                return ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSizes.paddingXXL,
-                    vertical: AppSizes.paddingXS,
-                  ),
-                  itemCount: controller.nativeLanguages.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: AppSizes.spacingM),
-                  itemBuilder: (context, index) {
-                    final lang = controller.nativeLanguages[index];
-                    return LanguageListCard(
-                      language: lang,
-                      isSelected:
-                          controller.selectedNativeLanguage.value == lang.code,
-                      onTap: () =>
-                          controller.selectNativeLanguage(lang.code, id: lang.id),
-                    );
-                  },
-                );
-              }),
-            ),
-          ],
+          ),
         ),
-      ),
+
+        // Header
+        Padding(
+          padding: const EdgeInsets.only(
+            top: AppSizes.paddingXXL,
+            left: AppSizes.paddingXXL,
+            right: AppSizes.paddingXXL,
+            bottom: AppSizes.paddingL,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(
+                'native_language_title'.tr,
+                style: AppTextStyles.h2.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: AppSizes.trackingSnug,
+                ),
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: AppSizes.spacingS),
+              AppText(
+                'native_language_subtitle'.tr,
+                variant: AppTextVariant.bodyMedium,
+                color: AppColors.textSecondary,
+                height: AppSizes.lineHeightNormal,
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+        ),
+
+        // Language list
+        Expanded(
+          child: Obx(() {
+            if (controller.isLoadingLanguages.value) {
+              return _buildSkeleton();
+            }
+            if (controller.nativeLanguages.isEmpty) {
+              return _buildError();
+            }
+            return ListView.separated(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.paddingXXL,
+                vertical: AppSizes.paddingXS,
+              ),
+              itemCount: controller.nativeLanguages.length,
+              separatorBuilder: (_, _) => const SizedBox(height: AppSizes.spacingM),
+              itemBuilder: (context, index) {
+                final lang = controller.nativeLanguages[index];
+                return LanguageListCard(
+                  language: lang,
+                  isSelected:
+                      controller.selectedNativeLanguage.value == lang.code,
+                  onTap: () =>
+                      controller.selectNativeLanguage(lang.code, id: lang.id),
+                );
+              },
+            );
+          }),
+        ),
+      ],
     );
   }
 
@@ -124,7 +124,7 @@ class NativeLanguageScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildError(OnboardingController controller) {
+  Widget _buildError() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

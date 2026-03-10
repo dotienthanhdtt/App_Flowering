@@ -7,7 +7,8 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../controllers/read-controller.dart';
 
-/// Read tab — shows reading sections or empty state
+/// Read tab — shows reading sections or empty state.
+/// Tab child screen — exempt from BaseScreen to avoid nested Scaffold.
 class ReadScreen extends StatelessWidget {
   const ReadScreen({super.key});
 

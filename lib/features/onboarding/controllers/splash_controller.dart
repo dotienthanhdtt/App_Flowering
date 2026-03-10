@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
 import '../../../app/routes/app-route-constants.dart';
+import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/services/auth_storage.dart';
 
-class SplashController extends GetxController {
+class SplashController extends BaseController {
   final _authStorage = Get.find<AuthStorage>();
   final _apiClient = Get.find<ApiClient>();
 
