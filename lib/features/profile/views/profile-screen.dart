@@ -7,7 +7,8 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../controllers/profile-controller.dart';
 
-/// Profile tab — user info, stats, settings, logout
+/// Profile tab — user info, stats, settings, logout.
+/// Tab child screen — exempt from BaseScreen to avoid nested Scaffold.
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 

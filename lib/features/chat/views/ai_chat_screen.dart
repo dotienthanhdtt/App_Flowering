@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../../../core/base/base_screen.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../controllers/ai_chat_controller.dart';
 import '../models/chat_message_model.dart';
@@ -14,43 +15,42 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 
 /// Screen 07 — AI onboarding chat with Flora using real /onboarding/* APIs.
-class AiChatScreen extends StatelessWidget {
+class AiChatScreen extends BaseScreen<AiChatController> {
   const AiChatScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<AiChatController>();
+  bool get showLoadingOverlay => false;
 
+  @override
+  Color? get backgroundColor => AppColors.background;
+
+  @override
+  Widget buildContent(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
       ),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Obx(() => ChatTopBar(
-                progress: controller.progress.value,
-                onSkip: controller.skipOnboarding,
-              )),
-              Obx(() {
-                if (controller.errorMessage.value.isNotEmpty) {
-                  return _ErrorBanner(
-                    message: controller.errorMessage.value,
-                    onRetry: controller.messages.isEmpty
-                        ? controller.retrySession
-                        : null,
-                  );
-                }
-                return const SizedBox.shrink();
-              }),
-              Expanded(child: _ChatList(controller: controller)),
-              const ChatInputBar(),
-            ],
-          ),
-        ),
+      child: Column(
+        children: [
+          Obx(() => ChatTopBar(
+            progress: controller.progress.value,
+            onSkip: controller.skipOnboarding,
+          )),
+          Obx(() {
+            if (controller.errorMessage.value.isNotEmpty) {
+              return _ErrorBanner(
+                message: controller.errorMessage.value,
+                onRetry: controller.messages.isEmpty
+                    ? controller.retrySession
+                    : null,
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+          Expanded(child: _ChatList(controller: controller)),
+          const ChatInputBar(),
+        ],
       ),
     );
   }

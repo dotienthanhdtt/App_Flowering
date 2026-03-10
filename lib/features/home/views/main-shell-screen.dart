@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import '../../../core/base/base_screen.dart';
 import '../../chat/views/chat-home-screen.dart';
 import '../../lessons/views/read-screen.dart';
 import '../../vocabulary/views/vocabulary-screen.dart';
@@ -9,24 +9,28 @@ import '../controllers/main-shell-controller.dart';
 import '../widgets/bottom-nav-bar.dart';
 
 /// Main shell with IndexedStack tab switching and custom bottom nav
-class MainShellScreen extends StatelessWidget {
+class MainShellScreen extends BaseScreen<MainShellController> {
   const MainShellScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<MainShellController>();
+  bool get useSafeArea => false;
 
-    return Scaffold(
-      body: Obx(() => IndexedStack(
-        index: controller.selectedIndex.value,
-        children: const [
-          ChatHomeScreen(),
-          ReadScreen(),
-          VocabularyScreen(),
-          ProfileScreen(),
-        ],
-      )),
-      bottomNavigationBar: const BottomNavBar(),
-    );
+  @override
+  bool get showLoadingOverlay => false;
+
+  @override
+  Widget? buildBottomNav(BuildContext context) => const BottomNavBar();
+
+  @override
+  Widget buildContent(BuildContext context) {
+    return Obx(() => IndexedStack(
+      index: controller.selectedIndex.value,
+      children: const [
+        ChatHomeScreen(),
+        ReadScreen(),
+        VocabularyScreen(),
+        ProfileScreen(),
+      ],
+    ));
   }
 }

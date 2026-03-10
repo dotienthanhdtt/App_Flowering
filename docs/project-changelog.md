@@ -2,6 +2,41 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-03-10] Base Class Inheritance Enforcement ✅ COMPLETED
+
+#### Changed
+- **All 6 feature controllers** migrated from `GetxController` to `BaseController`:
+  - `MainShellController`, `SplashController`, `OnboardingController` (simple — no conflicts)
+  - `AuthController`, `ForgotPasswordController`, `AiChatController` (removed duplicate `isLoading`/`errorMessage` fields)
+
+- **10 screens** migrated from `StatelessWidget` to `BaseScreen<T>`:
+  - Auth: `LoginEmailScreen`, `SignupEmailScreen`, `ForgotPasswordScreen`, `NewPasswordScreen`, `OtpVerificationScreen`
+  - Chat: `AiChatScreen`
+  - Onboarding: `SplashScreen`, `NativeLanguageScreen`, `LearningLanguageScreen`, `ScenarioGiftScreen`
+  - Home: `MainShellScreen`
+
+- **5 screens documented as exempt** with explanatory comments:
+  - Tab children (nested Scaffold risk): `VocabularyScreen`, `ProfileScreen`, `ChatHomeScreen`, `ReadScreen`
+  - StatefulWidget (needs State lifecycle): `WelcomeProblemScreen`
+
+- **CLAUDE.md** — Added "Base Class Inheritance (Mandatory)" rules section and BaseController enforcement note
+- **docs/code-standards.md** — Updated controller and view standards to show BaseController/BaseScreen patterns
+- **docs/system-architecture.md** — Updated presentation layer to document base class requirements
+- **docs/codebase-summary.md** — Updated base class status from "pending" to "enforced"
+
+#### Technical Decisions
+- **Inline loading preferred:** All migrated screens set `showLoadingOverlay => false` because they handle loading UI inline (spinners in buttons)
+- **No behavior change:** Removing duplicate `isLoading`/`errorMessage` fields works because views already reference `controller.isLoading` which now resolves to BaseController's inherited field (same type: `RxBool`/`RxString`)
+- **Tab children exempt:** Using BaseScreen would create nested Scaffolds since MainShellScreen already wraps them in a Scaffold
+
+#### Quality Assurance
+- ✅ `flutter analyze` passes — 0 errors, 0 new warnings
+- ✅ Zero controllers extend `GetxController` directly in `features/*/controllers/`
+- ✅ All non-exempt screens extend `BaseScreen<T>`
+- ✅ Exempt screens have explanatory doc comments
+
+---
+
 ### [2026-03-10] Chat Grammar Correction Feature ✅ COMPLETED
 
 #### Added

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/routes/app-route-constants.dart';
+import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
@@ -14,18 +15,15 @@ import '../widgets/word-translation-sheet-loader.dart';
 
 /// Manages the AI onboarding chat flow using real /onboarding/* endpoints.
 /// Session lifecycle: start → chat turns → complete → navigate to scenario gift.
-class AiChatController extends GetxController {
+class AiChatController extends BaseController {
   final ApiClient _apiClient = Get.find();
   final OnboardingController _onboardingCtrl = Get.find();
   final StorageService _storageService = Get.find();
 
-
   final messages = <ChatMessage>[].obs;
-  final isLoading = false.obs;
   final isTyping = false.obs;
   final isChatComplete = false.obs;
   final progress = 0.0.obs;
-  final errorMessage = ''.obs;
 
   // Voice recording state
   final isRecording = false.obs;

@@ -101,6 +101,30 @@ View → Controller → Service → Network/Storage
   - `AppText` instead of `Text` (ensures consistent Inter font typography)
   - `AppButton` instead of `ElevatedButton`/`TextButton`
   - `AppTextField` instead of `TextField`
+- If widget not exit then create one and add to `lib/shared/widgets`
+
+### Base Class Inheritance (Mandatory)
+
+All feature controllers and screens MUST inherit from the base classes in `lib/core/base/`:
+
+**Controllers:**
+- All controllers in `features/*/controllers/` MUST extend `BaseController` (not `GetxController` directly)
+- `BaseController` provides: `isLoading`, `errorMessage`, `apiCall()`, `showSuccess()`, `clearError()`
+- Do NOT redeclare `isLoading` or `errorMessage` -- use inherited ones from `BaseController`
+- Always call `super.onInit()` / `super.onClose()` when overriding lifecycle
+
+**Screens (views):**
+- Screens with a controller: extend `BaseScreen<ControllerType>` -- gets automatic loading overlay, SafeArea, Scaffold
+  - Override `buildContent()` instead of `build()` for screen body
+  - Override `buildAppBar()`, `buildFab()`, `buildBottomNav()` as needed
+  - Override `backgroundColor`, `useSafeArea`, `showLoadingOverlay` getters to customize
+- Screens without a controller: extend `BaseStatelessScreen` -- same pattern minus loading overlay
+- StatefulWidget screens (rare): exempt from base class, document why in a comment
+
+**Exemptions:**
+- Shared widgets (`shared/widgets/`, `features/*/widgets/`) -- these are composable components, NOT screens
+- Tab child screens embedded in IndexedStack -- these should NOT use BaseScreen (would create nested Scaffolds); use plain StatelessWidget with just content, no Scaffold
+- StatefulWidget screens that need `State` lifecycle (e.g., animation controllers, PageController) -- exempt but add comment explaining why
 
 ### State Management Pattern
 
@@ -208,6 +232,8 @@ try {
 - Auto-injection via `AuthInterceptor`
 
 ### BaseController Pattern
+
+> **Rule:** Never extend `GetxController` directly in feature controllers. Always use `BaseController`.
 
 All controllers should extend `BaseController` for consistent error handling:
 

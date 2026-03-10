@@ -45,6 +45,7 @@ List<_WelcomeStepData> get _welcomeSteps => [
   ),
 ];
 
+/// StatefulWidget — exempt from BaseScreen (needs State lifecycle for PageController).
 class WelcomeProblemScreen extends StatefulWidget {
   const WelcomeProblemScreen({super.key});
 

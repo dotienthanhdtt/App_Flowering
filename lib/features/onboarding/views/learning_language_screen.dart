@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/base/base_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -7,80 +8,79 @@ import '../../../shared/widgets/app_text.dart';
 import '../controllers/onboarding_controller.dart';
 import '../widgets/language_card.dart';
 
-class LearningLanguageScreen extends StatelessWidget {
+class LearningLanguageScreen extends BaseScreen<OnboardingController> {
   const LearningLanguageScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<OnboardingController>();
+  bool get showLoadingOverlay => false;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.only(
-                top: AppSizes.inputHeight,
-                left: AppSizes.paddingXXL,
-                right: AppSizes.paddingXXL,
-                bottom: AppSizes.paddingXXL,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText(
-                    'language_select_title'.tr,
-                    style: AppTextStyles.h2.copyWith(
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: AppSizes.trackingSnug,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                  const SizedBox(height: AppSizes.spacingS),
-                  AppText(
-                    'language_select_subtitle'.tr,
-                    variant: AppTextVariant.bodyMedium,
-                    color: AppColors.textSecondary,
-                    height: AppSizes.lineHeightNormal,
-                    textAlign: TextAlign.left,
-                  ),
-                ],
-              ),
-            ),
+  @override
+  Color? get backgroundColor => AppColors.background;
 
-            // Language grid
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoadingLanguages.value) {
-                  return _buildSkeleton();
-                }
-                if (controller.learningLanguages.isEmpty) {
-                  return _buildError(controller);
-                }
-                return GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: AppSizes.spacingL,
-                  crossAxisSpacing: AppSizes.spacingL,
-                  childAspectRatio: 0.95,
-                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXXL),
-                  children: controller.learningLanguages.map((lang) {
-                    return LanguageGridCard(
-                      language: lang,
-                      onTap: () => controller.selectLearningLanguage(
-                        lang.code,
-                        id: lang.id,
-                      ),
-                    );
-                  }).toList(),
-                );
-              }),
-            ),
-          ],
+  @override
+  Widget buildContent(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header
+        Padding(
+          padding: const EdgeInsets.only(
+            top: AppSizes.inputHeight,
+            left: AppSizes.paddingXXL,
+            right: AppSizes.paddingXXL,
+            bottom: AppSizes.paddingXXL,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(
+                'language_select_title'.tr,
+                style: AppTextStyles.h2.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: AppSizes.trackingSnug,
+                ),
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: AppSizes.spacingS),
+              AppText(
+                'language_select_subtitle'.tr,
+                variant: AppTextVariant.bodyMedium,
+                color: AppColors.textSecondary,
+                height: AppSizes.lineHeightNormal,
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
         ),
-      ),
+
+        // Language grid
+        Expanded(
+          child: Obx(() {
+            if (controller.isLoadingLanguages.value) {
+              return _buildSkeleton();
+            }
+            if (controller.learningLanguages.isEmpty) {
+              return _buildError();
+            }
+            return GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: AppSizes.spacingL,
+              crossAxisSpacing: AppSizes.spacingL,
+              childAspectRatio: 0.95,
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXXL),
+              children: controller.learningLanguages.map((lang) {
+                return LanguageGridCard(
+                  language: lang,
+                  onTap: () => controller.selectLearningLanguage(
+                    lang.code,
+                    id: lang.id,
+                  ),
+                );
+              }).toList(),
+            );
+          }),
+        ),
+      ],
     );
   }
 
@@ -104,7 +104,7 @@ class LearningLanguageScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildError(OnboardingController controller) {
+  Widget _buildError() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
