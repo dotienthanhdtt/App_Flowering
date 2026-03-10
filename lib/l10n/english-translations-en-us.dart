@@ -211,9 +211,9 @@ const Map<String, String> enUS = {
   'welcome_tap_continue': 'Tap anywhere to continue',
 
   // Onboarding — Language Selection (Screen 05/06)
-  'language_select_title': "What do you want\nto learn?",
+  'language_select_title': "What do you want to learn?",
   'language_select_subtitle': "Choose a language to get started",
-  'native_language_title': "What's your native\nlanguage?",
+  'native_language_title': "What's your native language?",
   'native_language_subtitle': "We'll personalize your learning experience",
   'language_load_error': 'Failed to load languages',
   'language_coming_soon': 'Soon',
@@ -242,4 +242,9 @@ const Map<String, String> enUS = {
   // Auth — Social
   'continue_with_apple': 'Continue with Apple',
   'continue_with_google': 'Continue with Google',
+
+  // Grammar Correction
+  'corrected': 'Corrected',
+  'hide': 'Hide',
+  'show': 'Show',
 };

@@ -87,8 +87,13 @@ class AiChatController extends GetxController {
     messages.removeWhere((m) => m.type == ChatMessageType.quickReplies);
     errorMessage.value = '';
 
-    _addUserMessage(trimmed);
+    final lastAiMessage = _getLastAiMessageText();
+    final userMessageId = 'user_${DateTime.now().millisecondsSinceEpoch}';
+    _addUserMessage(trimmed, messageId: userMessageId);
     isTyping.value = true;
+
+    // Fire grammar check in parallel (non-blocking)
+    _checkGrammar(userMessageId, trimmed, lastAiMessage);
 
     try {
       final response = await _apiClient.post<OnboardingSession>(
@@ -208,6 +213,57 @@ class AiChatController extends GetxController {
     recordingDuration.value = 0;
   }
 
+  /// Toggle grammar correction visibility for a user message
+  void toggleCorrection(String messageId) {
+    final index = messages.indexWhere((m) => m.id == messageId);
+    if (index == -1) return;
+    messages[index].showCorrection = !messages[index].showCorrection;
+    messages.refresh();
+  }
+
+  /// Get the last AI message text for grammar correction context
+  String? _getLastAiMessageText() {
+    for (int i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].type == ChatMessageType.aiText) {
+        return messages[i].text;
+      }
+    }
+    return null;
+  }
+
+  /// Fire-and-forget grammar check in parallel with chat API
+  Future<void> _checkGrammar(
+    String messageId,
+    String userText,
+    String? previousAiMessage,
+  ) async {
+    if (previousAiMessage == null) return;
+    try {
+      final response = await _apiClient.post<Map<String, dynamic>>(
+        ApiEndpoints.chatCorrect,
+        data: {
+          'previousAiMessage': previousAiMessage,
+          'userMessage': userText,
+          'targetLanguage': _onboardingCtrl.selectedLearningLanguage.value,
+        },
+        fromJson: (data) => data as Map<String, dynamic>,
+      );
+      if (response.isSuccess && response.data != null) {
+        final corrected = response.data!['correctedText'] as String?;
+        if (corrected != null) {
+          final idx = messages.indexWhere((m) => m.id == messageId);
+          if (idx != -1) {
+            messages[idx].correctedText = corrected;
+            messages[idx].showCorrection = true;
+            messages.refresh();
+          }
+        }
+      }
+    } catch (_) {
+      // Silent fail — grammar check is non-critical
+    }
+  }
+
   Future<void> _completeOnboarding() async {
     isChatComplete.value = true;
     try {
@@ -237,9 +293,9 @@ class AiChatController extends GetxController {
     _scrollToBottom();
   }
 
-  void _addUserMessage(String text) {
+  void _addUserMessage(String text, {String? messageId}) {
     messages.add(ChatMessage(
-      id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+      id: messageId ?? 'user_${DateTime.now().millisecondsSinceEpoch}',
       type: ChatMessageType.userText,
       text: text,
       timestamp: DateTime.now(),

@@ -20,13 +20,14 @@ Phase 5: Routes/i18n ████████████ 100% (1.5h) ✅ COMPLE
 Phase 6: Onboarding & Auth ████████████ 100% (6h) ✅ COMPLETED (screens 01-14)
 Phase 6.5: Bottom Navigation ████████████ 100% (1h) ✅ COMPLETED
 Phase 6.7: Text→AppText Refactor ████████████ 100% (3h) ✅ COMPLETED
+Phase 6.8: Chat Grammar Correction ████████████ 100% (1h) ✅ COMPLETED
 Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
 Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending
 Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
 Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
 ```
 
-**Overall Progress:** 100% of foundation + onboarding + refactoring (21.5h / 25h completed — all user acquisition, app shell, and typography system consolidated)
+**Overall Progress:** 100% of foundation + onboarding + refactoring + grammar correction (22.5h / 25h completed — all user acquisition, app shell, typography system, and chat enhancements consolidated)
 
 ## Phase Details
 
@@ -534,6 +535,65 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 
 ---
 
+### Phase 6.8: Chat Grammar Correction ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 1 hour
+**Completion Date:** 2026-03-10
+**Dependencies:** Phase 6 ✅
+**Priority:** P2 - High (Chat enhancement)
+
+**Deliverables:**
+- ✅ `grammar_correction_section.dart` - New widget for displaying corrections (NEW)
+- ✅ `chat_message_model.dart` - Enhanced with `correctedText`, `showCorrection` fields
+- ✅ `api_endpoints.dart` - Added `chatCorrect` endpoint constant
+- ✅ `ai_chat_controller.dart` - Parallel grammar check logic with error handling
+- ✅ `user_message_bubble.dart` - Integrated correction section with toggle button
+- ✅ `ai_chat_screen.dart` - Wired up message object and correction callback
+- ✅ `english-translations-en-us.dart` - Added 4 translation keys
+- ✅ `vietnamese-translations-vi-vn.dart` - Added 4 translation keys
+
+**Key Achievements:**
+- Implemented parallel API call: grammar check runs alongside main chat request
+- Non-blocking error handling: correction failure doesn't interrupt chat flow
+- User-controlled UI: toggle button in bubble shows/hides suggestions
+- Integrated design: correction displays inside user bubble matching design system
+- Full localization: EN and VI translations for all new UI text
+
+**API Integration:**
+- `POST /ai/correct` - Grammar correction endpoint
+- Called in parallel with chat message send
+- Automatic error handling with graceful fallback
+
+**Files Created:**
+- `/lib/features/chat/widgets/grammar_correction_section.dart` (NEW)
+
+**Files Modified:**
+- `/lib/features/chat/models/chat_message_model.dart`
+- `/lib/core/constants/api_endpoints.dart`
+- `/lib/features/chat/controllers/ai_chat_controller.dart`
+- `/lib/features/chat/widgets/user_message_bubble.dart`
+- `/lib/features/chat/views/ai_chat_screen.dart`
+- `/lib/l10n/english-translations-en-us.dart`
+- `/lib/l10n/vietnamese-translations-vi-vn.dart`
+
+**Technical Decisions:**
+- **Parallel Calls:** Grammar check doesn't block chat send (improves UX)
+- **Error Resilience:** API failure logged but doesn't propagate to user
+- **UI Pattern:** Toggle in bubble keeps interface clean and user-controlled
+- **Data Model:** Immutable message fields + reactive `showCorrection` for state
+
+**Success Criteria Met:**
+- ✅ Correction API called in parallel on every user message
+- ✅ Correction UI shows in bubble only when errors found
+- ✅ No visual change when no corrections needed
+- ✅ Hide/Show toggle works smoothly
+- ✅ API failures don't break chat functionality
+- ✅ Zero compile errors
+- ✅ App runs normally with feature active
+
+---
+
 ### Phase 7: Home Dashboard 🔲 PENDING
 
 **Status:** 🔲 Pending
@@ -797,6 +857,40 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 ---
 
 ## Change Log
+
+### 2026-03-10 (Phase 6.8 Complete — Chat Grammar Correction Feature)
+
+**Phase 6.8 Completion Summary:**
+- ✅ **Grammar Correction Widget:** New `grammar_correction_section.dart` displays corrections in user bubble
+- ✅ **Model Enhancement:** Added `correctedText` and `showCorrection` fields to ChatMessage
+- ✅ **API Integration:** `POST /ai/correct` endpoint integrated with parallel call logic
+- ✅ **Controller Logic:** Async grammar check with automatic error handling
+- ✅ **UI Toggle:** Show/hide button for corrections in user message bubble
+- ✅ **Full Localization:** EN and VI translation keys added (4 keys each)
+
+**Feature Details:**
+- Grammar check runs in parallel with main chat send (non-blocking)
+- Corrections display only if errors found (no visual noise)
+- User can toggle visibility with button in message bubble
+- API failure gracefully handled (doesn't interrupt chat)
+- All UI elements integrated into existing design system
+
+**Files Created:**
+- `/lib/features/chat/widgets/grammar_correction_section.dart`
+
+**Files Modified:**
+- Chat model, endpoints, controller, widgets, screen
+- Both EN and VI translation files
+
+**Quality Metrics:**
+- ✅ Zero compile errors
+- ✅ App runs normally
+- ✅ Feature fully tested and functional
+- ✅ All acceptance criteria met
+
+**Next Step:** Implement Phase 7 (Home Dashboard)
+
+---
 
 ### 2026-03-09 (Phase 6.7 Complete — Text→AppText Refactoring)
 

@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
+import '../models/chat_message_model.dart';
+import 'grammar_correction_section.dart';
 
 /// Orange user text bubble, right-aligned, rounded [16,16,0,16].
+/// Shows grammar correction section when correctedText is available.
 class UserMessageBubble extends StatelessWidget {
-  final String text;
+  final ChatMessage message;
+  final VoidCallback? onToggleCorrection;
 
-  const UserMessageBubble({super.key, required this.text});
+  const UserMessageBubble({
+    super.key,
+    required this.message,
+    this.onToggleCorrection,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +33,23 @@ class UserMessageBubble extends StatelessWidget {
             bottomLeft: Radius.circular(AppSizes.radiusL),
           ),
         ),
-        child: AppText(
-          text,
-          variant: AppTextVariant.label,
-          color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppText(
+              message.text ?? '',
+              variant: AppTextVariant.label,
+              color: Colors.white,
+            ),
+            if (message.correctedText != null) ...[
+              const SizedBox(height: AppSizes.spacingS),
+              GrammarCorrectionSection(
+                correctedText: message.correctedText!,
+                isExpanded: message.showCorrection,
+                onToggle: () => onToggleCorrection?.call(),
+              ),
+            ],
+          ],
         ),
       ),
     );

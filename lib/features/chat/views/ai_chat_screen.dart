@@ -142,7 +142,10 @@ class _ChatList extends StatelessWidget {
         );
 
       case ChatMessageType.userText:
-        return UserMessageBubble(text: message.text ?? '');
+        return UserMessageBubble(
+          message: message,
+          onToggleCorrection: () => controller.toggleCorrection(message.id),
+        );
 
       case ChatMessageType.quickReplies:
         return QuickReplyRow(

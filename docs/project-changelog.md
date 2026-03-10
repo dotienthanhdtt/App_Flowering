@@ -2,6 +2,82 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-03-10] Chat Grammar Correction Feature ✅ COMPLETED
+
+#### Added
+- **Grammar Correction API Integration** (`lib/core/constants/api_endpoints.dart`)
+  - `POST /ai/correct` - New endpoint for grammar checking
+
+- **ChatMessage Model Enhancement** (`lib/features/chat/models/chat_message_model.dart`)
+  - `correctedText` field - Stores corrected version of message
+  - `showCorrection` field - Reactive toggle for showing/hiding correction
+
+- **Grammar Correction UI Component** (`lib/features/chat/widgets/grammar_correction_section.dart`)
+  - New widget displaying grammar corrections inside user message bubble
+  - Shows suggested corrections with visual highlighting
+  - Matches design system aesthetic
+
+- **User Message Bubble Enhancement** (`lib/features/chat/widgets/user_message_bubble.dart`)
+  - Integrated grammar correction section
+  - Toggle button to show/hide corrections
+  - Smooth animation transitions
+
+- **Controller Logic** (`lib/features/chat/controllers/ai_chat_controller.dart`)
+  - Parallel grammar check API call on every user message
+  - Automatic error handling (doesn't break chat flow)
+  - Loading state management for correction UI
+
+- **Screen Integration** (`lib/features/chat/views/ai_chat_screen.dart`)
+  - Message object passed to bubbles with correction data
+  - Callback handler for correction toggle events
+
+- **Localization** (EN & VI)
+  - `grammar_correction_label` - "Grammar Correction" label
+  - `grammar_corrections` - Plural form
+  - `show_correction` - "Show Correction" button text
+  - `hide_correction` - "Hide Correction" button text
+  - Added to both `english-translations-en-us.dart` and `vietnamese-translations-vi-vn.dart`
+
+#### Key Features
+- ✅ Parallel API call: Grammar check runs alongside main chat request
+- ✅ Non-blocking: Correction failures don't interrupt chat functionality
+- ✅ User-controlled: Toggle button lets users show/hide suggestions
+- ✅ Integrated UI: Correction displays inside user bubble matching design
+- ✅ Localized: Full EN/VI translation support
+
+#### Files Modified
+- `lib/features/chat/models/chat_message_model.dart` - Added correction fields
+- `lib/core/constants/api_endpoints.dart` - Added chatCorrect endpoint
+- `lib/features/chat/controllers/ai_chat_controller.dart` - Added parallel correction logic
+- `lib/features/chat/widgets/user_message_bubble.dart` - Integrated correction section
+- `lib/features/chat/widgets/grammar_correction_section.dart` (NEW)
+- `lib/features/chat/views/ai_chat_screen.dart` - Wired up message + callback
+- `lib/l10n/english-translations-en-us.dart` - Added EN keys
+- `lib/l10n/vietnamese-translations-vi-vn.dart` - Added VI keys
+
+#### Technical Decisions
+- **Parallel Calls:** Grammar check doesn't wait for main chat response (improves UX)
+- **Error Resilience:** Correction failure logged but doesn't propagate to user
+- **UI Pattern:** Toggle in bubble keeps UI clean and user-controlled
+- **Data Model:** Immutable fields with reactive `showCorrection` for state management
+
+#### Quality Assurance
+- ✅ No compile errors
+- ✅ App runs normally with grammar corrections active
+- ✅ Corrections display correctly when returned from API
+- ✅ Toggle functionality works smoothly
+- ✅ Graceful handling of API failures
+
+#### Success Metrics Met
+- ✅ Correction API called in parallel with chat API on every user message
+- ✅ Correction UI appears inside user bubble when errors found
+- ✅ No visual change when no errors detected
+- ✅ Hide/Show toggle works correctly
+- ✅ Correction failures don't break chat flow
+- ✅ Zero compile errors, app runs normally
+
+---
+
 ### [2026-02-28] Phase 6: Onboarding Feature (First Half) ✅ COMPLETED
 
 #### Added

@@ -18,6 +18,7 @@ class LearningLanguageScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
             Padding(
@@ -28,6 +29,7 @@ class LearningLanguageScreen extends StatelessWidget {
                 bottom: AppSizes.paddingXXL,
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppText(
                     'language_select_title'.tr,
@@ -35,7 +37,7 @@ class LearningLanguageScreen extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       letterSpacing: AppSizes.trackingSnug,
                     ),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                   ),
                   const SizedBox(height: AppSizes.spacingS),
                   AppText(
@@ -43,7 +45,7 @@ class LearningLanguageScreen extends StatelessWidget {
                     variant: AppTextVariant.bodyMedium,
                     color: AppColors.textSecondary,
                     height: AppSizes.lineHeightNormal,
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                   ),
                 ],
               ),
@@ -67,8 +69,6 @@ class LearningLanguageScreen extends StatelessWidget {
                   children: controller.learningLanguages.map((lang) {
                     return LanguageGridCard(
                       language: lang,
-                      isSelected:
-                          controller.selectedLearningLanguage.value == lang.code,
                       onTap: () => controller.selectLearningLanguage(
                         lang.code,
                         id: lang.id,
