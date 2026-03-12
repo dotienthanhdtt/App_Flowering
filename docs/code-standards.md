@@ -558,31 +558,35 @@ class StorageService {
 }
 ```
 
-### Secure Storage for Tokens
+### Token Storage with AuthStorage
 
 ```dart
 // lib/core/services/auth_storage.dart
-class AuthStorage {
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+class AuthStorage extends GetxService {
+  late Box<String> _box;
 
-  static const String _accessTokenKey = 'access_token';
-  static const String _refreshTokenKey = 'refresh_token';
+  Future<AuthStorage> init() async {
+    _box = await Hive.openBox<String>('auth');
+    return this;
+  }
 
   Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
   }) async {
-    await _storage.write(key: _accessTokenKey, value: accessToken);
-    await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    await _box.put('access_token', accessToken);
+    await _box.put('refresh_token', refreshToken);
   }
 
   Future<String?> getAccessToken() async {
-    return await _storage.read(key: _accessTokenKey);
+    return _box.get('access_token');
   }
 
+  bool get isLoggedIn => getAccessToken() != null;
+
   Future<void> clearTokens() async {
-    await _storage.delete(key: _accessTokenKey);
-    await _storage.delete(key: _refreshTokenKey);
+    await _box.delete('access_token');
+    await _box.delete('refresh_token');
   }
 }
 ```
@@ -770,7 +774,7 @@ Before committing code, verify:
 feat(auth): add login functionality
 
 Implement login screen with email/password validation.
-Add JWT token storage using flutter_secure_storage.
+Add JWT token storage using AuthStorage (Hive).
 
 Closes #123
 
@@ -867,11 +871,8 @@ String? validateEmail(String? value) {
 ### Sensitive Data Handling
 
 ```dart
-// ✅ Good - Use secure storage
+// ✅ Good - Use AuthStorage for tokens
 await authStorage.saveTokens(accessToken: token, refreshToken: refresh);
-
-// ❌ Bad - Never store tokens in Hive
-await Hive.box('tokens').put('access_token', token);
 
 // ✅ Good - No sensitive data in logs
 if (kDebugMode) {
@@ -880,6 +881,10 @@ if (kDebugMode) {
 
 // ❌ Bad - Don't log sensitive data
 print('User credentials: $email, $password');
+
+// ✅ Good - Separate user cache from token storage
+// Tokens: AuthStorage (Hive 'auth' box)
+// Cache: StorageService (Hive 'lessons_cache', 'chat_cache' boxes)
 ```
 
 ## GetX Service Pattern
