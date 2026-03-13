@@ -18,7 +18,7 @@
 ### Networking & Storage
 - **HTTP Client:** Dio 5.4.0
 - **Local Cache:** Hive 2.2.3, Hive Flutter 1.1.0
-- **Secure Storage:** flutter_secure_storage (planned for Phase 3)
+- **Token Storage:** AuthStorage (Hive-based) ✅
 
 ### Audio & Media
 - **Audio Recording:** record 5.0.4
@@ -54,7 +54,7 @@ flowering/
 │   │   ├── flowering-app-widget-with-getx.dart              # Main app widget ✅
 │   │   ├── global-dependency-injection-bindings.dart        # Global DI (5 services) ✅
 │   │   └── routes/
-│   │       ├── app-route-constants.dart                     # Route constants (21 routes) ✅
+│   │       ├── app-route-constants.dart                     # Route constants (16 routes) ✅
 │   │       └── app-page-definitions-with-transitions.dart   # Route definitions ✅
 │   │
 │   ├── core/                              # Core infrastructure
@@ -208,7 +208,7 @@ Complete dependency setup with all required packages.
 - Headings: h1 (32px), h2 (24px), h3 (20px)
 - Body: bodyLarge (16px), bodyMedium (14px), bodySmall (12px)
 - Components: button (15px), caption (12px), label (13px w600)
-- Font: Outfit (changed from Inter)
+- Font: Inter via google_fonts
 ```
 
 **api_endpoints.dart** - API Routes:
@@ -272,7 +272,7 @@ Complete dependency setup with all required packages.
 - System UI configuration (portrait, transparent status bar)
 - Initial route changed from `/login` to `/splash`
 
-**Routes (21 total):**
+**Routes (16 total):**
 
 | Constant | Path | Screen |
 |---|---|---|
@@ -295,8 +295,6 @@ Complete dependency setup with all required packages.
 | `read` | `/home?tab=1` | ReadScreen (via nav bar) |
 | `vocabulary` | `/home?tab=2` | VocabularyScreen (via nav bar) |
 | `profile` | `/home?tab=3` | ProfileScreen (via nav bar) |
-| `lessons` | `/lessons` | Lesson browser (future) |
-| `settings` | `/settings` | App settings (future) |
 
 **Transitions:** All use `rightToLeft` at 300ms
 
@@ -623,11 +621,10 @@ flutter build apk --release --dart-define=ENV=prod
 
 ## Known Technical Debt
 
-1. **Typography Inconsistency:** Plan mentions Open Sans, code uses Inter
-2. **Auth Token Storage:** Currently using Hive (acceptable for mobile), can upgrade to flutter_secure_storage
-3. **Permission Handler:** Basic permission check exists, full UX flow deferred to feature implementation
-4. **Localization:** Translation files empty (Phase 5)
-5. **Unit Tests:** 70+ test cases identified, not yet implemented
+1. **Permission Handler:** Basic permission check exists, full UX flow deferred to feature implementation
+2. **Unit Tests:** 70+ test cases identified, not yet implemented (7 infrastructure tests exist)
+3. **Feature Coverage:** Chat, Read, Vocabulary, Profile screens are placeholders
+4. **Cache Strategy:** Simple eviction logic, could be enhanced with more sophisticated LRU/FIFO algorithms
 
 ## Next Implementation Steps
 

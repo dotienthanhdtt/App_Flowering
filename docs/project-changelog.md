@@ -789,14 +789,31 @@
 
 ---
 
-### Phase 6: Authentication Feature (Next)
-- Login/register screens with validation
-- Auth controller and bindings
-- Token management integration
-- User session handling
+### Upcoming Phases (7-10)
 
-### Phase 7-10: Feature Implementations (Planned)
-- Home dashboard
+**Phase 7: Home Dashboard**
+- Learning statistics and progress display
+- Quick action cards
+- Recent activity feed
+- Integration with backend progress API
+
+**Phase 8: Expanded Chat Feature**
+- Full chat interface with message history
+- Voice input/output integration
+- Message persistence
+- Offline message queue
+
+**Phase 9: Lessons & Content**
+- Lessons browser with categories
+- Offline content caching
+- Lesson completion tracking
+- Vocabulary management
+
+**Phase 10: Profile & Settings**
+- User profile page
+- App settings and preferences
+- Account management
+- Language/theme preferences
 - AI chat with voice support
 - Lessons browser with offline caching
 - Profile and settings
