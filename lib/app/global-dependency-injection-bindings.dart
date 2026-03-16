@@ -4,6 +4,9 @@ import '../core/services/auth_storage.dart';
 import '../core/services/connectivity_service.dart';
 import '../core/services/audio_service.dart';
 import '../core/network/api_client.dart';
+import '../features/subscription/controllers/subscription-controller.dart';
+import '../features/subscription/services/revenuecat-service.dart';
+import '../features/subscription/services/subscription-service.dart';
 
 /// Global dependency injection for core services
 ///
@@ -40,6 +43,24 @@ class AppBindings extends Bindings {
       () => ApiClient(),
       fenix: true,
     );
+
+    // Subscription services
+    Get.lazyPut<RevenueCatService>(
+      () => RevenueCatService(),
+      fenix: true,
+    );
+
+    Get.lazyPut<SubscriptionService>(
+      () => SubscriptionService(),
+      fenix: true,
+    );
+
+    // SubscriptionController registered globally — used by SubscriptionStatusWidget
+    // across multiple screens (settings, profile, etc.)
+    Get.lazyPut<SubscriptionController>(
+      () => SubscriptionController(),
+      fenix: true,
+    );
   }
 }
 
@@ -67,4 +88,12 @@ Future<void> initializeServices() async {
   // API client last (depends on auth storage)
   final apiClient = Get.put(ApiClient());
   await apiClient.init(authStorage);
+
+  // RevenueCat SDK — must be after API client
+  final revenueCatService = Get.put(RevenueCatService());
+  await revenueCatService.init();
+
+  // Subscription service — depends on RevenueCatService, ApiClient, AuthStorage, StorageService
+  final subscriptionService = Get.put(SubscriptionService());
+  await subscriptionService.init();
 }

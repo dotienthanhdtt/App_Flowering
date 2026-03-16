@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../features/subscription/bindings/subscription-binding.dart';
+import '../../features/subscription/views/paywall-screen.dart';
 import 'app-route-constants.dart';
 
 // Placeholder screen for initial setup
@@ -39,7 +42,7 @@ abstract class AppPages {
   static const Curve defaultCurve = Curves.easeInOut;
 
   /// Initial route (will be determined by auth state later)
-  static String get initialRoute => AppRoutes.login;
+  static String get initialRoute => AppRoutes.splash;
 
   /// All app pages with routes, screens, and transitions
   static final List<GetPage> pages = [
@@ -121,6 +124,16 @@ abstract class AppPages {
       page: () => const _PlaceholderScreen('Settings'),
       // binding: SettingsBinding(),
       transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Paywall screen
+    GetPage(
+      name: AppRoutes.paywall,
+      page: () => const PaywallScreen(),
+      binding: SubscriptionBinding(),
+      transition: Transition.downToUp,
       transitionDuration: defaultDuration,
       curve: defaultCurve,
     ),

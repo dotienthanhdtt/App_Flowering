@@ -8,4 +8,10 @@ class EnvConfig {
   static String get env => dotenv.env['ENV'] ?? 'development';
   static bool get isDev => env == 'development';
   static bool get isProd => env == 'production';
+
+  // RevenueCat API Keys
+  static String get revenueCatAppleApiKey =>
+      dotenv.env['REVENUECAT_APPLE_API_KEY'] ?? '';
+  static String get revenueCatGoogleApiKey =>
+      dotenv.env['REVENUECAT_GOOGLE_API_KEY'] ?? '';
 }
