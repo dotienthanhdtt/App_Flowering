@@ -37,6 +37,8 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+/.claude/
+/.opencode/
 
 # Generated files (build_runner)
 *.g.dart
