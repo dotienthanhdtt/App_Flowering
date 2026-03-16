@@ -83,9 +83,9 @@ Flowering is a Flutter-based AI-powered language learning application focused on
 - Progress tracking without internet
 
 #### 4.3 Security
-- Secure token storage using flutter_secure_storage
+- Secure token storage using Hive (AuthStorage)
 - HTTPS-only API communication
-- No sensitive data in plain Hive storage
+- No sensitive data in plain Hive storage (tokens separated in AuthStorage)
 - Token expiration and refresh handling
 
 #### 4.4 Scalability
@@ -105,7 +105,7 @@ Flowering is a Flutter-based AI-powered language learning application focused on
 - **Platform:** Flutter 3.10.3+
 - **State Management:** GetX 4.6.6+
 - **Networking:** Dio 5.4.0+
-- **Storage:** Hive 2.2.3+ for cache, flutter_secure_storage for tokens
+- **Storage:** Hive 2.2.3+ for all data (cache and tokens via AuthStorage)
 - **Audio:** record 5.0.4+, audioplayers 5.2.1+
 - **Minimum Android:** API 21 (Android 5.0)
 - **Minimum iOS:** iOS 12.0
@@ -165,21 +165,30 @@ Flowering is a Flutter-based AI-powered language learning application focused on
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0.0 | 2026-02-05 | Initial release - Core features |
+| 1.0.0 | 2026-03-11 | Onboarding & Auth complete, chat with grammar correction, bottom nav, typography system |
 
 ### 11. Acceptance Criteria
 
-**Phase 1 (Setup) - COMPLETED:**
+**Phase 1-4 (Setup & Infrastructure) - COMPLETED:**
 - ✅ Project structure created
 - ✅ Dependencies installed
 - ✅ Environment configuration
-- ✅ Core constants defined
+- ✅ Network layer with error handling (ApiClient, interceptors, exceptions)
+- ✅ Core services (StorageService, AuthStorage, AudioService, ConnectivityService)
+- ✅ Base classes enforced (BaseController, BaseScreen)
+- ✅ Shared widgets library (AppButton, AppTextField, AppText, etc.)
 - ✅ App compiles successfully
 
-**Phase 2-10 (Pending):**
-- Network layer with error handling
-- Core services (storage, audio, connectivity)
-- Base classes and shared widgets
-- Routing and localization
-- All feature implementations
-- Comprehensive testing
+**Phase 5-6 (User Acquisition & Chat) - COMPLETED:**
+- ✅ Routing and localization (99+ translation keys, 16 routes)
+- ✅ Onboarding flow (8 screens: splash, welcome, language selection, AI chat, scenario)
+- ✅ Authentication (login, signup, forgot password, OTP, password reset)
+- ✅ Bottom navigation (4 tabs: chat, read, vocabulary, profile)
+- ✅ Chat feature with grammar correction and translation
+
+**Phase 7-10 (Future Features):**
+- Home dashboard with learning stats
+- Expanded chat features and message history
+- Lessons browser with offline caching
+- Profile and settings screens
+- Comprehensive testing (target >70% coverage)

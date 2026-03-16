@@ -11,9 +11,13 @@ abstract class AppRoutes {
   // Chat routes
   static const String chat = '/chat';
 
-  // Lessons routes
+  // Lessons / Read routes
   static const String lessons = '/lessons';
   static const String lessonDetail = '/lessons/detail';
+  static const String read = '/read';
+
+  // Vocabulary routes
+  static const String vocabulary = '/vocabulary';
 
   // Profile routes
   static const String profile = '/profile';
@@ -23,4 +27,20 @@ abstract class AppRoutes {
 
   // Subscription routes
   static const String paywall = '/paywall';
+
+  // Onboarding routes
+  static const String onboardingWelcome = '/onboarding/welcome';
+  static const String onboardingWelcome2 = '/onboarding/welcome-2';
+  static const String onboardingWelcome3 = '/onboarding/welcome-3';
+  static const String onboardingNativeLanguage = '/onboarding/native-language';
+  static const String onboardingLearningLanguage = '/onboarding/learning-language';
+  static const String onboardingScenarioGift = '/onboarding/scenario-gift';
+  // Note: Login Gate is a bottom sheet shown over ScenarioGift — no GetPage needed.
+  static const String onboardingLoginGate = '/onboarding/login-gate';
+
+  // Signup / Auth routes
+  static const String signup = '/signup';
+  static const String forgotPassword = '/forgot-password';
+  static const String otpVerification = '/otp-verification';
+  static const String newPassword = '/new-password';
 }

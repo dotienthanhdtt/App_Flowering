@@ -2,6 +2,186 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-03-10] Base Class Inheritance Enforcement ✅ COMPLETED
+
+#### Changed
+- **All 6 feature controllers** migrated from `GetxController` to `BaseController`:
+  - `MainShellController`, `SplashController`, `OnboardingController` (simple — no conflicts)
+  - `AuthController`, `ForgotPasswordController`, `AiChatController` (removed duplicate `isLoading`/`errorMessage` fields)
+
+- **10 screens** migrated from `StatelessWidget` to `BaseScreen<T>`:
+  - Auth: `LoginEmailScreen`, `SignupEmailScreen`, `ForgotPasswordScreen`, `NewPasswordScreen`, `OtpVerificationScreen`
+  - Chat: `AiChatScreen`
+  - Onboarding: `SplashScreen`, `NativeLanguageScreen`, `LearningLanguageScreen`, `ScenarioGiftScreen`
+  - Home: `MainShellScreen`
+
+- **5 screens documented as exempt** with explanatory comments:
+  - Tab children (nested Scaffold risk): `VocabularyScreen`, `ProfileScreen`, `ChatHomeScreen`, `ReadScreen`
+  - StatefulWidget (needs State lifecycle): `WelcomeProblemScreen`
+
+- **CLAUDE.md** — Added "Base Class Inheritance (Mandatory)" rules section and BaseController enforcement note
+- **docs/code-standards.md** — Updated controller and view standards to show BaseController/BaseScreen patterns
+- **docs/system-architecture.md** — Updated presentation layer to document base class requirements
+- **docs/codebase-summary.md** — Updated base class status from "pending" to "enforced"
+
+#### Technical Decisions
+- **Inline loading preferred:** All migrated screens set `showLoadingOverlay => false` because they handle loading UI inline (spinners in buttons)
+- **No behavior change:** Removing duplicate `isLoading`/`errorMessage` fields works because views already reference `controller.isLoading` which now resolves to BaseController's inherited field (same type: `RxBool`/`RxString`)
+- **Tab children exempt:** Using BaseScreen would create nested Scaffolds since MainShellScreen already wraps them in a Scaffold
+
+#### Quality Assurance
+- ✅ `flutter analyze` passes — 0 errors, 0 new warnings
+- ✅ Zero controllers extend `GetxController` directly in `features/*/controllers/`
+- ✅ All non-exempt screens extend `BaseScreen<T>`
+- ✅ Exempt screens have explanatory doc comments
+
+---
+
+### [2026-03-10] Chat Grammar Correction Feature ✅ COMPLETED
+
+#### Added
+- **Grammar Correction API Integration** (`lib/core/constants/api_endpoints.dart`)
+  - `POST /ai/correct` - New endpoint for grammar checking
+
+- **ChatMessage Model Enhancement** (`lib/features/chat/models/chat_message_model.dart`)
+  - `correctedText` field - Stores corrected version of message
+  - `showCorrection` field - Reactive toggle for showing/hiding correction
+
+- **Grammar Correction UI Component** (`lib/features/chat/widgets/grammar_correction_section.dart`)
+  - New widget displaying grammar corrections inside user message bubble
+  - Shows suggested corrections with visual highlighting
+  - Matches design system aesthetic
+
+- **User Message Bubble Enhancement** (`lib/features/chat/widgets/user_message_bubble.dart`)
+  - Integrated grammar correction section
+  - Toggle button to show/hide corrections
+  - Smooth animation transitions
+
+- **Controller Logic** (`lib/features/chat/controllers/ai_chat_controller.dart`)
+  - Parallel grammar check API call on every user message
+  - Automatic error handling (doesn't break chat flow)
+  - Loading state management for correction UI
+
+- **Screen Integration** (`lib/features/chat/views/ai_chat_screen.dart`)
+  - Message object passed to bubbles with correction data
+  - Callback handler for correction toggle events
+
+- **Localization** (EN & VI)
+  - `grammar_correction_label` - "Grammar Correction" label
+  - `grammar_corrections` - Plural form
+  - `show_correction` - "Show Correction" button text
+  - `hide_correction` - "Hide Correction" button text
+  - Added to both `english-translations-en-us.dart` and `vietnamese-translations-vi-vn.dart`
+
+#### Key Features
+- ✅ Parallel API call: Grammar check runs alongside main chat request
+- ✅ Non-blocking: Correction failures don't interrupt chat functionality
+- ✅ User-controlled: Toggle button lets users show/hide suggestions
+- ✅ Integrated UI: Correction displays inside user bubble matching design
+- ✅ Localized: Full EN/VI translation support
+
+#### Files Modified
+- `lib/features/chat/models/chat_message_model.dart` - Added correction fields
+- `lib/core/constants/api_endpoints.dart` - Added chatCorrect endpoint
+- `lib/features/chat/controllers/ai_chat_controller.dart` - Added parallel correction logic
+- `lib/features/chat/widgets/user_message_bubble.dart` - Integrated correction section
+- `lib/features/chat/widgets/grammar_correction_section.dart` (NEW)
+- `lib/features/chat/views/ai_chat_screen.dart` - Wired up message + callback
+- `lib/l10n/english-translations-en-us.dart` - Added EN keys
+- `lib/l10n/vietnamese-translations-vi-vn.dart` - Added VI keys
+
+#### Technical Decisions
+- **Parallel Calls:** Grammar check doesn't wait for main chat response (improves UX)
+- **Error Resilience:** Correction failure logged but doesn't propagate to user
+- **UI Pattern:** Toggle in bubble keeps UI clean and user-controlled
+- **Data Model:** Immutable fields with reactive `showCorrection` for state management
+
+#### Quality Assurance
+- ✅ No compile errors
+- ✅ App runs normally with grammar corrections active
+- ✅ Corrections display correctly when returned from API
+- ✅ Toggle functionality works smoothly
+- ✅ Graceful handling of API failures
+
+#### Success Metrics Met
+- ✅ Correction API called in parallel with chat API on every user message
+- ✅ Correction UI appears inside user bubble when errors found
+- ✅ No visual change when no errors detected
+- ✅ Hide/Show toggle works correctly
+- ✅ Correction failures don't break chat flow
+- ✅ Zero compile errors, app runs normally
+
+---
+
+### [2026-02-28] Phase 6: Onboarding Feature (First Half) ✅ COMPLETED
+
+#### Added
+- **Onboarding Feature** (`lib/features/onboarding/`)
+  - `bindings/onboarding_binding.dart` - Dependency injection setup
+  - `controllers/onboarding_controller.dart` - State and screen navigation management
+  - `models/onboarding_model.dart` - Data structure for onboarding state
+  - `views/splash_screen.dart` - Loading screen shown on app startup
+  - `views/onboarding_welcome_1/2/3_screen.dart` - 3 welcome screens (3 features per screen)
+  - `views/onboarding_language_1/2_screen.dart` - Native and target language selection screens
+  - Feature-specific widgets and animations
+
+- **Routes Configuration**
+  - `/splash` - Splash screen (now initial route)
+  - `/onboarding-welcome-1`, `/onboarding-welcome-2`, `/onboarding-welcome-3`
+  - `/onboarding-language-1`, `/onboarding-language-2`
+  - 5 new routes with rightToLeft transitions (300ms)
+
+- **API Integration**
+  - `GET /users/me` - Fetch current user profile data
+  - `PUT /users/me` - Update user profile (language preferences, display name)
+
+#### Changed
+- **UserModel** (`lib/shared/models/user_model.dart`)
+  - Renamed `name` → `displayName`
+  - Renamed `nativeLanguage` → `nativeLanguageId`, `nativeLanguageCode`, `nativeLanguageName`
+  - Renamed `targetLanguage` → `targetLanguageId`, `targetLanguageCode`, `targetLanguageName`
+  - Updated JSON serialization to use camelCase field names
+  - Added copyWith method support for all new fields
+
+- **API Endpoints** (`lib/core/constants/api_endpoints.dart`)
+  - Added `userMe` constant for GET /users/me
+  - Added `updateUserMe` constant for PUT /users/me
+
+- **Configuration** (`.env.dev`)
+  - Updated API_BASE_URL from previous value to `https://dev.broduck.me`
+
+- **Routing** (`lib/app/routes/app-route-constants.dart`)
+  - Changed initial route from `/login` to `/splash`
+  - Added 5 onboarding route constants
+
+- **Global Bindings** (`lib/app/global-dependency-injection-bindings.dart`)
+  - Added `SplashBinding` for splash screen
+  - Added `OnboardingBinding` for onboarding feature
+
+#### Technical Decisions
+- **Onboarding Flow:** Splash → Welcome (3 screens) → Language Selection (2 screens) → Login
+- **Language Selection:** Two-step process (native language first, then target language)
+- **API Integration:** Onboarding controller syncs selections with backend via /users/me PUT
+- **UserModel Changes:** JSON field names use camelCase to match backend API contract
+- **Route Management:** Initial route is splash to allow app initialization before user login
+
+#### Build Verification
+- ✅ All onboarding screens compile without errors
+- ✅ Navigation flow works smoothly between screens
+- ✅ API endpoints properly configured
+- ✅ UserModel serialization updated and tested
+- ✅ No breaking changes to existing code
+
+#### Success Metrics Met
+- ✅ Onboarding screens render without UI errors
+- ✅ Splash screen shows during app initialization
+- ✅ Welcome screens display feature highlights
+- ✅ Language selection persists to backend
+- ✅ All route transitions are smooth (rightToLeft 300ms)
+- ✅ UserModel correctly serializes/deserializes new fields
+
+---
+
 ### [2026-02-05] Phase 1: Project Setup & Dependencies ✅ COMPLETED
 
 #### Added
@@ -299,6 +479,187 @@
 
 ## Upcoming Changes
 
+### [2026-03-09] Text→AppText Refactoring: Unified Typography System ✅ COMPLETED
+
+#### Added
+- **Base Widget Rule** (CLAUDE.md)
+  - Documented requirement to use `AppText` instead of raw `Text` widgets
+  - Extends to `AppButton` and `AppTextField` for consistency
+  - Ensures all future text rendering uses design system
+
+#### Changed
+- **AppText Widget** (`lib/shared/widgets/app_text.dart`)
+  - Added `button` variant to `AppTextVariant` enum
+  - Added optional override parameters: `fontWeight`, `fontSize`, `style`, `decoration`, `fontStyle`, `height`
+  - Updated build logic to merge overrides correctly
+  - Maintains backward compatibility with existing usages
+
+- **Text Widget Replacement** (30 files across codebase)
+  - 100+ raw `Text(` widgets replaced with `AppText(`
+  - Affected files:
+    - Shared widgets (4 files): app_button, app_text_field, word-translation-sheet, loading_widget
+    - Auth feature (8 files): All auth screens and widgets
+    - Chat feature (9 files): All chat screens, bubbles, and widgets
+    - Onboarding feature (8 files): All onboarding screens
+    - Other features (4 files): Profile, vocabulary, home, lessons
+  - All `.tr` translation calls preserved
+  - All color overrides correctly applied
+
+#### Technical Decisions
+- **Selective Replacement:** Intentionally skipped:
+  - `Text` inside `RichText`/`SelectableText` children (TextSpan usage)
+  - Emoji-only Text widgets (flag emojis in `_LanguageFlag`) - no Outfit font needed
+  - `Text` inside `AppText.build()` itself
+- **Style Merging:** Used variant + override approach for flexibility without bloating enum
+- **Import Consistency:** All relative imports updated per project convention
+- **Backward Compatibility:** All new params optional, existing code unaffected
+
+#### Quality Assurance
+- ✅ `flutter analyze` passes with zero errors/warnings
+- ✅ All tests passing (5/5)
+- ✅ Code review complete - all issues fixed:
+  - Style merge logic corrected
+  - Logout button color fixed
+  - Semantic variant applied correctly
+  - Unused GoogleFonts import removed
+- ✅ No visual regressions detected
+- ✅ All typography consistent across app
+
+#### Files Modified
+- `lib/shared/widgets/app_text.dart` - Enhanced with new params
+- 30 feature and shared widget files - Text→AppText replacement
+- `CLAUDE.md` - Added base widget rule
+- Multiple auth, chat, onboarding, and profile files
+
+#### Success Metrics Met
+- ✅ Consistent Outfit font usage enforced across 100+ text widgets
+- ✅ Centralized typography control via AppText variants
+- ✅ Design system compliance improved
+- ✅ Future text widgets guided toward base widget pattern
+- ✅ Codebase maintainability improved
+
+#### Build Verification
+- ✅ All modified files compile without errors
+- ✅ No new warnings introduced
+- ✅ Test suite passes (5/5)
+- ✅ Code review approved
+- ✅ No breaking changes to existing functionality
+
+---
+
+### [2026-03-08] Native Splash Screen Logo Polish ✅ COMPLETED
+
+#### Added
+- **Android Native Splash Logo**
+  - Added app logo to `launch_background.xml` using density-specific `splash_logo.png` drawables
+  - Density variants: mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi
+  - Centered logo display via `android:gravity="center"`
+
+- **iOS Native Splash Logo**
+  - Replaced generic LaunchImage assets with app logo at proper scales (180x180)
+  - Fixed storyboard centering with proper constraints:
+    - `centerX` and `centerY` constraints ensure centered logo
+    - LaunchScreen.storyboard properly configured with LaunchImage
+
+- **Flutter Text Animation**
+  - Added TweenAnimationBuilder for "Flowering" text and tagline
+  - 600ms fade-in animation with easeIn curve
+  - Text opacity transitions from 0.0 → 1.0
+
+#### Changed
+- **SplashScreen Widget** (`lib/features/onboarding/views/splash_screen.dart`)
+  - Logo now displays with app name and tagline
+  - Added animated text fade-in effect during app initialization
+  - Maintained existing primary color background
+
+#### Technical Decisions
+- **Platform-specific Assets:** Native splash uses density-specific Android drawables and iOS LaunchImage for proper scaling across devices
+- **Animation Timing:** 600ms fade-in chosen to match typical app initialization duration
+- **UI Consistency:** App logo and colors unified across native splash and Flutter UI
+
+#### Build Verification
+- ✅ Android native splash renders with centered logo
+- ✅ iOS storyboard displays centered LaunchImage with proper constraints
+- ✅ Flutter SplashScreen animation compiles without errors
+- ✅ No breaking changes to existing flows
+
+#### Success Metrics Met
+- ✅ Native splash screens display app logo professionally
+- ✅ Logo centered on both Android and iOS platforms
+- ✅ Text animation provides visual polish during initialization
+- ✅ Loading experience improved with branded native splash
+
+---
+
+### [2026-03-04] Bottom Navigation Bar Feature ✅ COMPLETED
+
+#### Added
+- **Bottom Navigation Bar Widget** (`lib/shared/widgets/bottom-nav-bar.dart`)
+  - 4-tab navigation (Chat, Read, Vocabulary, Profile)
+  - Custom styling matching Pencil design system
+  - Active/inactive tab color states (#FF7A27 orange active, #9C9585 gray inactive)
+  - 80px fixed height with 20px corner radius
+  - Integrated with MainShellScreen for tab switching
+
+- **MainShellScreen** (`lib/features/home/views/main-shell-screen.dart`)
+  - App shell containing bottom navigation
+  - IndexedStack-based page switching
+  - Maintains controller state across tab switches
+  - Routes to 4 main screens: ChatHomeScreen, ReadScreen, VocabularyScreen, ProfileScreen
+
+- **Navigation Tab Screens**
+  - `lib/features/chat/views/chat-home-screen.dart` - Chat home screen (placeholder)
+  - `lib/features/read/views/read-screen.dart` - Reading feature (placeholder)
+  - `lib/features/vocabulary/views/vocabulary-screen.dart` - Vocabulary management (placeholder)
+  - `lib/features/profile/views/profile-screen.dart` - User profile (placeholder)
+
+- **Vocabulary Feature Directory** (`lib/features/vocabulary/`)
+  - New feature module with bindings, controllers, views, and widgets
+  - Structure ready for vocabulary browser and management functionality
+
+- **Translation Keys** (EN & VI)
+  - `nav_chat` - Chat tab label
+  - `nav_read` - Read tab label
+  - `nav_vocabulary` - Vocabulary tab label
+  - `nav_profile` - Profile tab label
+
+- **Dependencies Added**
+  - `lucide_icons ^0.x.x` - Modern icon library for bottom nav icons
+
+#### Changed
+- **Routes Configuration** (`lib/app/routes/app-page-definitions-with-transitions.dart`)
+  - New home route (`/home`) → MainShellScreen (replaces previous home implementation)
+  - Previous auth flow routes remain unchanged
+
+- **Feature Directory Structure**
+  - Created new directories for Read, Chat, and Vocabulary features
+  - Maintained existing Profile feature
+
+#### Technical Decisions
+- **Bottom Nav Structure:** Custom widget for design consistency over built-in BottomNavigationBar
+- **Page Management:** IndexedStack for efficient tab switching without rebuilding screens
+- **Color Scheme:** Orange (#FF7A27) for active tabs per Pencil design system
+- **Icon Library:** lucide_icons for modern, consistent iconography
+- **Placeholder Screens:** Basic screens created to allow navigation testing before feature implementation
+
+#### Build Verification
+- ✅ All new widgets compile without errors
+- ✅ MainShellScreen integrates with existing routing
+- ✅ IndexedStack page switching functional
+- ✅ Bottom navigation styling matches Pencil design
+- ✅ All translation keys properly mapped
+- ✅ No breaking changes to existing authentication flow
+
+#### Success Metrics Met
+- ✅ Bottom navigation renders with correct 4-tab layout
+- ✅ Tab switching works smoothly without memory leaks
+- ✅ Active/inactive states display with correct colors
+- ✅ Navigation bar maintains consistent height (80px) and corner radius (20px)
+- ✅ Integration with existing app routing verified
+- ✅ Localization keys for all navigation labels (EN & VI)
+
+---
+
 ### [2026-02-09] Design System Update: Flowering Gen Z Aesthetic ✅ COMPLETED
 
 #### Changed
@@ -354,14 +715,105 @@
 
 ---
 
-### Phase 6: Authentication Feature (Next)
-- Login/register screens with validation
-- Auth controller and bindings
-- Token management integration
-- User session handling
+### [2026-03-08] Chat Translate Feature ✅ COMPLETED
 
-### Phase 7-10: Feature Implementations (Planned)
-- Home dashboard
+#### Added
+- **Word Translation Models** (`lib/shared/models/`)
+  - `WordTranslationModel` - Single word translation with transliterations
+  - `SentenceTranslationModel` - Sentence-level translation with word-by-word mapping
+
+- **Translation Service** (`lib/core/services/translation_service.dart`)
+  - `toggleTranslation()` - Async fetch/cache word translations
+  - Caches translations in StorageService (LRU eviction)
+  - Handles translation errors gracefully
+
+- **Word Translation UI Widgets** (`lib/shared/widgets/`)
+  - `WordTranslationSheet` - Bottom sheet displaying translation details
+  - `WordTranslationSheetLoader` - Loading state with skeleton
+  - Displays translated text with phonetic pronunciation
+
+- **Message Interactivity**
+  - `ChatMessage` model: added `backendMessageId`, mutable `translatedText` fields
+  - `AiMessageBubble`: added `onWordTap` callback for tap handling
+  - Integrated `AppTappablePhrase` widget for interactive word highlighting
+
+- **API Integration**
+  - `POST /ai/translate` - Backend endpoint for word translation
+  - Request: `{messageId, word}` → Response: `{translations, phoneticSimilar, phoneticOriginal}`
+
+- **Localization Keys** (EN & VI)
+  - Translation sheet labels and buttons
+  - Loading states and error messages
+
+#### Changed
+- **AppTappablePhrase Widget** (`lib/shared/widgets/app_tappable_phrase.dart`)
+  - Converted from StatelessWidget to StatefulWidget
+  - Fixes memory leak in gesture detector
+  - Maintains proper lifecycle cleanup
+
+- **ChatMessage Model** (`lib/shared/models/chat_message_model.dart`)
+  - Added `backendMessageId` field (UUID from API)
+  - Added `translatedText` (mutable) for caching translations
+
+- **AiMessageBubble Widget** (`lib/features/chat/widgets/ai_message_bubble.dart`)
+  - Added `onWordTap` callback parameter
+  - Integrated `AppTappablePhrase` with translation callback
+
+- **AiChatController** (`lib/features/chat/controllers/ai_chat_controller.dart`)
+  - Added `onWordTap(word)` handler
+  - Added `toggleTranslation(word, messageId)` async method
+  - Manages translation loading/error states
+
+#### Technical Decisions
+- **Translation Caching:** Uses existing StorageService to cache frequent translations (reduces API calls)
+- **Lazy Loading:** Translations fetched on-demand when user taps word
+- **Memory Safety:** AppTappablePhrase fixed to use StatefulWidget for proper cleanup
+- **Backend Integration:** Leverages new POST /ai/translate endpoint
+- **UX Pattern:** Bottom sheet provides immersive translation detail view
+
+#### Build Verification
+- ✅ New models compile without errors
+- ✅ TranslationService integrates with StorageService
+- ✅ Word translation sheet renders without UI issues
+- ✅ AppTappablePhrase memory leak fixed (StatefulWidget lifecycle)
+- ✅ ChatMessage serialization handles new fields
+- ✅ AiMessageBubble tap handling functional
+- ✅ No breaking changes to existing chat flow
+
+#### Success Metrics Met
+- ✅ Users can tap words in AI messages to see translations
+- ✅ Translations display with phonetic information
+- ✅ Translation data cached to reduce API load
+- ✅ Memory leak fixed in AppTappablePhrase
+- ✅ All new l10n keys added for EN and VI
+
+---
+
+### Upcoming Phases (7-10)
+
+**Phase 7: Home Dashboard**
+- Learning statistics and progress display
+- Quick action cards
+- Recent activity feed
+- Integration with backend progress API
+
+**Phase 8: Expanded Chat Feature**
+- Full chat interface with message history
+- Voice input/output integration
+- Message persistence
+- Offline message queue
+
+**Phase 9: Lessons & Content**
+- Lessons browser with categories
+- Offline content caching
+- Lesson completion tracking
+- Vocabulary management
+
+**Phase 10: Profile & Settings**
+- User profile page
+- App settings and preferences
+- Account management
+- Language/theme preferences
 - AI chat with voice support
 - Lessons browser with offline caching
 - Profile and settings

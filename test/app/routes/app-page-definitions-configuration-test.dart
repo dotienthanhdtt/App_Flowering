@@ -18,8 +18,8 @@ void main() {
       expect(AppPages.defaultCurve, Curves.easeInOut);
     });
 
-    test('initial route is login', () {
-      expect(AppPages.initialRoute, AppRoutes.login);
+    test('initial route is splash', () {
+      expect(AppPages.initialRoute, AppRoutes.splash);
     });
 
     test('all required routes are defined', () {
@@ -34,6 +34,9 @@ void main() {
       expect(routeNames, contains(AppRoutes.lessonDetail));
       expect(routeNames, contains(AppRoutes.profile));
       expect(routeNames, contains(AppRoutes.settings));
+      expect(routeNames, contains(AppRoutes.onboardingWelcome));
+      expect(routeNames, contains(AppRoutes.onboardingNativeLanguage));
+      expect(routeNames, contains(AppRoutes.onboardingLearningLanguage));
     });
 
     test('splash screen has fade transition', () {

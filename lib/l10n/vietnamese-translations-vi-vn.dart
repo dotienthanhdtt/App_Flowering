@@ -17,7 +17,7 @@ const Map<String, String> viVN = {
 
   // Auth
   'login': 'Đăng nhập',
-  'register': 'Đăng ký',
+  'register': 'Đăng ký.',
   'logout': 'Đăng xuất',
   'email': 'Email',
   'password': 'Mật khẩu',
@@ -86,6 +86,26 @@ const Map<String, String> viVN = {
   'privacy_policy': 'Chính sách bảo mật',
   'terms_of_service': 'Điều khoản sử dụng',
 
+  // Bottom Navigation
+  'nav_chat': 'Trò chuyện',
+  'nav_read': 'Đọc',
+  'nav_vocabulary': 'Từ vựng',
+  'nav_profile': 'Hồ sơ',
+
+  // Chat Home
+  'chat_home_title': 'Cuộc trò chuyện',
+  'chat_home_empty': 'Chưa có cuộc trò chuyện nào',
+  'chat_home_start': 'Bắt đầu trò chuyện mới',
+
+  // Read
+  'read_title': 'Bài đọc',
+  'read_empty': 'Chưa có bài học',
+
+  // Vocabulary
+  'vocabulary_title': 'Từ vựng',
+  'vocabulary_search': 'Tìm từ...',
+  'vocabulary_empty': 'Chưa học từ nào',
+
   // Errors
   'network_error': 'Vui lòng kiểm tra kết nối mạng',
   'server_error': 'Đã xảy ra lỗi. Vui lòng thử lại sau',
@@ -112,4 +132,135 @@ const Map<String, String> viVN = {
   'subscription_purchase_button': 'Đăng ký ngay',
   'subscription_terms': 'Điều khoản sử dụng',
   'subscription_privacy': 'Chính sách bảo mật',
+
+  // Onboarding — AI Chat (Screen 07)
+  'chat_session_error': 'Không thể bắt đầu phiên. Vui lòng thử lại.',
+  'chat_session_expired': 'Phiên hết hạn. Vui lòng bắt đầu lại.',
+  'chat_retry': 'Thử lại',
+  'chat_leave_confirm': 'Rời cuộc trò chuyện?',
+  'chat_leave_message': 'Tiến trình của bạn sẽ bị mất nếu rời đi.',
+  'chat_leave_action': 'Rời đi',
+  'chat_stay_action': 'Ở lại',
+  'chat_completing': 'Đang hoàn thiện hồ sơ của bạn...',
+  'chat_skip': 'Bỏ qua',
+  'chat_translate': 'Dịch',
+  'chat_hide_translation': 'Ẩn',
+  'chat_play_audio': 'Phát',
+  'chat_type_message': 'Nhập tin nhắn...',
+  'chat_complete': 'Hoàn thành',
+
+  // Onboarding — Scenario Gift (Screen 08)
+  'scenario_title': 'Kịch bản của bạn',
+  'scenario_subtitle': 'Flora đã tạo ra những tình huống này riêng cho bạn',
+  'scenario_cta': 'Bắt đầu luyện tập →',
+  'scenario_empty': 'Các tình huống của bạn đang được chuẩn bị...',
+  'scenario_level': 'Cấp độ',
+
+  // Onboarding — Login Gate (Screen 09)
+  'auth_gate_title': 'Lưu tiến trình của bạn',
+  'auth_gate_subtitle': 'Tạo tài khoản để giữ kế hoạch cá nhân hóa',
+  'auth_continue_apple': 'Tiếp tục với Apple',
+  'auth_continue_google': 'Tiếp tục với Google',
+  'auth_continue_email': 'Đăng ký bằng Email',
+  'auth_social_coming_soon': 'Sắp ra mắt',
+  'auth_social_coming_soon_message': 'Đăng nhập mạng xã hội sẽ sớm được hỗ trợ.',
+
+  // Auth — Signup (Screen 10)
+  'signup_title': 'Tạo Tài Khoản',
+  'signup_subtitle': 'Bắt đầu hành trình ngôn ngữ của bạn',
+  'signup_full_name': 'Họ và Tên',
+  'signup_full_name_hint': 'Tên của bạn',
+  'signup_cta': 'Tạo Tài Khoản',
+  'signup_email_exists': 'Email này đã được đăng ký',
+
+  // Auth — Login (Screen 11)
+  'login_title': 'Chào Mừng Trở Lại',
+  'login_subtitle': 'Đăng nhập để tiếp tục hành trình',
+  'login_cta': 'Đăng Nhập',
+  'login_or_divider': 'hoặc',
+
+  // Validation
+  'full_name_required': 'Vui lòng nhập họ và tên',
+  'full_name_min_length': 'Tên phải có ít nhất 2 ký tự',
+
+  // Auth — Forgot Password (Screen 12)
+  'forgot_title': 'Quên Mật Khẩu',
+  'forgot_subtitle': 'Nhập email và chúng tôi sẽ gửi mã đặt lại',
+  'forgot_cta': 'Gửi Mã Đặt Lại',
+  'forgot_back_to_login': 'Quay lại Đăng nhập',
+  'forgot_success': 'Mã đặt lại đã được gửi đến',
+
+  // Auth — OTP (Screen 13)
+  'otp_title': 'Kiểm Tra Email',
+  'otp_subtitle': 'Chúng tôi đã gửi mã 6 chữ số đến',
+  'otp_resend': 'Gửi lại',
+  'otp_resend_in': 'Gửi lại sau',
+  'otp_invalid': 'Mã không hợp lệ hoặc đã hết hạn',
+
+  // Auth — New Password (Screen 14)
+  'new_password_title': 'Mật Khẩu Mới',
+  'new_password_subtitle': 'Tạo mật khẩu mạnh cho tài khoản của bạn',
+  'new_password_label': 'Mật Khẩu Mới',
+  'new_password_confirm_label': 'Xác Nhận Mật Khẩu Mới',
+  'new_password_cta': 'Đặt Lại Mật Khẩu',
+  'password_reset_success': 'Đặt lại mật khẩu thành công',
+  'password_reset_title': 'Đặt Lại Mật Khẩu',
+  'password_reset_message': 'Mật khẩu đã được đặt lại. Vui lòng đăng nhập.',
+
+  // Word Translation (Screen 08a)
+  'word_translation_title': 'Bản dịch',
+  'word_definition_label': 'Định nghĩa',
+  'word_examples_label': 'Ví dụ',
+  'word_translation_error': 'Không thể tải bản dịch',
+  'sentence_translation_unavailable': 'Dịch câu không khả dụng trong quá trình giới thiệu',
+  'word_translation_retry': 'Thử lại',
+  'translation_target_language': 'Tiếng Việt',
+
+  // Onboarding — Welcome Problem (Screen 04)
+  'welcome_headline_1': "Não bạn\nkhông được tạo ra\nđể ghi nhớ.",
+  'welcome_body_1': "Nó được tạo ra để nói. Flowering hoạt động cùng não bạn — không chống lại nó.",
+  'welcome_headline_2': "Bạn quên\nvì không có gì\nđược tạo ra cho bạn.",
+  'welcome_body_2': "Các ứng dụng thông thường cho mọi người cùng một bài học. Flowering ghi nhớ những gì bạn gặp khó khăn — và đưa nó trở lại đúng lúc.",
+  'welcome_headline_3': "Cuối cùng, một ứng dụng\nhiểu\nchỉ riêng bạn.",
+  'welcome_body_3': "Tốc độ của bạn. Sở thích của bạn. Mục tiêu của bạn. Flowering xây dựng con đường sống động phát triển cùng bạn — không ai khác có được điều tương tự.",
+  'welcome_cta': "Bắt đầu ngay",
+  'welcome_tap_continue': 'Chạm bất kỳ đâu để tiếp tục',
+
+  // Onboarding — Language Selection (Screen 05/06)
+  'language_select_title': "Bạn muốn học gì?",
+  'language_select_subtitle': "Chọn một ngôn ngữ để bắt đầu",
+  'native_language_title': "Ngôn ngữ mẹ đẻ của bạn?",
+  'native_language_subtitle': "Chúng tôi sẽ cá nhân hóa trải nghiệm học tập",
+  'language_load_error': 'Không thể tải danh sách ngôn ngữ',
+  'language_coming_soon': 'Sắp có',
+
+  // Onboarding — Top Bar
+  'login_action': 'Đăng nhập',
+  'signup_action': 'Đăng ký',
+  'go_back': 'Quay lại',
+  'coming_soon_suffix': 'Sắp ra mắt',
+  'otp_didnt_receive': 'Không nhận được mã?',
+  'otp_resend_in_timer': 'Gửi lại sau',
+
+  // Onboarding — Splash
+  'splash_subtitle': 'Nở rộ theo cách của bạn',
+
+  // Chat
+  'ai_name': 'Flora',
+
+  // Auth — Form hints
+  'email_hint': 'ban@example.com',
+  'password_hint': 'Mật khẩu của bạn',
+  'password_min_hint': 'Ít nhất 8 ký tự',
+  'confirm_password_hint': 'Nhập lại mật khẩu',
+  'confirm_new_password_hint': 'Nhập lại mật khẩu mới',
+
+  // Auth — Social
+  'continue_with_apple': 'Tiếp tục với Apple',
+  'continue_with_google': 'Tiếp tục với Google',
+
+  // Grammar Correction
+  'corrected': 'Đã sửa',
+  'hide': 'Ẩn',
+  'show': 'Hiện',
 };

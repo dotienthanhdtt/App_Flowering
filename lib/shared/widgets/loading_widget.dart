@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_sizes.dart';
+import 'app_text.dart';
 
 /// Animated loading widget with pulsating glow
 class LoadingWidget extends StatefulWidget {
@@ -50,12 +52,11 @@ class _LoadingWidgetState extends State<LoadingWidget>
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) => Container(
-              width: loadingSize + 20,
-              height: loadingSize + 20,
+              width: loadingSize + AppSizes.spacingXL,
+              height: loadingSize + AppSizes.spacingXL,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
-                  // Pulsating glow effect
                   BoxShadow(
                     color: glowColor.withValues(
                       alpha: 0.3 + 0.2 * math.sin(_controller.value * 2 * math.pi),
@@ -92,8 +93,8 @@ class _LoadingWidgetState extends State<LoadingWidget>
             ),
           ),
           if (widget.message != null) ...[
-            const SizedBox(height: 24),
-            Text(
+            const SizedBox(height: AppSizes.spacingXXL),
+            AppText(
               widget.message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),

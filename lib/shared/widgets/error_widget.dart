@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_sizes.dart';
 import 'app_button.dart';
 import 'app_text.dart';
 
@@ -19,16 +21,16 @@ class AppErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSizes.paddingXXL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon ?? Icons.error_outline,
-              size: 64,
+              size: AppSizes.icon4XL,
               color: AppColors.error,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSizes.spacingL),
             AppText(
               message,
               variant: AppTextVariant.bodyLarge,
@@ -36,9 +38,9 @@ class AppErrorWidget extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSizes.spacingXXL),
               AppButton(
-                text: 'Try Again',
+                text: 'retry'.tr,
                 onPressed: onRetry,
                 isFullWidth: false,
                 variant: AppButtonVariant.outline,

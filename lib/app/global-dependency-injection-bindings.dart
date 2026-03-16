@@ -7,6 +7,7 @@ import '../core/network/api_client.dart';
 import '../features/subscription/controllers/subscription-controller.dart';
 import '../features/subscription/services/revenuecat-service.dart';
 import '../features/subscription/services/subscription-service.dart';
+import '../core/services/translation-service.dart';
 
 /// Global dependency injection for core services
 ///
@@ -96,4 +97,7 @@ Future<void> initializeServices() async {
   // Subscription service — depends on RevenueCatService, ApiClient, AuthStorage, StorageService
   final subscriptionService = Get.put(SubscriptionService());
   await subscriptionService.init();
+
+  // Translation service (depends on API client)
+  Get.put(TranslationService(), permanent: true);
 }

@@ -94,6 +94,37 @@ View → Controller → Service → Network/Storage
 - Services are singletons registered in `global-dependency-injection-bindings.dart`
 - All async initialization happens in service `init()` methods
 - Add // TODO if task need I to complete
+- Re use ui component in lib/shared/widgets, using those component to build layout. In a view screen if any layout duplicate many time please create component for this layout
+- All user-facing text in `AppText` must use `.tr` for translation (e.g., `AppText('key'.tr)`) — add keys to `lib/l10n/english-translations-en-us.dart` and `lib/l10n/vietnamese-translations-vi-vn.dart`
+- Color, size, text style, api_endpoint re use in lib/core/constants
+- Always use base widgets from `lib/shared/widgets/` instead of raw Flutter widgets:
+  - `AppText` instead of `Text` (ensures consistent Inter font typography)
+  - `AppButton` instead of `ElevatedButton`/`TextButton`
+  - `AppTextField` instead of `TextField`
+- If widget not exit then create one and add to `lib/shared/widgets`
+
+### Base Class Inheritance (Mandatory)
+
+All feature controllers and screens MUST inherit from the base classes in `lib/core/base/`:
+
+**Controllers:**
+- All controllers in `features/*/controllers/` MUST extend `BaseController` (not `GetxController` directly)
+- `BaseController` provides: `isLoading`, `errorMessage`, `apiCall()`, `showSuccess()`, `clearError()`
+- Do NOT redeclare `isLoading` or `errorMessage` -- use inherited ones from `BaseController`
+- Always call `super.onInit()` / `super.onClose()` when overriding lifecycle
+
+**Screens (views):**
+- Screens with a controller: extend `BaseScreen<ControllerType>` -- gets automatic loading overlay, SafeArea, Scaffold
+  - Override `buildContent()` instead of `build()` for screen body
+  - Override `buildAppBar()`, `buildFab()`, `buildBottomNav()` as needed
+  - Override `backgroundColor`, `useSafeArea`, `showLoadingOverlay` getters to customize
+- Screens without a controller: extend `BaseStatelessScreen` -- same pattern minus loading overlay
+- StatefulWidget screens (rare): exempt from base class, document why in a comment
+
+**Exemptions:**
+- Shared widgets (`shared/widgets/`, `features/*/widgets/`) -- these are composable components, NOT screens
+- Tab child screens embedded in IndexedStack -- these should NOT use BaseScreen (would create nested Scaffolds); use plain StatelessWidget with just content, no Scaffold
+- StatefulWidget screens that need `State` lifecycle (e.g., animation controllers, PageController) -- exempt but add comment explaining why
 
 ### State Management Pattern
 
@@ -202,6 +233,8 @@ try {
 
 ### BaseController Pattern
 
+> **Rule:** Never extend `GetxController` directly in feature controllers. Always use `BaseController`.
+
 All controllers should extend `BaseController` for consistent error handling:
 
 ```dart
@@ -221,6 +254,12 @@ class AuthController extends BaseController {
 ```
 
 ## File Organization Rules
+
+### One Class Per File (Strict)
+Each `.dart` file must contain **exactly one public class**. Never put multiple widgets, controllers, or models in the same file.
+- Extract every widget (even small/private ones) into its own file
+- Name the file after the class: `AiAvatar` → `ai_avatar.dart`
+- Private helper widgets (`_Foo`) must become public classes in separate files
 
 ### Maximum File Size
 Keep individual files under **200 lines**. When exceeded:

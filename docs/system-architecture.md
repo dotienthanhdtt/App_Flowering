@@ -126,21 +126,27 @@ lib/
 **Purpose:** Handle UI rendering and user interactions.
 
 **Components:**
-- **Views:** Stateless/Stateful widgets rendering UI
-- **Controllers:** GetX controllers managing state and business logic
+- **Views:** Screens extend `BaseScreen<T>` (provides Scaffold, SafeArea, loading overlay). Tab child screens and StatefulWidget screens are exempt.
+- **Controllers:** All extend `BaseController` (provides `isLoading`, `errorMessage`, `apiCall()`, `showSuccess()`)
 - **Bindings:** Dependency injection for controllers and services
-- **Widgets:** Feature-specific reusable components
+- **Widgets:** Feature-specific reusable components (do NOT extend base classes)
 
 **Pattern:** MVC with GetX reactive state management
+
+**Base Class Inheritance (Mandatory):**
+- Controllers: `BaseController` → never `GetxController` directly
+- Screens with controller: `BaseScreen<T>` → override `buildContent()` instead of `build()`
+- Tab child screens in IndexedStack: plain `StatelessWidget` (avoids nested Scaffold)
+- StatefulWidget screens: exempt, add explanatory comment
 
 **Example:**
 ```dart
 // Feature structure
 features/auth/
   ├── bindings/auth_binding.dart      # Inject AuthController
-  ├── controllers/auth_controller.dart # Handle login/register
-  ├── views/login_screen.dart          # Login UI
-  └── widgets/auth_text_field.dart     # Custom input field
+  ├── controllers/auth_controller.dart # extends BaseController
+  ├── views/login_screen.dart          # extends BaseScreen<AuthController>
+  └── widgets/auth_text_field.dart     # Custom input field (no base class)
 ```
 
 ### 2. Domain Layer (Shared Models)
@@ -153,6 +159,14 @@ features/auth/
 - API response/error models
 
 **Pattern:** Plain Dart classes with JSON serialization
+
+**Key Models:**
+- `UserModel` - User profile data
+- `ChatMessage` - Message data with optional translation caching
+- `WordTranslationModel` - Translation data for individual words (translations, phonetics)
+- `SentenceTranslationModel` - Sentence-level translation with word mappings
+- `ApiErrorModel` - API error response parsing
+- `ApiResponse<T>` - Generic response wrapper with code/message/data structure
 
 ### 3. Data Layer (Core Services)
 
@@ -327,6 +341,40 @@ Future<void> setPlaybackRate(double rate);
 - Proper disposal of recorder and player
 - Stream subscription cleanup
 - Memory leak fixes applied
+
+#### TranslationService
+Word and sentence translation via backend API with caching.
+
+**Observable State:**
+```dart
+final isTranslating = false.obs;
+final lastTranslatedWord = ''.obs;
+```
+
+**Key Methods:**
+```dart
+// Word translation
+Future<WordTranslationModel?> toggleTranslation({
+  required String messageId,
+  required String word,
+});
+
+// Cache management
+Future<WordTranslationModel?> getTranslation(String word);
+Future<void> saveTranslation(String word, WordTranslationModel translation);
+Future<void> clearTranslationCache();
+```
+
+**Caching Strategy:**
+- Translations cached in StorageService with LRU eviction
+- Cache key: word hash (lowercase)
+- Reduces repeated API calls for same word
+- 24-hour cache expiration (implementation may vary)
+
+**API Contract:**
+- Endpoint: `POST /ai/translate`
+- Request: `{messageId: UUID, word: String}`
+- Response: `{translations: [String], phoneticSimilar: String, phoneticOriginal: String}`
 
 ### 4. Infrastructure Layer
 
@@ -514,22 +562,22 @@ await apiClient.uploadFile(
 
 | Box Name | Purpose | Max Size | Eviction |
 |----------|---------|----------|----------|
+| `auth` | Access/refresh tokens, user ID | 10KB | Manual |
 | `lessons_cache` | Lesson content | 100MB | LRU |
-| `chat_messages` | Chat history | 10MB | FIFO |
-| `user_data` | User profile | 1MB | Manual |
-| `app_settings` | App preferences | 100KB | Manual |
+| `chat_cache` | Chat message history | 10MB | FIFO |
+| `preferences` | App settings | 1MB | Manual |
 
 ### Secure Storage
 
 **Token Storage:**
-- Access token: flutter_secure_storage
-- Refresh token: flutter_secure_storage
-- User ID: flutter_secure_storage
+- Access token: AuthStorage (Hive 'auth' box)
+- Refresh token: AuthStorage (Hive 'auth' box)
+- User ID: AuthStorage (Hive 'auth' box)
 
-**Why Secure Storage:**
-- Encrypted at rest (AES-256)
-- OS-level keychain/keystore
-- Not accessible to other apps
+**Storage Pattern:**
+- Tokens: Separate Hive box from cache (prevents accidental cache eviction)
+- Cache: Separate boxes for lessons (LRU 100MB) and chat (FIFO 10MB)
+- Acceptable for mobile; can upgrade to flutter_secure_storage if needed for higher security
 
 ## Audio Architecture
 
@@ -576,8 +624,8 @@ Convert to WAV → Send to API → Receive Response → Play Audio
 ```
 1. User Login → POST /auth/login
 2. Receive access + refresh tokens
-3. Store tokens in flutter_secure_storage
-4. Inject access token in API requests
+3. Store tokens in AuthStorage (Hive 'auth' box)
+4. Inject access token in API requests (AuthInterceptor)
 5. On 401 → Refresh token → Retry request
 6. On refresh failure → Logout user
 ```
@@ -594,8 +642,8 @@ if (response.statusCode == 401) {
 
 ### Data Protection
 
-- No sensitive data in Hive (only cache)
-- Tokens in flutter_secure_storage only
+- Tokens in AuthStorage (separate from cache)
+- Cache in Hive with eviction limits (lessons LRU 100MB, chat FIFO 10MB)
 - HTTPS-only communication
 - Certificate pinning (future enhancement)
 
@@ -628,6 +676,62 @@ class AuthBinding extends Bindings {
   }
 }
 ```
+
+## Navigation Architecture (Phase 5-6.5 ✅)
+
+### Bottom Navigation Bar (Phase 6.5 ✅)
+
+**Implementation:**
+- **Widget:** `BottomNavBar` in `lib/shared/widgets/bottom-nav-bar.dart`
+- **Container:** `MainShellScreen` in `lib/features/home/views/main-shell-screen.dart`
+- **Strategy:** IndexedStack for efficient tab switching
+
+**Navigation Tabs (4 total):**
+| Tab | Label | Screen | Route |
+|-----|-------|--------|-------|
+| Chat | `nav_chat` | ChatHomeScreen | `/home?tab=0` |
+| Read | `nav_read` | ReadScreen | `/home?tab=1` |
+| Vocabulary | `nav_vocabulary` | VocabularyScreen | `/home?tab=2` |
+| Profile | `nav_profile` | ProfileScreen | `/home?tab=3` |
+
+**Design Specifications:**
+```dart
+// Colors
+activeTabColor: #FF7A27 (Warm Orange)
+inactiveTabColor: #9C9585 (Gray)
+backgroundColor: #FFFDF7 (Cream White)
+
+// Dimensions
+height: 80px
+cornerRadius: 20px (top corners only)
+padding: Responsive (16-24px horizontal)
+
+// Icons
+Library: lucide_icons
+Size: 24-28px (scalable)
+```
+
+**Page Switching Logic:**
+```dart
+// MainShellScreen uses IndexedStack
+IndexedStack(
+  index: selectedTab.value,
+  children: [
+    ChatHomeScreen(),
+    ReadScreen(),
+    VocabularyScreen(),
+    ProfileScreen(),
+  ],
+)
+```
+
+**State Management:**
+- GetX controller tracks `selectedTab` observable (0-3)
+- Tab switching triggers controller update
+- Screen state preserved across tab switches (no rebuild)
+- Navigation labels localized (EN & VI)
+
+---
 
 ## Navigation Architecture (Phase 5 ✅)
 
@@ -711,16 +815,19 @@ Get.updateLocale(const Locale('vi', 'VN'))  // Switch language
 
 ## Material3 Theme (Phase 5 ✅)
 
-**Color Scheme:**
-- Primary: Warm Orange (#FF7A27)
-- Seed color used for Material3 palette generation
-- System uses `useMaterial3: true`
-- Updated to Pencil warm neutral palette
+**Color Scheme - Warm Neutral Palette:**
+- Primary: #FF7A27 (Warm Orange) - Main action color
+- Background: #FFFDF7 (Cream White) - Surface and canvas
+- Text Primary: #292F36 (Charcoal) - Body text
+- Text Secondary: #699A6B (Sage Green) - Secondary text
+- Accent Colors: Blue (#5B7FD9), Green (#CAFFBF), Lavender (#B8C5E8), Rose (#FDCAE1)
+- Semantic: Success #CAFFBF, Warning #FFD6A5, Error #FF4444, Info #A0C4FF
 
-**System UI Configuration:**
+**System Configuration:**
+- Material3 enabled (`useMaterial3: true`)
+- Seed color generation from primary
 - Portrait-only orientation
-- Transparent status bar
-- Dark status bar icons
+- Transparent status bar with dark icons
 
 ## Performance Considerations
 
@@ -754,7 +861,7 @@ Get.updateLocale(const Locale('vi', 'VN'))  // Switch language
 | State Management | GetX 4.6.6 |
 | Networking | Dio 5.4.0 |
 | Cache Storage | Hive 2.2.3 |
-| Secure Storage | flutter_secure_storage |
+| Token Storage | Hive (AuthStorage) |
 | Audio Recording | record 5.0.4 |
 | Audio Playback | audioplayers 5.2.1 |
 | In-App Subscriptions | purchases_flutter 8.11.0 |

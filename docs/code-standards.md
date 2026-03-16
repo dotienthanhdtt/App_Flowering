@@ -128,15 +128,19 @@ features/{feature_name}/
 
 ### Controller Standards
 
+> **Rule:** All feature controllers MUST extend `BaseController`, never `GetxController` directly.
+
+`BaseController` provides `isLoading`, `errorMessage`, `apiCall()`, `showSuccess()`, `clearError()` — do NOT redeclare these fields.
+
 ```dart
-class AuthController extends GetxController {
+class AuthController extends BaseController {
   // 1. Dependencies (injected via Get.find)
   final ApiClient _apiClient = Get.find();
   final AuthStorage _authStorage = Get.find();
 
-  // 2. Reactive state (.obs for simple values)
-  final isLoading = false.obs;
-  final errorMessage = ''.obs;
+  // 2. Feature-specific reactive state (.obs)
+  // NOTE: isLoading and errorMessage are inherited from BaseController
+  final obscurePassword = true.obs;
 
   // 3. Non-reactive state (complex objects)
   UserModel? currentUser;
@@ -154,16 +158,12 @@ class AuthController extends GetxController {
     super.onClose();
   }
 
-  // 5. Public methods
+  // 5. Public methods — use inherited apiCall() or manual try/catch with inherited isLoading
   Future<void> login(String email, String password) async {
-    try {
-      isLoading.value = true;
-      // Implementation
-    } catch (e) {
-      _handleError(e);
-    } finally {
-      isLoading.value = false;
-    }
+    await apiCall(
+      () => _apiClient.post(ApiEndpoints.login, data: {...}),
+      onSuccess: (result) { /* handle */ },
+    );
   }
 
   // 6. Private helper methods
@@ -173,44 +173,42 @@ class AuthController extends GetxController {
 
 ### View (Screen) Standards
 
+> **Rule:** All feature screens with a controller MUST extend `BaseScreen<T>`. Tab child screens and StatefulWidget screens are exempt.
+
+`BaseScreen<T>` provides Scaffold, SafeArea, and optional loading overlay. Override `buildContent()` instead of `build()`.
+
 ```dart
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends BaseScreen<AuthController> {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Get controller
-    final controller = Get.find<AuthController>();
+  bool get showLoadingOverlay => false; // screen handles inline loading
+  @override
+  Color? get backgroundColor => AppColors.background;
 
-    return Scaffold(
-      appBar: AppBar(title: Text('login'.tr)),
-      body: Obx(() {
-        // Use Obx for reactive rebuilds
-        if (controller.isLoading.value) {
-          return const LoadingWidget();
-        }
-        return _buildContent(controller);
-      }),
-    );
-  }
-
-  // Extract complex widgets to methods
-  Widget _buildContent(AuthController controller) {
+  @override
+  Widget buildContent(BuildContext context) {
+    // Use `controller` (inherited from GetView) instead of Get.find()
     return Column(
       children: [
         AppTextField(
           label: 'email'.tr,
           onChanged: (value) => controller.email.value = value,
         ),
-        AppButton(
+        Obx(() => AppButton(
           text: 'login'.tr,
+          isLoading: controller.isLoading.value,
           onPressed: controller.login,
-        ),
+        )),
       ],
     );
   }
 }
 ```
+
+**Exemptions:**
+- Tab child screens (in IndexedStack) — use plain `StatelessWidget`, no Scaffold
+- StatefulWidget screens needing `State` lifecycle — add comment explaining why
 
 ### Widget Standards
 
@@ -560,31 +558,35 @@ class StorageService {
 }
 ```
 
-### Secure Storage for Tokens
+### Token Storage with AuthStorage
 
 ```dart
 // lib/core/services/auth_storage.dart
-class AuthStorage {
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+class AuthStorage extends GetxService {
+  late Box<String> _box;
 
-  static const String _accessTokenKey = 'access_token';
-  static const String _refreshTokenKey = 'refresh_token';
+  Future<AuthStorage> init() async {
+    _box = await Hive.openBox<String>('auth');
+    return this;
+  }
 
   Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
   }) async {
-    await _storage.write(key: _accessTokenKey, value: accessToken);
-    await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    await _box.put('access_token', accessToken);
+    await _box.put('refresh_token', refreshToken);
   }
 
   Future<String?> getAccessToken() async {
-    return await _storage.read(key: _accessTokenKey);
+    return _box.get('access_token');
   }
 
+  bool get isLoggedIn => getAccessToken() != null;
+
   Future<void> clearTokens() async {
-    await _storage.delete(key: _accessTokenKey);
-    await _storage.delete(key: _refreshTokenKey);
+    await _box.delete('access_token');
+    await _box.delete('refresh_token');
   }
 }
 ```
@@ -772,7 +774,7 @@ Before committing code, verify:
 feat(auth): add login functionality
 
 Implement login screen with email/password validation.
-Add JWT token storage using flutter_secure_storage.
+Add JWT token storage using AuthStorage (Hive).
 
 Closes #123
 
@@ -869,11 +871,8 @@ String? validateEmail(String? value) {
 ### Sensitive Data Handling
 
 ```dart
-// ✅ Good - Use secure storage
+// ✅ Good - Use AuthStorage for tokens
 await authStorage.saveTokens(accessToken: token, refreshToken: refresh);
-
-// ❌ Bad - Never store tokens in Hive
-await Hive.box('tokens').put('access_token', token);
 
 // ✅ Good - No sensitive data in logs
 if (kDebugMode) {
@@ -882,6 +881,10 @@ if (kDebugMode) {
 
 // ❌ Bad - Don't log sensitive data
 print('User credentials: $email, $password');
+
+// ✅ Good - Separate user cache from token storage
+// Tokens: AuthStorage (Hive 'auth' box)
+// Cache: StorageService (Hive 'lessons_cache', 'chat_cache' boxes)
 ```
 
 ## GetX Service Pattern
