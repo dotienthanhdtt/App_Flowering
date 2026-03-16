@@ -97,6 +97,15 @@ lib/
 │   │   ├── controllers/               # Business logic
 │   │   ├── views/                     # UI screens
 │   │   └── widgets/                   # Feature widgets
+│   ├── subscription/                  # In-app purchases & subscriptions
+│   │   ├── services/
+│   │   │   ├── revenuecat-service.dart   # RevenueCat SDK wrapper
+│   │   │   └── subscription-service.dart # Subscription orchestration (pending)
+│   │   ├── models/                    # Subscription models
+│   │   ├── bindings/                  # DI bindings
+│   │   ├── controllers/               # Business logic
+│   │   ├── views/                     # Subscription UI
+│   │   └── widgets/                   # Feature widgets
 │   ├── home/                          # Home dashboard
 │   ├── chat/                          # AI chat
 │   ├── lessons/                       # Lesson browser
@@ -159,6 +168,41 @@ features/auth/
 **Pattern:** Singleton services registered in GetX
 
 ### Core Services (Phase 3 ✅)
+
+#### RevenueCatService
+
+Thin wrapper around RevenueCat SDK for in-app subscriptions and purchases.
+
+**Purpose:** Handle RevenueCat initialization, user identification, purchase flows, and subscription state updates.
+
+**Key Methods:**
+```dart
+Future<RevenueCatService> init()  // Initialize SDK with platform-specific API keys
+Future<LogInResult> logIn(String userId)  // Link anonymous RC user to backend user
+Future<CustomerInfo> logOut()  // Reset to anonymous user
+Future<Offerings> getOfferings()  // Fetch available products/subscriptions
+Future<CustomerInfo> purchasePackage(Package package)  // Handle purchase flow
+Future<CustomerInfo> restorePurchases()  // Restore existing purchases
+Future<CustomerInfo> getCustomerInfo()  // Get current subscription state
+Stream<CustomerInfo> get customerInfoStream  // Subscribe to subscription changes
+bool get isConfigured  // Check if SDK initialized successfully
+```
+
+**Features:**
+- Platform-specific API keys (iOS and Android)
+- Graceful handling of missing API keys (no crash, service disabled)
+- Debug logging in development mode
+- Reactive CustomerInfo updates via stream
+- Proper error handling and resource cleanup
+
+**Error Handling:**
+- SDK initialization failures logged to console
+- PlatformExceptions propagated to callers for UI handling
+- Stream cleanup on service disposal
+
+**Configuration:**
+- Requires `revenueCatAppleApiKey` and `revenueCatGoogleApiKey` in environment
+- Uses `purchases_flutter` v8.11.0 SDK
 
 #### StorageService
 Hive-based local storage with intelligent cache eviction.
@@ -713,6 +757,7 @@ Get.updateLocale(const Locale('vi', 'VN'))  // Switch language
 | Secure Storage | flutter_secure_storage |
 | Audio Recording | record 5.0.4 |
 | Audio Playback | audioplayers 5.2.1 |
+| In-App Subscriptions | purchases_flutter 8.11.0 |
 | Localization | intl 0.19.0 |
 | Typography | google_fonts 6.1.0 |
 | Connectivity | connectivity_plus 6.0.3 |

@@ -388,6 +388,47 @@ None currently - Phase 1 completed successfully.
 
 None - Initial release.
 
+### [2026-03-13] Phase 3: RevenueCat Service ✅ COMPLETED
+
+#### Added
+- **RevenueCat Subscription Integration**
+  - `lib/features/subscription/services/revenuecat-service.dart` - Thin SDK wrapper (88 LOC)
+  - Service initialization with platform-specific API keys (iOS/Android)
+  - User identification methods: `logIn(userId)`, `logOut()`
+  - Purchase flow: `getOfferings()`, `purchasePackage()`
+  - Purchase restoration: `restorePurchases()`
+  - Subscription state: `getCustomerInfo()` with `customerInfoStream`
+  - Graceful degradation when API keys are missing
+
+- **Subscription Feature Structure**
+  - Created `lib/features/subscription/` directory structure
+  - Planned subscription models and services for Phase 4
+
+#### Technical Decisions
+- **Thin Wrapper Pattern:** RevenueCatService handles only SDK calls, no business logic
+- **Platform-Specific Keys:** Supports iOS (App Store) and Android (Google Play) separately
+- **Stream-Based Updates:** CustomerInfo stream for reactive subscription state changes
+- **Error Propagation:** PlatformExceptions propagated to callers for proper UX handling
+- **Graceful Failure:** Missing API keys don't crash the app, service disabled gracefully
+
+#### Security & Configuration
+- API keys loaded from environment config (EnvConfig)
+- Debug logging only in development mode
+- No hardcoded credentials in code
+- Platform-specific security handled by RevenueCat SDK
+
+#### Build Verification
+- ✅ Service compiles without errors
+- ✅ No circular dependencies
+- ✅ Proper resource cleanup (stream disposal)
+- ✅ flutter analyze passes
+
+#### Dependencies
+- `purchases_flutter ^8.11.0` - RevenueCat SDK
+- Requires `revenueCatAppleApiKey` and `revenueCatGoogleApiKey` in `.env.dev`/`.env.prod`
+
+---
+
 ### [2026-02-26] Design System Sync: Pencil Warm Neutral Palette Update
 
 #### Changed
