@@ -117,6 +117,22 @@ const Map<String, String> viVN = {
   'offline_mode': 'Chế độ ngoại tuyến',
   'sync_pending': 'Thay đổi sẽ được đồng bộ khi có mạng',
 
+  // Subscription
+  'subscription_title': 'Nâng cấp Premium',
+  'subscription_hero_description':
+      'Mở khóa trò chuyện AI không giới hạn, tất cả bài học và nhiều hơn nữa.',
+  'subscription_gate_description': 'Nâng cấp để truy cập tính năng này.',
+  'subscription_restore': 'Khôi phục giao dịch',
+  'subscription_current_plan': 'Gói hiện tại',
+  'subscription_free_plan': 'Miễn phí',
+  'subscription_monthly': 'Hàng tháng',
+  'subscription_yearly': 'Hàng năm',
+  'subscription_lifetime': 'Trọn đời',
+  'subscription_best_value': 'Tốt nhất',
+  'subscription_purchase_button': 'Đăng ký ngay',
+  'subscription_terms': 'Điều khoản sử dụng',
+  'subscription_privacy': 'Chính sách bảo mật',
+
   // Onboarding — AI Chat (Screen 07)
   'chat_session_error': 'Không thể bắt đầu phiên. Vui lòng thử lại.',
   'chat_session_expired': 'Phiên hết hạn. Vui lòng bắt đầu lại.',

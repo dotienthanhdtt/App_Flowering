@@ -44,4 +44,7 @@ class ApiEndpoints {
   // Progress
   static const String progress = '/progress';
   static const String stats = '/progress/stats';
+
+  // Subscriptions
+  static const String subscriptionMe = '/subscriptions/me';
 }

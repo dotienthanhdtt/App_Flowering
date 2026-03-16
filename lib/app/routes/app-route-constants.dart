@@ -25,6 +25,9 @@ abstract class AppRoutes {
   // Settings routes
   static const String settings = '/settings';
 
+  // Subscription routes
+  static const String paywall = '/paywall';
+
   // Onboarding routes
   static const String onboardingWelcome = '/onboarding/welcome';
   static const String onboardingWelcome2 = '/onboarding/welcome-2';

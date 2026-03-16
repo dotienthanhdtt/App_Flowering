@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/constants/app_sizes.dart';
+import '../../features/subscription/bindings/subscription-binding.dart';
+import '../../features/subscription/views/paywall-screen.dart';
 import 'app-route-constants.dart';
 import '../../features/onboarding/bindings/onboarding_binding.dart';
 import '../../features/onboarding/bindings/splash_binding.dart';
@@ -166,6 +168,16 @@ abstract class AppPages {
       page: () => const _PlaceholderScreen('Settings'),
       // binding: SettingsBinding(),
       transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Paywall screen
+    GetPage(
+      name: AppRoutes.paywall,
+      page: () => const PaywallScreen(),
+      binding: SubscriptionBinding(),
+      transition: Transition.downToUp,
       transitionDuration: defaultDuration,
       curve: defaultCurve,
     ),

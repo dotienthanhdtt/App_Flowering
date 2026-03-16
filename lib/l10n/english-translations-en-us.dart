@@ -117,6 +117,22 @@ const Map<String, String> enUS = {
   'offline_mode': 'Offline Mode',
   'sync_pending': 'Changes will sync when online',
 
+  // Subscription
+  'subscription_title': 'Upgrade to Premium',
+  'subscription_hero_description':
+      'Unlock unlimited AI conversations, all lessons, and more.',
+  'subscription_gate_description': 'Upgrade to access this feature.',
+  'subscription_restore': 'Restore Purchases',
+  'subscription_current_plan': 'Current Plan',
+  'subscription_free_plan': 'Free',
+  'subscription_monthly': 'Monthly',
+  'subscription_yearly': 'Yearly',
+  'subscription_lifetime': 'Lifetime',
+  'subscription_best_value': 'Best Value',
+  'subscription_purchase_button': 'Subscribe Now',
+  'subscription_terms': 'Terms & Conditions',
+  'subscription_privacy': 'Privacy Policy',
+
   // Onboarding — AI Chat (Screen 07)
   'chat_session_error': 'Could not start session. Please try again.',
   'chat_session_expired': 'Session expired. Please restart onboarding.',
