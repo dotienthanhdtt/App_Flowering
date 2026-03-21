@@ -2,6 +2,13 @@
 .claude/
 .opencode/
 
+# FVM (Flutter Version Management)
+.fvm/flutter_sdk
+.fvm/versions/
+.fvm/release
+.fvm/version
+.fvm
+
 # Miscellaneous
 *.class
 *.log
