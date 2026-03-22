@@ -2,6 +2,143 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-03-23] AI Chat Screen UI Redesign (Screens 08A-08E) ✅ COMPLETED
+
+#### Added
+- **Chat Context Card** (`lib/features/chat/widgets/chat-context-card.dart`)
+  - New widget displaying scenario context at top of chat area
+  - Orange/warning background with message-circle icon
+  - Integrated in AiChatScreen when contextDescription exists
+
+#### Changed
+- **ChatTopBar** (`lib/features/chat/widgets/chat_top_bar.dart`)
+  - Replaced onboarding-style (logo+progress+skip) with conversation-style design
+  - Back arrow + centered title + optional more icon (for 08E)
+  - 1px divider below in `infoColor`
+  - New constructor: `title`, `onBack`, `showMoreButton`, `onMore`
+
+- **GrammarCorrectionSection** (`lib/features/chat/widgets/grammar_correction_section.dart`)
+  - Redesigned from embedded-in-bubble to standalone card
+  - Red border (1px `errorColor`), white background, sparkles icon
+  - "Try this instead:" header with corrected text below
+  - Removed toggle UI (now always visible when present)
+
+- **ChatTextInputField** (`lib/features/chat/widgets/chat_text_input_field.dart`)
+  - Placeholder color: changed to `infoColor` (#9CB0CF)
+  - Input text size: 16px (`fontSizeMedium`)
+
+- **AiMessageBubble** (`lib/features/chat/widgets/ai_message_bubble.dart`)
+  - Removed "Flora" label and AI avatar widget
+  - Updated card shadow: blur 4, #0000001A, offset y:1
+  - Moved action buttons (Translate/Play) outside card with pill-shaped backgrounds
+  - Translation section integrated inside card with divider (for 08D)
+
+- **TextActionButton** (`lib/features/chat/widgets/text_action_button.dart`)
+  - Added `hasPillBackground` parameter for pill-shaped chip variant
+  - Pill variant has beige background, subtle shadow, 8px border radius
+
+- **UserMessageBubble** (`lib/features/chat/widgets/user_message_bubble.dart`)
+  - Color changed: orange (`primaryColor`) → blue (`secondaryColor`)
+  - Border radius: 12px all corners (was mixed)
+  - Removed embedded `GrammarCorrectionSection`
+  - Removed `onToggleCorrection` callback
+
+- **ChatRecordingBar** (`lib/features/chat/widgets/chat_recording_bar.dart`)
+  - Cancel/send button sizes increased: 36px → 48px circles
+
+- **ChatWaveformBars** (`lib/features/chat/widgets/chat_waveform_bars.dart`)
+  - Bar count increased: 20 → 39 bars
+  - Gap between bars: 2px
+  - Height range: 6-26px
+
+- **WordTranslationSheet** (`lib/shared/widgets/word-translation-sheet.dart`)
+  - Added "Save to My Words" button at bottom (52px height, outlined, bookmark icon)
+  - Handle pill width: 40 → 36px
+  - Added `onSave` callback parameter
+
+- **WordTranslationSheetLoader** (`lib/shared/widgets/word-translation-sheet-loader.dart`)
+  - Now forwards `onSave` callback to `WordTranslationSheet`
+
+- **AiChatController** (`lib/features/chat/controllers/ai_chat_controller.dart`)
+  - Added `chatTitle` observable (read from route args)
+  - Added `contextDescription` observable (read from route args)
+  - Added `saveWord()` stub method for vocabulary integration
+
+- **AiChatScreen** (`lib/features/chat/views/ai_chat_screen.dart`)
+  - Grammar correction now renders as separate item below user message (right-aligned)
+  - Context card renders above chat list when contextDescription is not empty
+  - ChatTopBar now receives `title` from controller instead of progress data
+  - Integrated all Phase 01-03 widget updates
+
+#### Added Translation Keys
+- `chat_try_instead` - "Try this instead:" (EN: "Try this instead:", VI: "Thu lai cau nay:")
+- `chat_save_to_words` - "Save to My Words" (EN: "Save to My Words", VI: "Luu vao tu vung")
+
+#### Phases Completed
+1. ✅ **Phase 01:** Top bar, grammar correction, input widgets — 7/7 todo items
+2. ✅ **Phase 02:** Message bubbles, recording bar — 6/6 todo items
+3. ✅ **Phase 03:** Bottom sheet, context card, screen integration — 9/9 todo items
+
+#### Files Modified
+- `lib/features/chat/widgets/chat_top_bar.dart` - Full rewrite for conversation style
+- `lib/features/chat/widgets/grammar_correction_section.dart` - Red border card design
+- `lib/features/chat/widgets/chat_text_input_field.dart` - Color and size tweaks
+- `lib/features/chat/widgets/ai_message_bubble.dart` - Removed Flora, updated shadow, actions below
+- `lib/features/chat/widgets/user_message_bubble.dart` - Blue color, 12px radius
+- `lib/features/chat/widgets/text_action_button.dart` - Added pill background option
+- `lib/features/chat/widgets/chat_recording_bar.dart` - 48px buttons
+- `lib/features/chat/widgets/chat_waveform_bars.dart` - 39 bars, 2px gap
+- `lib/shared/widgets/word-translation-sheet.dart` - Save button, handle resize
+- `lib/shared/widgets/word-translation-sheet-loader.dart` - Forward onSave callback
+- `lib/features/chat/controllers/ai_chat_controller.dart` - Chat title, context, saveWord()
+- `lib/features/chat/views/ai_chat_screen.dart` - Integrate all changes, grammar correction rendering
+- `lib/l10n/english-translations-en-us.dart` - Added chat_try_instead, chat_save_to_words
+- `lib/l10n/vietnamese-translations-vi-vn.dart` - Added chat_try_instead, chat_save_to_words
+
+#### Files Created
+- `lib/features/chat/widgets/chat-context-card.dart` - Scenario context card widget
+
+#### Technical Decisions
+- **Grammar Correction Placement:** Rendered below user bubble as separate item (not inside) for cleaner UI separation
+- **Context Card:** Only shown when contextDescription observable is not empty
+- **Pill Buttons:** Reused TextActionButton with `hasPillBackground` parameter (no new widget)
+- **Backward Compatibility:** WordTranslationSheet's `onSave` callback is optional (nullable)
+- **Title Management:** ChatTopBar now reads from controller observable instead of route params
+
+#### Quality Assurance
+- ✅ All 3 phases completed: 22 todo items checked
+- ✅ `flutter analyze` passes — 0 errors, 0 new warnings
+- ✅ All widget files under 200 lines
+- ✅ Screens compile without errors
+- ✅ Visual QA against Pencil design screens 08A-08E verified
+- ✅ Grammar correction properly separated from user bubble
+- ✅ Context card renders when scenario description exists
+- ✅ Recording bar buttons sized to 48px
+- ✅ Waveform bars increased to 39 with 2px gaps
+- ✅ Save button integrated into bottom sheet
+
+#### Design Alignment
+- ✅ Top bar: 56px height, back arrow (24px), centered title (20px w600)
+- ✅ Grammar correction: Red border (1px errorColor), white bg, sparkles icon
+- ✅ User bubble: Blue (#0077BA secondaryColor), 12px all corners, 18px white text
+- ✅ AI bubble: White card, shadow blur 4, action pills below with 8px radius
+- ✅ Recording bar: 48px cancel/send circles, 39 waveform bars with 2px gaps
+- ✅ Context card: Orange bg, message-circle icon, scenario text
+- ✅ Bottom sheet: Save button (52px height, outlined, bookmark icon)
+
+#### Success Metrics Met
+- ✅ 3 phases completed on schedule (260323 plan)
+- ✅ All 22 implementation todo items completed
+- ✅ Zero compile errors
+- ✅ All widget redesigns match Pencil screens 08A-08E
+- ✅ Grammar correction successfully separated from user bubble
+- ✅ Context card functional when contextDescription provided
+- ✅ Recording bar UI enhanced with larger buttons and more bars
+- ✅ Bottom sheet save button integrated with callback support
+- ✅ Full translation coverage (EN + VI)
+
+---
+
 ### [2026-03-10] Base Class Inheritance Enforcement ✅ COMPLETED
 
 #### Changed
