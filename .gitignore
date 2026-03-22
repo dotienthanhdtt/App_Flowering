@@ -81,3 +81,17 @@ app.*.map.json
 # macOS
 **/macos/Flutter/GeneratedPluginRegistrant.swift
 **/macos/Flutter/ephemeral/
+
+# macOS Finder duplicate files
+*\ 2.*
+*\ 2
+*\ 3.*
+*\ 3
+*\ 4.*
+*\ 4
+*\ 5.*
+*\ 5
+
+# Build output
+build
+/build/
