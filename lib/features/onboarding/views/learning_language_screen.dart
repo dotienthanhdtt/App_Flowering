@@ -15,7 +15,7 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.background;
+  Color? get backgroundColor => AppColors.backgroundColor;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -45,7 +45,7 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
               AppText(
                 'language_select_subtitle'.tr,
                 variant: AppTextVariant.bodyMedium,
-                color: AppColors.textSecondary,
+                color: AppColors.textSecondaryColor,
                 height: AppSizes.lineHeightNormal,
                 textAlign: TextAlign.left,
               ),
@@ -95,9 +95,9 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
         6,
         (_) => Container(
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: AppColors.surfaceColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
-            border: Border.all(color: AppColors.borderLight),
+            border: Border.all(color: AppColors.borderLightColor),
           ),
         ),
       ),
@@ -112,7 +112,7 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
           AppText(
             'language_load_error'.tr,
             variant: AppTextVariant.bodyMedium,
-            color: AppColors.textSecondary,
+            color: AppColors.textSecondaryColor,
           ),
           const SizedBox(height: AppSizes.spacingL),
           GestureDetector(
@@ -120,7 +120,7 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
             child: AppText(
               'retry'.tr,
               variant: AppTextVariant.label,
-              color: AppColors.primary,
+              color: AppColors.primaryColor,
             ),
           ),
         ],

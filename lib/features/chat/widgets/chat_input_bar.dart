@@ -20,8 +20,8 @@ class ChatInputBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(
           AppSizes.paddingL, AppSizes.paddingXS, AppSizes.paddingL, AppSizes.paddingL),
       decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.borderLight)),
+        color: AppColors.surfaceColor,
+        border: Border(top: BorderSide(color: AppColors.borderLightColor)),
       ),
       child: Obx(() {
         final isComplete = controller.isChatComplete.value;

@@ -28,14 +28,14 @@ class AppErrorWidget extends StatelessWidget {
             Icon(
               icon ?? Icons.error_outline,
               size: AppSizes.icon4XL,
-              color: AppColors.error,
+              color: AppColors.errorColor,
             ),
             const SizedBox(height: AppSizes.spacingL),
             AppText(
               message,
               variant: AppTextVariant.bodyLarge,
               textAlign: TextAlign.center,
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondaryColor,
             ),
             if (onRetry != null) ...[
               const SizedBox(height: AppSizes.spacingXXL),

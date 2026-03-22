@@ -126,15 +126,15 @@ class _OtpBox extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: AppSizes.font4XL,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: AppColors.textPrimaryColor,
         ),
         decoration: InputDecoration(
           counterText: '',
           filled: true,
-          fillColor: AppColors.surface,
-          border: _border(AppColors.borderLight, AppSizes.borderMedium),
-          enabledBorder: _border(AppColors.borderLight, AppSizes.borderMedium),
-          focusedBorder: _border(AppColors.primary, 2),
+          fillColor: AppColors.surfaceColor,
+          border: _border(AppColors.borderLightColor, AppSizes.borderMedium),
+          enabledBorder: _border(AppColors.borderLightColor, AppSizes.borderMedium),
+          focusedBorder: _border(AppColors.primaryColor, 2),
         ),
       ),
     );

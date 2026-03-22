@@ -29,9 +29,9 @@ class QuickReplyRow extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: AppSizes.paddingM, vertical: AppSizes.paddingXS),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: AppColors.surfaceColor,
                     borderRadius: BorderRadius.circular(AppSizes.radiusPill),
-                    border: Border.all(color: AppColors.borderLight),
+                    border: Border.all(color: AppColors.borderLightColor),
                     boxShadow: const [
                       BoxShadow(
                         color: Color(0x08191919),
@@ -43,7 +43,7 @@ class QuickReplyRow extends StatelessWidget {
                   child: AppText(
                     opt,
                     fontSize: AppSizes.fontSM,
-                    color: AppColors.textPrimary,
+                    color: AppColors.textPrimaryColor,
                   ),
                 ),
               ),

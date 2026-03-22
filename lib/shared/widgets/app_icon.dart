@@ -21,7 +21,7 @@ class AppIcon extends StatelessWidget {
     final iconWidget = Icon(
       icon,
       size: size ?? AppSizes.iconXL,
-      color: color ?? AppColors.textPrimary,
+      color: color ?? AppColors.textPrimaryColor,
     );
 
     if (onTap != null) {

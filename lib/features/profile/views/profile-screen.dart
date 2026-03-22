@@ -41,11 +41,11 @@ class ProfileScreen extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: AppSizes.avatarXL / 2,
-          backgroundColor: AppColors.primarySoft,
+          backgroundColor: AppColors.primarySoftColor,
           child: const Icon(
             LucideIcons.user,
             size: AppSizes.iconXXL,
-            color: AppColors.primary,
+            color: AppColors.primaryColor,
           ),
         ),
         const SizedBox(height: AppSizes.spacingM),
@@ -94,10 +94,10 @@ class ProfileScreen extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: controller.logout,
         icon: const Icon(LucideIcons.logOut, size: AppSizes.iconL),
-        label: AppText('logout'.tr, color: AppColors.error),
+        label: AppText('logout'.tr, color: AppColors.errorColor),
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.error,
-          side: const BorderSide(color: AppColors.error),
+          foregroundColor: AppColors.errorColor,
+          side: const BorderSide(color: AppColors.errorColor),
           padding: const EdgeInsets.symmetric(vertical: AppSizes.paddingM),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -118,7 +118,7 @@ class _StatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AppText(value, variant: AppTextVariant.h3, color: AppColors.primary),
+        AppText(value, variant: AppTextVariant.h3, color: AppColors.primaryColor),
         const SizedBox(height: AppSizes.spacingXS),
         AppText(label, variant: AppTextVariant.caption),
       ],
@@ -136,11 +136,11 @@ class _SettingsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: AppColors.textSecondary, size: AppSizes.iconL),
+      leading: Icon(icon, color: AppColors.textSecondaryColor, size: AppSizes.iconL),
       title: AppText(label, variant: AppTextVariant.bodyMedium),
       trailing: const Icon(
         LucideIcons.chevronRight,
-        color: AppColors.textTertiary,
+        color: AppColors.textTertiaryColor,
         size: AppSizes.iconL,
       ),
       onTap: () {},

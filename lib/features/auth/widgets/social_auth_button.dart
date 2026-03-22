@@ -25,11 +25,11 @@ class SocialAuthButton extends StatelessWidget {
       child: Container(
         height: AppSizes.buttonHeightM,
         decoration: BoxDecoration(
-          color: isApple ? AppColors.textPrimary : AppColors.surface,
+          color: isApple ? AppColors.textPrimaryColor : AppColors.surfaceColor,
           borderRadius: BorderRadius.circular(AppSizes.radiusPill),
           border: isApple
               ? null
-              : Border.all(color: AppColors.borderLight, width: AppSizes.borderMedium),
+              : Border.all(color: AppColors.borderLightColor, width: AppSizes.borderMedium),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -48,7 +48,7 @@ class SocialAuthButton extends StatelessWidget {
               variant: AppTextVariant.bodyLarge,
               fontSize: AppSizes.fontL,
               fontWeight: FontWeight.w600,
-              color: isApple ? Colors.white : AppColors.textPrimary,
+              color: isApple ? Colors.white : AppColors.textPrimaryColor,
             ),
           ],
         ),

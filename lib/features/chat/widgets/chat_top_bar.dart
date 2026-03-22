@@ -28,7 +28,7 @@ class ChatTopBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
           decoration: const BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: AppColors.borderLight, width: AppSizes.borderThin),
+              bottom: BorderSide(color: AppColors.borderLightColor, width: AppSizes.borderThin),
             ),
           ),
           child: Row(
@@ -47,7 +47,7 @@ class ChatTopBar extends StatelessWidget {
                 'app_name'.tr,
                 variant: AppTextVariant.bodyLarge,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+                color: AppColors.textPrimaryColor,
               ),
               const SizedBox(width: AppSizes.spacingS),
               Text(flagEmoji, style: const TextStyle(fontSize: AppSizes.fontXL)),
@@ -57,7 +57,7 @@ class ChatTopBar extends StatelessWidget {
                 child: AppText(
                   'chat_skip'.tr,
                   variant: AppTextVariant.label,
-                  color: AppColors.textTertiary,
+                  color: AppColors.textTertiaryColor,
                 ),
               ),
             ],
@@ -69,12 +69,12 @@ class ChatTopBar extends StatelessWidget {
           child: LayoutBuilder(
             builder: (_, constraints) => Stack(
               children: [
-                Container(color: AppColors.borderLight),
+                Container(color: AppColors.borderLightColor),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 400),
                   curve: Curves.easeOut,
                   width: constraints.maxWidth * progress,
-                  color: AppColors.primary,
+                  color: AppColors.primaryColor,
                 ),
               ],
             ),

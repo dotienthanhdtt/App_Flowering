@@ -49,22 +49,22 @@ class FloweringApp extends StatelessWidget {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        primary: AppColors.primary,
-        secondary: AppColors.accentGreen,
-        surface: AppColors.surface,
-        error: AppColors.error,
+        seedColor: AppColors.primaryColor,
+        primary: AppColors.primaryColor,
+        secondary: AppColors.successColor,
+        surface: AppColors.surfaceColor,
+        error: AppColors.errorColor,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppColors.backgroundColor,
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: AppColors.surfaceColor,
+        foregroundColor: AppColors.textPrimaryColor,
         elevation: 0,
         centerTitle: true,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.primaryColor,
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -77,17 +77,17 @@ class FloweringApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppColors.radiusM),
         ),
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: AppColors.surfaceColor,
       ),
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppColors.radiusL),
         ),
-        color: AppColors.surface,
+        color: AppColors.surfaceColor,
       ),
       dividerTheme: const DividerThemeData(
-        color: AppColors.border,
+        color: AppColors.borderColor,
         thickness: 1,
       ),
     );

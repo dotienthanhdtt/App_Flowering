@@ -18,7 +18,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.background;
+  Color? get backgroundColor => AppColors.backgroundColor;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -29,7 +29,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
           alignment: Alignment.centerLeft,
           child: IconButton(
             icon: const Icon(Icons.arrow_back_rounded,
-                color: AppColors.textPrimary),
+                color: AppColors.textPrimaryColor),
             onPressed: Get.back,
           ),
         ),
@@ -51,7 +51,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                   AppText(
                     'login_subtitle'.tr,
                     variant: AppTextVariant.bodyMedium,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textSecondaryColor,
                   ),
                   const SizedBox(height: AppSizes.spacing3XL),
                   // Social auth
@@ -69,7 +69,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                   Row(
                     children: [
                       const Expanded(
-                          child: Divider(color: AppColors.borderLight)),
+                          child: Divider(color: AppColors.borderLightColor)),
                       Padding(
                         padding:
                             const EdgeInsets.symmetric(horizontal: AppSizes.paddingSM),
@@ -80,7 +80,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                         ),
                       ),
                       const Expanded(
-                          child: Divider(color: AppColors.borderLight)),
+                          child: Divider(color: AppColors.borderLightColor)),
                     ],
                   ),
                   const SizedBox(height: AppSizes.spacingXL),
@@ -112,7 +112,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                         variant: AppTextVariant.caption,
                         fontSize: AppSizes.fontSM,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ),
@@ -127,7 +127,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                         controller.errorMessage.value,
                         variant: AppTextVariant.caption,
                         fontSize: AppSizes.fontSM,
-                        color: AppColors.error,
+                        color: AppColors.errorColor,
                       ),
                     );
                   }),
@@ -138,7 +138,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                         child: Container(
                           height: AppSizes.buttonHeightM,
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: AppColors.primaryColor,
                             borderRadius:
                                 BorderRadius.circular(AppSizes.radiusPill),
                           ),
@@ -168,14 +168,14 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                         text: TextSpan(
                           style: GoogleFonts.inter(
                             fontSize: AppSizes.fontM,
-                            color: AppColors.textSecondary,
+                            color: AppColors.textSecondaryColor,
                           ),
                           children: [
                             TextSpan(text: '${'dont_have_account'.tr} '),
                             TextSpan(
                               text: 'signup_action'.tr,
                               style: const TextStyle(
-                                color: AppColors.primary,
+                                color: AppColors.primaryColor,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

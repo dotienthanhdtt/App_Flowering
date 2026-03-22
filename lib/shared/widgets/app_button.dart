@@ -73,8 +73,8 @@ class AppButton extends StatelessWidget {
           child: ElevatedButton(
             onPressed: isLoading ? null : onPressed,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.textOnPrimary,
+              backgroundColor: AppColors.primaryColor,
+              foregroundColor: AppColors.textOnPrimaryColor,
               minimumSize:
                   Size(isFullWidth ? double.infinity : 0, buttonHeight),
               padding: buttonPadding,
@@ -93,8 +93,8 @@ class AppButton extends StatelessWidget {
         button = ElevatedButton(
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primarySoft,
-            foregroundColor: AppColors.primary,
+            backgroundColor: AppColors.primarySoftColor,
+            foregroundColor: AppColors.primaryColor,
             minimumSize:
                 Size(isFullWidth ? double.infinity : 0, buttonHeight),
             padding: buttonPadding,
@@ -112,8 +112,8 @@ class AppButton extends StatelessWidget {
         button = OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            backgroundColor: AppColors.surface,
-            foregroundColor: AppColors.textSecondary,
+            backgroundColor: AppColors.surfaceColor,
+            foregroundColor: AppColors.textSecondaryColor,
             minimumSize:
                 Size(isFullWidth ? double.infinity : 0, buttonHeight),
             padding: buttonPadding,
@@ -122,7 +122,7 @@ class AppButton extends StatelessWidget {
                   BorderRadius.circular(AppSizes.radiusPill),
             ),
             side: const BorderSide(
-              color: AppColors.borderStrong,
+              color: AppColors.borderStrongColor,
               width: AppSizes.borderMedium,
             ),
           ),
@@ -134,7 +134,7 @@ class AppButton extends StatelessWidget {
         button = TextButton(
           onPressed: isLoading ? null : onPressed,
           style: TextButton.styleFrom(
-            foregroundColor: AppColors.primary,
+            foregroundColor: AppColors.primaryColor,
             minimumSize:
                 Size(isFullWidth ? double.infinity : 0, buttonHeight),
             padding: buttonPadding,
@@ -154,13 +154,13 @@ class AppButton extends StatelessWidget {
     );
     switch (variant) {
       case AppButtonVariant.primary:
-        return base.copyWith(color: AppColors.textOnPrimary);
+        return base.copyWith(color: AppColors.textOnPrimaryColor);
       case AppButtonVariant.secondary:
-        return base.copyWith(color: AppColors.primary);
+        return base.copyWith(color: AppColors.primaryColor);
       case AppButtonVariant.outline:
-        return base.copyWith(color: AppColors.textSecondary);
+        return base.copyWith(color: AppColors.textSecondaryColor);
       case AppButtonVariant.text:
-        return base.copyWith(color: AppColors.primary);
+        return base.copyWith(color: AppColors.primaryColor);
     }
   }
 }

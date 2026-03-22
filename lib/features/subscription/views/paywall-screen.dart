@@ -15,12 +15,12 @@ class PaywallScreen extends StatelessWidget {
     final controller = Get.find<PaywallController>();
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundWarm,
+      backgroundColor: AppColors.backgroundWarmColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: AppColors.textPrimary),
+          icon: const Icon(Icons.close, color: AppColors.textPrimaryColor),
           onPressed: () => Get.back(),
         ),
         centerTitle: true,
@@ -29,14 +29,14 @@ class PaywallScreen extends StatelessWidget {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+            color: AppColors.textPrimaryColor,
           ),
         ),
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.offerings.isEmpty) {
           return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+            child: CircularProgressIndicator(color: AppColors.primaryColor),
           );
         }
         if (controller.offerings.isEmpty) {
@@ -83,7 +83,7 @@ class _PaywallBody extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(
                     controller.errorMessage.value,
-                    style: const TextStyle(color: AppColors.error, fontSize: 13),
+                    style: const TextStyle(color: AppColors.errorColor, fontSize: 13),
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -113,7 +113,7 @@ class _HeroSection extends StatelessWidget {
         const Icon(
           Icons.workspace_premium_rounded,
           size: 48,
-          color: AppColors.primary,
+          color: AppColors.primaryColor,
         ),
         const SizedBox(height: 12),
         Text(
@@ -121,13 +121,13 @@ class _HeroSection extends StatelessWidget {
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+            color: AppColors.textPrimaryColor,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           'subscription_hero_description'.tr,
-          style: const TextStyle(fontSize: 15, color: AppColors.textSecondary),
+          style: const TextStyle(fontSize: 15, color: AppColors.textSecondaryColor),
         ),
       ],
     );
@@ -147,18 +147,18 @@ class _EmptyOfferings extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.cloud_off_rounded,
-                size: 48, color: AppColors.textTertiary),
+                size: 48, color: AppColors.textTertiaryColor),
             const SizedBox(height: 16),
             const Text(
               'Could not load subscription plans.',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 15),
+              style: TextStyle(color: AppColors.textSecondaryColor, fontSize: 15),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.primaryColor,
                 foregroundColor: Colors.white,
               ),
               child: Text('retry'.tr),

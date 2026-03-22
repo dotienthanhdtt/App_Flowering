@@ -17,7 +17,7 @@ class SplashScreen extends BaseScreen<SplashController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.primary;
+  Color? get backgroundColor => AppColors.primaryColor;
 
   @override
   Widget buildContent(BuildContext context) {

@@ -23,7 +23,7 @@ class ScenarioCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
         boxShadow: const [
-          BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: Offset(0, 2)),
+          BoxShadow(color: AppColors.shadowColor, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Stack(
@@ -128,7 +128,7 @@ class _LearnedBadge extends StatelessWidget {
         width: 20,
         height: 20,
         decoration: const BoxDecoration(
-          color: AppColors.success,
+          color: AppColors.successColor,
           shape: BoxShape.circle,
         ),
         child: const Icon(
@@ -164,7 +164,7 @@ class _LevelDots extends StatelessWidget {
             height: 6,
             margin: const EdgeInsets.only(right: 3),
             decoration: BoxDecoration(
-              color: i < level ? AppColors.primary : AppColors.borderLight,
+              color: i < level ? AppColors.primaryColor : AppColors.borderLightColor,
               shape: BoxShape.circle,
             ),
           );
@@ -181,11 +181,11 @@ class _PlaceholderBg extends StatelessWidget {
   const _PlaceholderBg({required this.scenario});
 
   Color _accentLightColor() => switch (scenario.accentColor) {
-        'blue' => AppColors.accentBlueLight,
-        'green' => AppColors.accentGreenLight,
-        'lavender' => AppColors.accentLavenderLight,
-        'rose' => AppColors.accentRoseLight,
-        _ => AppColors.primarySoft,
+        'blue' => AppColors.secondaryLightColor,
+        'green' => AppColors.successLightColor,
+        'lavender' => AppColors.lavenderLightColor,
+        'rose' => AppColors.roseLightColor,
+        _ => AppColors.primarySoftColor,
       };
 
   String _iconEmoji() => switch (scenario.icon) {

@@ -26,7 +26,7 @@ class GrammarCorrectionSection extends StatelessWidget {
         Container(
           width: double.infinity,
           height: AppSizes.borderThin,
-          color: AppColors.primaryLight,
+          color: AppColors.primaryLightColor,
         ),
         const SizedBox(height: AppSizes.spacingS),
         if (isExpanded) ...[
@@ -35,14 +35,14 @@ class GrammarCorrectionSection extends StatelessWidget {
               const Icon(
                 Icons.check_circle,
                 size: AppSizes.iconXXS,
-                color: AppColors.accentGreenDark,
+                color: AppColors.successDarkColor,
               ),
               const SizedBox(width: AppSizes.spacingXS),
               AppText(
                 'corrected'.tr,
                 fontSize: AppSizes.fontXXS,
                 fontWeight: FontWeight.w600,
-                color: AppColors.accentGreenDark,
+                color: AppColors.successDarkColor,
               ),
             ],
           ),
@@ -61,7 +61,7 @@ class GrammarCorrectionSection extends StatelessWidget {
             isExpanded ? 'hide'.tr : 'show'.tr,
             fontSize: AppSizes.fontXS,
             fontWeight: FontWeight.w500,
-            color: AppColors.primaryLight,
+            color: AppColors.primaryLightColor,
           ),
         ),
       ],

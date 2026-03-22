@@ -83,7 +83,7 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
         statusBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.backgroundColor,
         body: ValueListenableBuilder<int>(
           valueListenable: _currentStep,
           builder: (context, step, _) {
@@ -154,7 +154,7 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
             AppText(
               step.subtext,
               variant: AppTextVariant.bodyLarge,
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondaryColor,
               height: AppSizes.lineHeightXLoose,
             ),
           ],
@@ -169,7 +169,7 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
         'welcome_tap_continue'.tr,
         variant: AppTextVariant.bodyLarge,
         fontSize: AppSizes.fontL,
-        color: AppColors.textTertiary,
+        color: AppColors.textTertiaryColor,
       ),
     );
   }
@@ -181,7 +181,7 @@ class _WelcomeProblemScreenState extends State<WelcomeProblemScreen> {
       child: ElevatedButton(
         onPressed: _onTap,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.primaryColor,
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(

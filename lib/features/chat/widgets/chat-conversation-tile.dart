@@ -34,11 +34,11 @@ class ChatConversationTile extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: AppSizes.avatarM / 2,
-              backgroundColor: AppColors.primarySoft,
+              backgroundColor: AppColors.primarySoftColor,
               child: const Icon(
                 LucideIcons.messageCircle,
                 size: AppSizes.iconSM,
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
               ),
             ),
             const SizedBox(width: AppSizes.spacingM),

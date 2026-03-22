@@ -15,7 +15,7 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.background;
+  Color? get backgroundColor => AppColors.backgroundColor;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -31,13 +31,13 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
               width: AppSizes.inputHeight,
               height: AppSizes.inputHeight,
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: AppColors.surfaceColor,
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                border: Border.all(color: AppColors.borderLight),
+                border: Border.all(color: AppColors.borderLightColor),
               ),
               child: const Icon(
                 Icons.chevron_left,
-                color: AppColors.textPrimary,
+                color: AppColors.textPrimaryColor,
               ),
             ),
           ),
@@ -66,7 +66,7 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
               AppText(
                 'native_language_subtitle'.tr,
                 variant: AppTextVariant.bodyMedium,
-                color: AppColors.textSecondary,
+                color: AppColors.textSecondaryColor,
                 height: AppSizes.lineHeightNormal,
                 textAlign: TextAlign.left,
               ),
@@ -116,9 +116,9 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
       itemBuilder: (_, _) => Container(
         height: AppSizes.cardHeightCompact,
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceColor,
           borderRadius: BorderRadius.circular(AppSizes.radiusL),
-          border: Border.all(color: AppColors.borderLight),
+          border: Border.all(color: AppColors.borderLightColor),
         ),
       ),
     );
@@ -132,7 +132,7 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
           AppText(
             'language_load_error'.tr,
             variant: AppTextVariant.bodyMedium,
-            color: AppColors.textSecondary,
+            color: AppColors.textSecondaryColor,
           ),
           const SizedBox(height: AppSizes.spacingL),
           GestureDetector(
@@ -140,7 +140,7 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
             child: AppText(
               'retry'.tr,
               variant: AppTextVariant.label,
-              color: AppColors.primary,
+              color: AppColors.primaryColor,
             ),
           ),
         ],

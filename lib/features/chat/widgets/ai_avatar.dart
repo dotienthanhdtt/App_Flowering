@@ -12,7 +12,7 @@ class AiAvatar extends StatelessWidget {
       width: AppSizes.avatarM,
       height: AppSizes.avatarM,
       decoration: const BoxDecoration(
-        color: AppColors.primarySoft,
+        color: AppColors.primarySoftColor,
         shape: BoxShape.circle,
       ),
       child: ClipOval(

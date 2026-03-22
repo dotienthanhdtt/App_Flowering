@@ -23,7 +23,7 @@ class StepDotsIndicator extends StatelessWidget {
           width: isActive ? AppSizes.spacing3XL : AppSizes.spacingL,
           height: AppSizes.spacingXS,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.textPrimary : AppColors.borderLight,
+            color: isActive ? AppColors.textPrimaryColor : AppColors.borderLightColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusXS),
           ),
         );

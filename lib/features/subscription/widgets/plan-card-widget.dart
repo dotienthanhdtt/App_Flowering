@@ -29,16 +29,16 @@ class PlanCardWidget extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 6),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primarySoft : AppColors.surface,
+          color: isSelected ? AppColors.primarySoftColor : AppColors.surfaceColor,
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
+            color: isSelected ? AppColors.primaryColor : AppColors.borderColor,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(AppColors.radiusL),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.12),
+                    color: AppColors.primaryColor.withValues(alpha: 0.12),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   )
@@ -60,7 +60,7 @@ class PlanCardWidget extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: AppColors.textPrimaryColor,
                         ),
                       ),
                       if (isRecommended) ...[
@@ -76,7 +76,7 @@ class PlanCardWidget extends StatelessWidget {
                         offering.description,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondaryColor,
                         ),
                       ),
                     ),
@@ -88,7 +88,7 @@ class PlanCardWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
-                color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                color: isSelected ? AppColors.primaryColor : AppColors.textPrimaryColor,
               ),
             ),
           ],
@@ -109,9 +109,9 @@ class _RadioDot extends StatelessWidget {
       height: 22,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isSelected ? AppColors.primary : Colors.transparent,
+        color: isSelected ? AppColors.primaryColor : Colors.transparent,
         border: Border.all(
-          color: isSelected ? AppColors.primary : AppColors.border,
+          color: isSelected ? AppColors.primaryColor : AppColors.borderColor,
           width: 2,
         ),
       ),
@@ -130,7 +130,7 @@ class _RecommendedBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        color: AppColors.primaryColor,
         borderRadius: BorderRadius.circular(AppColors.radiusPill),
       ),
       child: Text(

@@ -73,7 +73,7 @@ class _AppTappablePhraseState extends State<AppTappablePhrase> {
       TextStyle wordStyle = customStyle ?? baseStyle;
       if (isHighlighted) {
         wordStyle = wordStyle.copyWith(
-          color: widget.highlightColor ?? AppColors.primary,
+          color: widget.highlightColor ?? AppColors.primaryColor,
           backgroundColor: widget.highlightBackground,
           fontWeight: FontWeight.w600,
         );

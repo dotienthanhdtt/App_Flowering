@@ -15,7 +15,7 @@ class ForgotPasswordScreen extends BaseScreen<ForgotPasswordController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.background;
+  Color? get backgroundColor => AppColors.backgroundColor;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -26,7 +26,7 @@ class ForgotPasswordScreen extends BaseScreen<ForgotPasswordController> {
           alignment: Alignment.centerLeft,
           child: IconButton(
             icon: const Icon(Icons.arrow_back_rounded,
-                color: AppColors.textPrimary),
+                color: AppColors.textPrimaryColor),
             onPressed: Get.back,
           ),
         ),
@@ -48,7 +48,7 @@ class ForgotPasswordScreen extends BaseScreen<ForgotPasswordController> {
                   AppText(
                     'forgot_subtitle'.tr,
                     variant: AppTextVariant.bodyMedium,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textSecondaryColor,
                     height: AppSizes.lineHeightNormal,
                   ),
                   const SizedBox(height: AppSizes.spacing4XL),
@@ -71,7 +71,7 @@ class ForgotPasswordScreen extends BaseScreen<ForgotPasswordController> {
                         controller.errorMessage.value,
                         variant: AppTextVariant.caption,
                         fontSize: AppSizes.fontSM,
-                        color: AppColors.error,
+                        color: AppColors.errorColor,
                       ),
                     );
                   }),
@@ -83,7 +83,7 @@ class ForgotPasswordScreen extends BaseScreen<ForgotPasswordController> {
                         child: Container(
                           height: AppSizes.buttonHeightM,
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(
                                 AppSizes.radiusPill),
                           ),

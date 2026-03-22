@@ -55,10 +55,10 @@ class VocabularyScreen extends StatelessWidget {
           prefixIcon: const Icon(
             LucideIcons.search,
             size: AppSizes.iconL,
-            color: AppColors.textTertiary,
+            color: AppColors.textTertiaryColor,
           ),
           filled: true,
-          fillColor: AppColors.surfaceMuted,
+          fillColor: AppColors.surfaceMutedColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
             borderSide: BorderSide.none,
@@ -82,13 +82,13 @@ class VocabularyScreen extends StatelessWidget {
               const Icon(
                 LucideIcons.languages,
                 size: AppSizes.icon3XL,
-                color: AppColors.textTertiary,
+                color: AppColors.textTertiaryColor,
               ),
               const SizedBox(height: AppSizes.spacingL),
               AppText(
                 'vocabulary_empty'.tr,
                 variant: AppTextVariant.bodyMedium,
-                color: AppColors.textTertiary,
+                color: AppColors.textTertiaryColor,
               ),
             ],
           ),

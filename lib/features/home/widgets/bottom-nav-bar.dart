@@ -18,13 +18,13 @@ class BottomNavBar extends StatelessWidget {
     return Container(
       height: AppSizes.navBarHeight,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.surfaceColor,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(AppSizes.radiusXL),
           topRight: Radius.circular(AppSizes.radiusXL),
         ),
         border: const Border(
-          top: BorderSide(color: AppColors.borderLight, width: AppSizes.borderThin),
+          top: BorderSide(color: AppColors.borderLightColor, width: AppSizes.borderThin),
         ),
         boxShadow: const [
           BoxShadow(
@@ -82,7 +82,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isActive ? AppColors.primary : AppColors.textTertiary;
+    final color = isActive ? AppColors.primaryColor : AppColors.textTertiaryColor;
     final fontWeight = isActive ? FontWeight.w600 : FontWeight.w500;
 
     return GestureDetector(

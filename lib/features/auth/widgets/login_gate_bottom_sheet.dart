@@ -18,8 +18,8 @@ class LoginGateBottomSheet extends StatelessWidget {
       'auth_social_coming_soon_message'.tr,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(AppSizes.paddingL),
-      backgroundColor: AppColors.surface,
-      colorText: AppColors.textPrimary,
+      backgroundColor: AppColors.surfaceColor,
+      colorText: AppColors.textPrimaryColor,
     );
   }
 
@@ -27,7 +27,7 @@ class LoginGateBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.surfaceColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.radiusXXL)),
       ),
       padding: EdgeInsets.fromLTRB(
@@ -44,7 +44,7 @@ class LoginGateBottomSheet extends StatelessWidget {
             width: 36,
             height: AppSizes.spacingXS,
             decoration: BoxDecoration(
-              color: AppColors.borderStrong,
+              color: AppColors.borderStrongColor,
               borderRadius: BorderRadius.circular(AppSizes.radiusXXS),
             ),
           ),
@@ -58,7 +58,7 @@ class LoginGateBottomSheet extends StatelessWidget {
           AppText(
             'auth_gate_subtitle'.tr,
             variant: AppTextVariant.bodyMedium,
-            color: AppColors.textSecondary,
+            color: AppColors.textSecondaryColor,
             height: AppSizes.lineHeightNormal,
             textAlign: TextAlign.center,
           ),
@@ -70,7 +70,7 @@ class LoginGateBottomSheet extends StatelessWidget {
           // "or" divider
           Row(
             children: [
-              const Expanded(child: Divider(color: AppColors.borderLight)),
+              const Expanded(child: Divider(color: AppColors.borderLightColor)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingSM),
                 child: AppText(
@@ -79,7 +79,7 @@ class LoginGateBottomSheet extends StatelessWidget {
                   fontSize: AppSizes.fontSM,
                 ),
               ),
-              const Expanded(child: Divider(color: AppColors.borderLight)),
+              const Expanded(child: Divider(color: AppColors.borderLightColor)),
             ],
           ),
           const SizedBox(height: AppSizes.spacingL),
@@ -92,7 +92,7 @@ class LoginGateBottomSheet extends StatelessWidget {
             child: Container(
               height: AppSizes.buttonHeightM,
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(AppSizes.radiusPill),
               ),
               alignment: Alignment.center,
@@ -114,14 +114,14 @@ class LoginGateBottomSheet extends StatelessWidget {
               text: TextSpan(
                 style: GoogleFonts.inter(
                   fontSize: AppSizes.fontM,
-                  color: AppColors.textSecondary,
+                  color: AppColors.textSecondaryColor,
                 ),
                 children: [
                   TextSpan(text: '${'already_have_account'.tr} '),
                   TextSpan(
                     text: 'login_action'.tr,
                     style: const TextStyle(
-                      color: AppColors.primary,
+                      color: AppColors.primaryColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

@@ -20,7 +20,7 @@ class ScenarioGiftScreen extends BaseScreen<OnboardingController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.background;
+  Color? get backgroundColor => AppColors.backgroundColor;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -86,7 +86,7 @@ class _ScenarioGrid extends StatelessWidget {
             'scenario_empty'.tr,
             variant: AppTextVariant.bodyLarge,
             fontSize: AppSizes.fontL,
-            color: AppColors.textTertiary,
+            color: AppColors.textTertiaryColor,
             height: AppSizes.lineHeightLoose,
             textAlign: TextAlign.center,
           ),
@@ -124,7 +124,7 @@ class _CtaButton extends StatelessWidget {
         child: Container(
           height: AppSizes.buttonHeightM,
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: AppColors.primaryColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusPill),
             boxShadow: const [
               BoxShadow(

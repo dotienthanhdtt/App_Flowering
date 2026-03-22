@@ -29,10 +29,10 @@ class ChatRecordingBar extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: const BoxDecoration(
-              color: AppColors.surfaceMuted,
+              color: AppColors.surfaceMutedColor,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.close, size: AppSizes.iconSM, color: AppColors.textTertiary),
+            child: const Icon(Icons.close, size: AppSizes.iconSM, color: AppColors.textTertiaryColor),
           ),
         ),
         const SizedBox(width: AppSizes.spacingM),
@@ -41,7 +41,7 @@ class ChatRecordingBar extends StatelessWidget {
           width: 8,
           height: 8,
           decoration: const BoxDecoration(
-            color: AppColors.error,
+            color: AppColors.errorColor,
             shape: BoxShape.circle,
           ),
         ),
@@ -50,7 +50,7 @@ class ChatRecordingBar extends StatelessWidget {
         Obx(() => AppText(
               _formatDuration(controller.recordingDuration.value),
               variant: AppTextVariant.label,
-              color: AppColors.textPrimary,
+              color: AppColors.textPrimaryColor,
             )),
         const SizedBox(width: AppSizes.spacingM),
         // Waveform bars
@@ -63,7 +63,7 @@ class ChatRecordingBar extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: const BoxDecoration(
-              color: AppColors.primary,
+              color: AppColors.primaryColor,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.send_rounded, size: AppSizes.iconSM, color: Colors.white),

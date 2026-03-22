@@ -24,10 +24,10 @@ class SubscriptionStatusWidget extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isPremium ? AppColors.primarySoft : AppColors.surfaceMuted,
+            color: isPremium ? AppColors.primarySoftColor : AppColors.surfaceMutedColor,
             borderRadius: BorderRadius.circular(AppColors.radiusM),
             border: Border.all(
-              color: isPremium ? AppColors.primaryLight : AppColors.border,
+              color: isPremium ? AppColors.primaryLightColor : AppColors.borderColor,
             ),
           ),
           child: Row(
@@ -38,7 +38,7 @@ class SubscriptionStatusWidget extends StatelessWidget {
                     ? Icons.workspace_premium_rounded
                     : Icons.lock_outline_rounded,
                 size: 18,
-                color: isPremium ? AppColors.primary : AppColors.textSecondary,
+                color: isPremium ? AppColors.primaryColor : AppColors.textSecondaryColor,
               ),
               const SizedBox(width: 6),
               Text(
@@ -47,7 +47,7 @@ class SubscriptionStatusWidget extends StatelessWidget {
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color:
-                      isPremium ? AppColors.primary : AppColors.textSecondary,
+                      isPremium ? AppColors.primaryColor : AppColors.textSecondaryColor,
                 ),
               ),
               if (!isPremium) ...[
@@ -55,7 +55,7 @@ class SubscriptionStatusWidget extends StatelessWidget {
                 const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 12,
-                  color: AppColors.textTertiary,
+                  color: AppColors.textTertiaryColor,
                 ),
               ],
             ],

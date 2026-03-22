@@ -42,7 +42,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
 
   @override
   Widget build(BuildContext context) {
-    final glowColor = widget.glowColor ?? AppColors.primary;
+    final glowColor = widget.glowColor ?? AppColors.primaryColor;
     final loadingSize = widget.size ?? 80.0;
 
     return Center(

@@ -24,7 +24,7 @@ class ChatActionButton extends StatelessWidget {
         width: AppSizes.inputHeight,
         height: AppSizes.inputHeight,
         decoration: const BoxDecoration(
-          color: AppColors.primary,
+          color: AppColors.primaryColor,
           shape: BoxShape.circle,
         ),
         child: Icon(

@@ -33,7 +33,7 @@ class _PaywallSheetContent extends StatelessWidget {
 
     return Container(
       decoration: const BoxDecoration(
-        color: AppColors.backgroundWarm,
+        color: AppColors.backgroundWarmColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
@@ -45,7 +45,7 @@ class _PaywallSheetContent extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.border,
+              color: AppColors.borderColor,
               borderRadius: BorderRadius.circular(AppColors.radiusPill),
             ),
           ),
@@ -53,7 +53,7 @@ class _PaywallSheetContent extends StatelessWidget {
           const Icon(
             Icons.workspace_premium_rounded,
             size: 40,
-            color: AppColors.primary,
+            color: AppColors.primaryColor,
           ),
           const SizedBox(height: 10),
           Text(
@@ -61,14 +61,14 @@ class _PaywallSheetContent extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: AppColors.textPrimaryColor,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             'subscription_gate_description'.tr,
             style: const TextStyle(
-                fontSize: 14, color: AppColors.textSecondary),
+                fontSize: 14, color: AppColors.textSecondaryColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -77,7 +77,7 @@ class _PaywallSheetContent extends StatelessWidget {
             if (controller.isLoading.value && controller.offerings.isEmpty) {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
-                child: CircularProgressIndicator(color: AppColors.primary),
+                child: CircularProgressIndicator(color: AppColors.primaryColor),
               );
             }
             return Column(
@@ -107,8 +107,8 @@ class _PaywallSheetContent extends StatelessWidget {
                           if (success) Get.back(result: true);
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: AppColors.primaryLight,
+                    backgroundColor: AppColors.primaryColor,
+                    disabledBackgroundColor: AppColors.primaryLightColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -136,7 +136,7 @@ class _PaywallSheetContent extends StatelessWidget {
             child: Text(
               'subscription_restore'.tr,
               style: const TextStyle(
-                  fontSize: 12, color: AppColors.textSecondary),
+                  fontSize: 12, color: AppColors.textSecondaryColor),
             ),
           ),
         ],

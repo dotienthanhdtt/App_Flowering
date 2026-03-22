@@ -29,16 +29,16 @@ class LanguageListCard extends StatelessWidget {
           height: AppSizes.cardHeightCompact,
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primarySoft : AppColors.surface,
+            color: isSelected ? AppColors.primarySoftColor : AppColors.surfaceColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.borderLight,
+              color: isSelected ? AppColors.primaryColor : AppColors.borderLightColor,
               width: isSelected ? 2 : AppSizes.borderThin,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.15),
+                      color: AppColors.primaryColor.withValues(alpha: 0.15),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -72,7 +72,7 @@ class LanguageListCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: AppSizes.paddingXS, vertical: AppSizes.spacingXS),
                   decoration: BoxDecoration(
-                    color: AppColors.warningLight,
+                    color: AppColors.warningLightColor,
                     borderRadius: BorderRadius.circular(AppSizes.radiusS),
                   ),
                   child: AppText(
@@ -80,7 +80,7 @@ class LanguageListCard extends StatelessWidget {
                     variant: AppTextVariant.caption,
                     fontSize: AppSizes.fontXXS,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.warning,
+                    color: AppColors.warningColor,
                   ),
                 )
               else if (isSelected)
@@ -88,7 +88,7 @@ class LanguageListCard extends StatelessWidget {
                   width: AppSizes.avatarS,
                   height: AppSizes.avatarS,
                   decoration: const BoxDecoration(
-                    color: AppColors.primary,
+                    color: AppColors.primaryColor,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.check, size: AppSizes.iconXS, color: Colors.white),
@@ -146,10 +146,10 @@ class LanguageGridCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(AppSizes.paddingXL),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: AppColors.surfaceColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
             border: Border.all(
-              color: AppColors.borderLight,
+              color: AppColors.borderLightColor,
               width: AppSizes.borderThin,
             ),
           ),
@@ -171,7 +171,7 @@ class LanguageGridCard extends StatelessWidget {
                 variant: AppTextVariant.caption,
                 fontSize: AppSizes.fontXXS,
                 fontWeight: language.isEnabled ? FontWeight.w400 : FontWeight.w500,
-                color: language.isEnabled ? AppColors.textSecondary : AppColors.textTertiary,
+                color: language.isEnabled ? AppColors.textSecondaryColor : AppColors.textTertiaryColor,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

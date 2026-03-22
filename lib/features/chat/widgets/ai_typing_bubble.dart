@@ -41,7 +41,7 @@ class _AiTypingBubbleState extends State<AiTypingBubble>
           padding: const EdgeInsets.symmetric(
               horizontal: AppSizes.font3XL, vertical: AppSizes.paddingM),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: AppColors.surfaceColor,
             borderRadius: const BorderRadius.only(
               topRight: Radius.circular(AppSizes.radiusL),
               bottomLeft: Radius.circular(AppSizes.radiusL),
@@ -73,8 +73,8 @@ class _AiTypingBubbleState extends State<AiTypingBubble>
                       height: AppSizes.spacingS,
                       decoration: BoxDecoration(
                         color: i == 1
-                            ? AppColors.primary
-                            : AppColors.primaryLight,
+                            ? AppColors.primaryColor
+                            : AppColors.primaryLightColor,
                         shape: BoxShape.circle,
                       ),
                     ),

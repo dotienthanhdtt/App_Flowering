@@ -29,7 +29,7 @@ class WordTranslationSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.surfaceColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.radiusXL)),
       ),
       child: SingleChildScrollView(
@@ -66,7 +66,7 @@ class WordTranslationSheet extends StatelessWidget {
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: AppColors.borderStrong,
+          color: AppColors.borderStrongColor,
           borderRadius: BorderRadius.circular(AppSizes.radiusXXS),
         ),
       ),
@@ -85,16 +85,16 @@ class WordTranslationSheet extends StatelessWidget {
         ),
         const SizedBox(width: AppSizes.spacingS),
         _CircleButton(
-          color: AppColors.primarySoft,
+          color: AppColors.primarySoftColor,
           icon: Icons.volume_up_rounded,
-          iconColor: AppColors.primary,
+          iconColor: AppColors.primaryColor,
           onTap: onPlayAudio,
         ),
         const SizedBox(width: AppSizes.spacingS),
         _CircleButton(
-          color: AppColors.surfaceMuted,
+          color: AppColors.surfaceMutedColor,
           icon: Icons.close,
-          iconColor: AppColors.textTertiary,
+          iconColor: AppColors.textTertiaryColor,
           onTap: onClose,
         ),
       ],
@@ -111,7 +111,7 @@ class WordTranslationSheet extends StatelessWidget {
         AppText(
           'word_translation_error'.tr,
           variant: AppTextVariant.bodyMedium,
-          color: AppColors.textSecondary,
+          color: AppColors.textSecondaryColor,
         ),
         const SizedBox(height: AppSizes.spacingM),
         GestureDetector(
@@ -120,7 +120,7 @@ class WordTranslationSheet extends StatelessWidget {
             'word_translation_retry'.tr,
             variant: AppTextVariant.label,
             fontWeight: FontWeight.w600,
-            color: AppColors.primary,
+            color: AppColors.primaryColor,
           ),
         ),
       ],
@@ -138,7 +138,7 @@ class WordTranslationSheet extends StatelessWidget {
           _buildPronunciationRow(model),
         ],
         const SizedBox(height: AppSizes.spacingM),
-        const Divider(height: 1, color: AppColors.borderLight),
+        const Divider(height: 1, color: AppColors.borderLightColor),
         const SizedBox(height: AppSizes.spacingM),
         // Translation
         _buildTranslation(model.translation),
@@ -163,7 +163,7 @@ class WordTranslationSheet extends StatelessWidget {
           AppText(
             model.pronunciation!,
             variant: AppTextVariant.bodyMedium,
-            color: AppColors.textTertiary,
+            color: AppColors.textTertiaryColor,
           ),
         if (model.pronunciation != null && model.partOfSpeech != null)
           const SizedBox(width: AppSizes.spacingS),
@@ -174,7 +174,7 @@ class WordTranslationSheet extends StatelessWidget {
               vertical: AppSizes.spacingXXS,
             ),
             decoration: BoxDecoration(
-              color: AppColors.accentBlueLight,
+              color: AppColors.secondaryLightColor,
               borderRadius: BorderRadius.circular(AppSizes.radiusPill),
             ),
             child: AppText(
@@ -182,7 +182,7 @@ class WordTranslationSheet extends StatelessWidget {
               variant: AppTextVariant.caption,
               fontSize: AppSizes.fontXXS,
               fontWeight: FontWeight.w600,
-              color: AppColors.accentBlueDark,
+              color: AppColors.secondaryDarkColor,
             ),
           ),
       ],
@@ -195,13 +195,13 @@ class WordTranslationSheet extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.language, size: AppSizes.iconXS, color: AppColors.accentBlue),
+            const Icon(Icons.language, size: AppSizes.iconXS, color: AppColors.secondaryColor),
             const SizedBox(width: AppSizes.spacingXS),
             AppText(
               'word_translation_title'.tr,
               variant: AppTextVariant.bodySmall,
               fontWeight: FontWeight.w600,
-              color: AppColors.accentBlue,
+              color: AppColors.secondaryColor,
             ),
           ],
         ),
@@ -210,7 +210,7 @@ class WordTranslationSheet extends StatelessWidget {
           translation,
           variant: AppTextVariant.bodyLarge,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: AppColors.textPrimaryColor,
         ),
       ],
     );
@@ -229,7 +229,7 @@ class WordTranslationSheet extends StatelessWidget {
         AppText(
           definition,
           variant: AppTextVariant.bodyMedium,
-          color: AppColors.textSecondary,
+          color: AppColors.textSecondaryColor,
           height: AppSizes.lineHeightLoose,
         ),
       ],
@@ -250,7 +250,7 @@ class WordTranslationSheet extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(AppSizes.paddingSM),
           decoration: BoxDecoration(
-            color: AppColors.background,
+            color: AppColors.backgroundColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
           ),
           child: Column(
@@ -264,7 +264,7 @@ class WordTranslationSheet extends StatelessWidget {
                         ex,
                         variant: AppTextVariant.bodySmall,
                         fontSize: AppSizes.fontSM,
-                        color: AppColors.textSecondary,
+                        color: AppColors.textSecondaryColor,
                         fontStyle: FontStyle.italic,
                         height: AppSizes.lineHeightLoose,
                       ),

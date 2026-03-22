@@ -34,7 +34,7 @@ class AiMessageBubble extends StatelessWidget {
           child: Container(
             constraints: const BoxConstraints(maxWidth: 280),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceColor,
               borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(AppSizes.radiusL),
                 bottomLeft: Radius.circular(AppSizes.radiusL),
@@ -57,14 +57,14 @@ class AiMessageBubble extends StatelessWidget {
                   'ai_name'.tr,
                   variant: AppTextVariant.label,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
+                  color: AppColors.primaryColor,
                 ),
                 const SizedBox(height: AppSizes.spacingXS),
                 // Message text — tappable words for translation
                 AppTappablePhrase(
                   message.text ?? '',
                   variant: AppTextVariant.bodyLarge,
-                  color: AppColors.textPrimary,
+                  color: AppColors.textPrimaryColor,
                   onWordTap: onWordTap != null
                       ? (word, _) => onWordTap!(word)
                       : null,
@@ -77,7 +77,7 @@ class AiMessageBubble extends StatelessWidget {
                     padding: const EdgeInsets.only(top: AppSizes.spacingS),
                     decoration: const BoxDecoration(
                       border: Border(
-                        top: BorderSide(color: AppColors.borderLight),
+                        top: BorderSide(color: AppColors.borderLightColor),
                       ),
                     ),
                     child: Column(
@@ -86,13 +86,13 @@ class AiMessageBubble extends StatelessWidget {
                         Row(
                           children: [
                             const Icon(Icons.translate,
-                                size: AppSizes.iconXXS, color: AppColors.info),
+                                size: AppSizes.iconXXS, color: AppColors.infoColor),
                             const SizedBox(width: AppSizes.spacingXS),
                             AppText(
                               'translation_target_language'.tr,
                               fontSize: AppSizes.fontXXS,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.info,
+                              color: AppColors.infoColor,
                             ),
                           ],
                         ),
@@ -100,7 +100,7 @@ class AiMessageBubble extends StatelessWidget {
                         AppText(
                           message.translatedText!,
                           variant: AppTextVariant.bodyMedium,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondaryColor,
                           fontStyle: FontStyle.italic,
                           height: AppSizes.lineHeightLoose,
                         ),
@@ -117,14 +117,14 @@ class AiMessageBubble extends StatelessWidget {
                       label: message.showTranslation
                           ? 'chat_hide_translation'.tr
                           : 'chat_translate'.tr,
-                      color: AppColors.info,
+                      color: AppColors.infoColor,
                       onTap: onTranslate,
                     ),
                     const SizedBox(width: AppSizes.spacingL),
                     TextActionButton(
                       icon: Icons.volume_up_rounded,
                       label: 'chat_play_audio'.tr,
-                      color: AppColors.textTertiary,
+                      color: AppColors.textTertiaryColor,
                       onTap: onPlayAudio,
                     ),
                   ],

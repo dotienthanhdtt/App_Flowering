@@ -14,8 +14,8 @@ class PaywallBottomActions extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
       decoration: const BoxDecoration(
-        color: AppColors.backgroundWarm,
-        border: Border(top: BorderSide(color: AppColors.border)),
+        color: AppColors.backgroundWarmColor,
+        border: Border(top: BorderSide(color: AppColors.borderColor)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -33,8 +33,8 @@ class PaywallBottomActions extends StatelessWidget {
                           if (success) Get.back(result: true);
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: AppColors.primaryLight,
+                    backgroundColor: AppColors.primaryColor,
+                    disabledBackgroundColor: AppColors.primaryLightColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -64,25 +64,25 @@ class PaywallBottomActions extends StatelessWidget {
                 child: Text(
                   'subscription_restore'.tr,
                   style: const TextStyle(
-                      fontSize: 12, color: AppColors.textSecondary),
+                      fontSize: 12, color: AppColors.textSecondaryColor),
                 ),
               ),
-              const Text('·', style: TextStyle(color: AppColors.textTertiary)),
+              const Text('·', style: TextStyle(color: AppColors.textTertiaryColor)),
               TextButton(
                 onPressed: () {},
                 child: Text(
                   'subscription_terms'.tr,
                   style: const TextStyle(
-                      fontSize: 12, color: AppColors.textSecondary),
+                      fontSize: 12, color: AppColors.textSecondaryColor),
                 ),
               ),
-              const Text('·', style: TextStyle(color: AppColors.textTertiary)),
+              const Text('·', style: TextStyle(color: AppColors.textTertiaryColor)),
               TextButton(
                 onPressed: () {},
                 child: Text(
                   'subscription_privacy'.tr,
                   style: const TextStyle(
-                      fontSize: 12, color: AppColors.textSecondary),
+                      fontSize: 12, color: AppColors.textSecondaryColor),
                 ),
               ),
             ],

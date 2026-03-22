@@ -41,7 +41,7 @@ class _ChatWaveformBarsState extends State<ChatWaveformBars>
             width: 3,
             height: height,
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              color: AppColors.primaryColor,
               borderRadius: BorderRadius.circular(1.5),
             ),
           );

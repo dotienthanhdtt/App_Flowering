@@ -1,69 +1,68 @@
 import 'package:flutter/material.dart';
 import 'app_sizes.dart';
 
-/// App color palette — Flowering Warm Neutral (Pencil Design System)
+/// App color palette — Flowering Design System (Pencil)
+/// Token names match design file: flowering_design.pen
 class AppColors {
   AppColors._();
 
-  // Primary
-  static const Color primary = Color(0xFFFF7A27);
-  static const Color primaryLight = Color(0xFFFFB380);
-  static const Color primaryDark = Color(0xFFD4621A);
-  static const Color primarySoft = Color(0xFFFFEADB);
+  // Primary — primary_color
+  static const Color primaryColor = Color(0xFFFD9029);
+  static const Color primaryLightColor = Color(0xFFFFB380);
+  static const Color primarySoftColor = Color(0xFFFFEADB);
 
-  // Neutrals
-  static const Color background = Color(0xFFF8F4E3);
-  static const Color backgroundWarm = Color(0xFFFFF8F0);
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceMuted = Color(0xFFF2EED8);
+  // Secondary — secondary_color
+  static const Color secondaryColor = Color(0xFF0077BA);
+  static const Color secondaryDarkColor = Color(0xFF005A8D);
+  static const Color secondaryLightColor = Color(0xFFE0F0FA);
+
+  // Tertiary — tertiary_color
+  static const Color tertiaryColor = Color(0xFF1447E6);
+
+  // Neutral — neutral_color
+  static const Color neutralColor = Color(0xFF545F71);
+
+  // Background — background_color
+  static const Color backgroundColor = Color(0xFFF9F7F2);
+  static const Color backgroundWarmColor = Color(0xFFFFF8F0);
+
+  // Surface — surface_color
+  static const Color surfaceColor = Color(0xFFFFFFFF);
+  static const Color surfaceMutedColor = Color(0xFFF2EED8);
 
   // Text
-  static const Color textPrimary = Color(0xFF191919);
-  static const Color textSecondary = Color(0xFF5C5646);
-  static const Color textTertiary = Color(0xFF9C9585);
-  static const Color textOnPrimary = Color(0xFFFFFFFF);
+  static const Color textPrimaryColor = Color(0xFF191919);
+  static const Color textSecondaryColor = Color(0xFF5C5646);
+  static const Color textTertiaryColor = Color(0xFF9C9585);
+  static const Color textOnPrimaryColor = Color(0xFFFFFFFF);
 
   // Borders
-  static const Color border = Color(0xFFE5DFC9);
-  static const Color borderLight = Color(0xFFF0ECDA);
-  static const Color borderStrong = Color(0xFFD4CEAE);
+  static const Color borderColor = Color(0xFFE5DFC9);
+  static const Color borderLightColor = Color(0xFFF0ECDA);
+  static const Color borderStrongColor = Color(0xFFD4CEAE);
 
-  // Semantic
-  static const Color success = Color(0xFF6BAF7A);
-  static const Color successLight = Color(0xFFE2F3E5);
-  static const Color warning = Color(0xFFE8C460);
-  static const Color warningLight = Color(0xFFFDF5DC);
-  static const Color error = Color(0xFFD97B7B);
-  static const Color errorLight = Color(0xFFFBEAEA);
-  static const Color info = Color(0xFF7AACCC);
-  static const Color infoLight = Color(0xFFE0F0FA);
+  // Success — success_color
+  static const Color successColor = Color(0xFF60993E);
+  static const Color successDarkColor = Color(0xFF4A8A58);
+  static const Color successLightColor = Color(0xFFE2F3E5);
 
-  // Accent — Blue
-  static const Color accentBlue = Color(0xFF7AACCC);
-  static const Color accentBlueDark = Color(0xFF5A8DAD);
-  static const Color accentBlueLight = Color(0xFFE0F0FA);
+  // Warning — warning_color
+  static const Color warningColor = Color(0xFFFFB830);
+  static const Color warningLightColor = Color(0xFFFDF5DC);
 
-  // Accent — Green
-  static const Color accentGreen = Color(0xFF6BAF7A);
-  static const Color accentGreenDark = Color(0xFF4A8A58);
-  static const Color accentGreenLight = Color(0xFFE2F3E5);
+  // Error — error_color
+  static const Color errorColor = Color(0xFFE63950);
+  static const Color errorLightColor = Color(0xFFFBEAEA);
 
-  // Accent — Lavender
-  static const Color accentLavender = Color(0xFFB8A9D4);
-  static const Color accentLavenderDark = Color(0xFF8E7DB8);
-  static const Color accentLavenderLight = Color(0xFFEDE8F5);
+  // Info — info_color
+  static const Color infoColor = Color(0xFF9CB0CF);
 
-  // Accent — Rose
-  static const Color accentRose = Color(0xFFE8A0A0);
-  static const Color accentRoseDark = Color(0xFFC47878);
-  static const Color accentRoseLight = Color(0xFFFBE8E8);
+  // Accent
+  static const Color lavenderLightColor = Color(0xFFEDE8F5);
+  static const Color roseLightColor = Color(0xFFFBE8E8);
 
   // Shadow
-  static const Color shadow = Color(0x10191919);
-
-  // Chat
-  static const Color userBubble = Color(0xFFFF7A27);
-  static const Color aiBubble = Color(0xFFFFFFFF);
+  static const Color shadowColor = Color(0x10191919);
 
   // Radius constants (delegated to AppSizes for single source of truth)
   static const double radiusS = AppSizes.radiusS;

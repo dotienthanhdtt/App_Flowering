@@ -77,7 +77,7 @@ class _AppTextFieldState extends State<AppTextField> {
             variant: AppTextVariant.label,
             fontSize: AppSizes.fontSM,
             fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+            color: AppColors.textPrimaryColor,
           ),
           const SizedBox(height: AppSizes.spacingSM),
         ],
@@ -100,7 +100,7 @@ class _AppTextFieldState extends State<AppTextField> {
           decoration: InputDecoration(
             hintText: widget.hint,
             hintStyle: AppTextStyles.bodyLarge.copyWith(
-              color: AppColors.textTertiary,
+              color: AppColors.textTertiaryColor,
             ),
             errorText: widget.errorText,
             prefixIcon: widget.prefixIcon,
@@ -108,7 +108,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 ? IconButton(
                     icon: Icon(
                       _obscureText ? Icons.visibility_off : Icons.visibility,
-                      color: AppColors.textSecondary,
+                      color: AppColors.textSecondaryColor,
                     ),
                     onPressed: () {
                       setState(() => _obscureText = !_obscureText);
@@ -122,40 +122,40 @@ class _AppTextFieldState extends State<AppTextField> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               borderSide: const BorderSide(
-                color: AppColors.border,
+                color: AppColors.borderColor,
                 width: AppSizes.borderMedium,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               borderSide: const BorderSide(
-                color: AppColors.border,
+                color: AppColors.borderColor,
                 width: AppSizes.borderMedium,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               borderSide: const BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: AppSizes.borderMedium,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               borderSide: const BorderSide(
-                color: AppColors.error,
+                color: AppColors.errorColor,
                 width: AppSizes.borderMedium,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               borderSide: const BorderSide(
-                color: AppColors.error,
+                color: AppColors.errorColor,
                 width: AppSizes.borderMedium,
               ),
             ),
             filled: true,
-            fillColor: hasError ? AppColors.errorLight : AppColors.surface,
+            fillColor: hasError ? AppColors.errorLightColor : AppColors.surfaceColor,
           ),
         ),
       ],

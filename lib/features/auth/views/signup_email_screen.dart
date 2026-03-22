@@ -17,7 +17,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.background;
+  Color? get backgroundColor => AppColors.backgroundColor;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -29,7 +29,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
           alignment: Alignment.centerLeft,
           child: IconButton(
             icon: const Icon(Icons.arrow_back_rounded,
-                color: AppColors.textPrimary),
+                color: AppColors.textPrimaryColor),
             onPressed: Get.back,
           ),
         ),
@@ -51,7 +51,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                   AppText(
                     'signup_subtitle'.tr,
                     variant: AppTextVariant.bodyMedium,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textSecondaryColor,
                   ),
                   const SizedBox(height: AppSizes.spacing3XL),
                   AuthTextField(
@@ -101,7 +101,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                         controller.errorMessage.value,
                         variant: AppTextVariant.caption,
                         fontSize: AppSizes.fontSM,
-                        color: AppColors.error,
+                        color: AppColors.errorColor,
                       ),
                     );
                   }),
@@ -112,7 +112,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                         child: Container(
                           height: AppSizes.buttonHeightM,
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: AppColors.primaryColor,
                             borderRadius:
                                 BorderRadius.circular(AppSizes.radiusPill),
                           ),
@@ -142,14 +142,14 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                         text: TextSpan(
                           style: GoogleFonts.inter(
                             fontSize: AppSizes.fontM,
-                            color: AppColors.textSecondary,
+                            color: AppColors.textSecondaryColor,
                           ),
                           children: [
                             TextSpan(text: '${'already_have_account'.tr} '),
                             TextSpan(
                               text: 'login_action'.tr,
                               style: const TextStyle(
-                                color: AppColors.primary,
+                                color: AppColors.primaryColor,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

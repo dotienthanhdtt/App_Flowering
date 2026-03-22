@@ -29,7 +29,7 @@ class OnboardingTopBar extends StatelessWidget {
             variant: AppTextVariant.bodyMedium,
             fontSize: AppSizes.font3XL,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+            color: AppColors.textPrimaryColor,
           ),
           const Spacer(),
           GestureDetector(
@@ -39,7 +39,7 @@ class OnboardingTopBar extends StatelessWidget {
               variant: AppTextVariant.bodyMedium,
               fontSize: AppSizes.fontL,
               fontWeight: FontWeight.w600,
-              color: AppColors.accentBlue,
+              color: AppColors.secondaryColor,
             ),
           ),
         ],

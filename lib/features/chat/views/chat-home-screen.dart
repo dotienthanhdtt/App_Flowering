@@ -41,7 +41,7 @@ class ChatHomeScreen extends StatelessWidget {
             onPressed: () => Get.find<ChatHomeController>().startNewChat(),
             icon: const Icon(
               LucideIcons.plus,
-              color: AppColors.primary,
+              color: AppColors.primaryColor,
               size: AppSizes.iconXL,
             ),
           ),
@@ -78,19 +78,19 @@ class ChatHomeScreen extends StatelessWidget {
           const Icon(
             LucideIcons.messageCircle,
             size: AppSizes.icon3XL,
-            color: AppColors.textTertiary,
+            color: AppColors.textTertiaryColor,
           ),
           const SizedBox(height: AppSizes.spacingL),
           AppText(
             'chat_home_empty'.tr,
             variant: AppTextVariant.bodyMedium,
-            color: AppColors.textTertiary,
+            color: AppColors.textTertiaryColor,
           ),
           const SizedBox(height: AppSizes.spacingS),
           AppText(
             'chat_home_start'.tr,
             variant: AppTextVariant.label,
-            color: AppColors.primary,
+            color: AppColors.primaryColor,
           ),
         ],
       ),

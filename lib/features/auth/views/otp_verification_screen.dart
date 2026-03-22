@@ -16,7 +16,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.background;
+  Color? get backgroundColor => AppColors.backgroundColor;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -29,7 +29,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
           alignment: Alignment.centerLeft,
           child: IconButton(
             icon: const Icon(Icons.arrow_back_rounded,
-                color: AppColors.textPrimary),
+                color: AppColors.textPrimaryColor),
             onPressed: Get.back,
           ),
         ),
@@ -49,7 +49,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                 Obx(() => AppText(
                       '${'otp_subtitle'.tr} ${controller.maskedEmail}',
                       variant: AppTextVariant.bodyMedium,
-                      color: AppColors.textSecondary,
+                      color: AppColors.textSecondaryColor,
                       height: AppSizes.lineHeightNormal,
                     )),
                 const SizedBox(height: AppSizes.spacing4XL),
@@ -75,7 +75,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                       controller.errorMessage.value,
                       variant: AppTextVariant.caption,
                       fontSize: AppSizes.fontSM,
-                      color: AppColors.error,
+                      color: AppColors.errorColor,
                     ),
                   );
                 }),
@@ -87,7 +87,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                           width: AppSizes.iconXL,
                           height: AppSizes.iconXL,
                           child: CircularProgressIndicator(
-                            color: AppColors.primary,
+                            color: AppColors.primaryColor,
                             strokeWidth: 2,
                           ),
                         ),
@@ -109,7 +109,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                       text: TextSpan(
                         style: GoogleFonts.inter(
                           fontSize: AppSizes.fontM,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondaryColor,
                         ),
                         children: [
                           TextSpan(text: label),
@@ -122,8 +122,8 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                                 variant: AppTextVariant.bodyMedium,
                                 fontWeight: FontWeight.w600,
                                 color: canResend
-                                    ? AppColors.primary
-                                    : AppColors.textTertiary,
+                                    ? AppColors.primaryColor
+                                    : AppColors.textTertiaryColor,
                               ),
                             ),
                           ),

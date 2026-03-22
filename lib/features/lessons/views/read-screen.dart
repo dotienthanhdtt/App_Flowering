@@ -41,7 +41,7 @@ class ReadScreen extends StatelessWidget {
             onPressed: () {},
             icon: const Icon(
               LucideIcons.search,
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondaryColor,
               size: AppSizes.iconXL,
             ),
           ),
@@ -59,13 +59,13 @@ class ReadScreen extends StatelessWidget {
             const Icon(
               LucideIcons.bookOpen,
               size: AppSizes.icon3XL,
-              color: AppColors.textTertiary,
+              color: AppColors.textTertiaryColor,
             ),
             const SizedBox(height: AppSizes.spacingL),
             AppText(
               'read_empty'.tr,
               variant: AppTextVariant.bodyMedium,
-              color: AppColors.textTertiary,
+              color: AppColors.textTertiaryColor,
             ),
           ],
         ),

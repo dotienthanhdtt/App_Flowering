@@ -20,10 +20,10 @@ void main() {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          primary: AppColors.primary,
+          seedColor: AppColors.primaryColor,
+          primary: AppColors.primaryColor,
         ),
-        scaffoldBackgroundColor: AppColors.background,
+        scaffoldBackgroundColor: AppColors.backgroundColor,
       ),
       translations: AppTranslations(),
       locale: const Locale('en', 'US'),

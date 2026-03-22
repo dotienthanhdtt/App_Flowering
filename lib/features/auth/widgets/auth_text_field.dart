@@ -46,20 +46,20 @@ class AuthTextField extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           validator: validator,
-          style: GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textPrimary),
+          style: GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textPrimaryColor),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle:
-                GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textTertiary),
+                GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textTertiaryColor),
             filled: true,
-            fillColor: AppColors.surface,
+            fillColor: AppColors.surfaceColor,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: AppSizes.paddingL, vertical: AppSizes.paddingM),
-            border: _border(AppColors.borderLight),
-            enabledBorder: _border(AppColors.borderLight),
-            focusedBorder: _border(AppColors.primary),
-            errorBorder: _border(AppColors.error),
-            focusedErrorBorder: _border(AppColors.error),
+            border: _border(AppColors.borderLightColor),
+            enabledBorder: _border(AppColors.borderLightColor),
+            focusedBorder: _border(AppColors.primaryColor),
+            errorBorder: _border(AppColors.errorColor),
+            focusedErrorBorder: _border(AppColors.errorColor),
             suffixIcon: onToggleObscure != null
                 ? GestureDetector(
                     onTap: onToggleObscure,
@@ -68,7 +68,7 @@ class AuthTextField extends StatelessWidget {
                           ? Icons.visibility_off_rounded
                           : Icons.visibility_rounded,
                       size: AppSizes.iconL,
-                      color: AppColors.textTertiary,
+                      color: AppColors.textTertiaryColor,
                     ),
                   )
                 : null,

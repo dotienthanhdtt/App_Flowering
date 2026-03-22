@@ -26,7 +26,7 @@ class UserMessageBubble extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             horizontal: AppSizes.paddingL, vertical: AppSizes.paddingSM),
         decoration: const BoxDecoration(
-          color: AppColors.primary,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(AppSizes.radiusL),
             topRight: Radius.circular(AppSizes.radiusL),
