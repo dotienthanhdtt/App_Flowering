@@ -22,8 +22,8 @@ class ChatTextInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: AppSizes.inputHeight,
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      height: AppSizes.buttonHeightMedium,
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
       decoration: BoxDecoration(
         color: AppColors.surfaceMutedColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusPill),
@@ -33,11 +33,11 @@ class ChatTextInputField extends StatelessWidget {
         controller: textController,
         enabled: enabled,
         onSubmitted: onSubmitted,
-        style: GoogleFonts.inter(fontSize: AppSizes.fontM, color: AppColors.textPrimaryColor),
+        style: GoogleFonts.inter(fontSize: AppSizes.fontSizeSmall, color: AppColors.textPrimaryColor),
         decoration: InputDecoration.collapsed(
           hintText: isComplete ? 'chat_complete'.tr : 'chat_type_message'.tr,
           hintStyle: GoogleFonts.inter(
-            fontSize: AppSizes.fontM,
+            fontSize: AppSizes.fontSizeSmall,
             color: AppColors.textTertiaryColor,
           ),
         ),

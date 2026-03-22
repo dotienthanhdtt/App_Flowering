@@ -114,7 +114,7 @@ class _OtpBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 44,
-      height: AppSizes.buttonHeightM,
+      height: AppSizes.buttonHeightLarge,
       child: TextField(
         controller: controller,
         focusNode: focusNode,
@@ -124,7 +124,7 @@ class _OtpBox extends StatelessWidget {
         onChanged: onChanged,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         style: GoogleFonts.inter(
-          fontSize: AppSizes.font4XL,
+          fontSize: AppSizes.fontSizeXLarge,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimaryColor,
         ),

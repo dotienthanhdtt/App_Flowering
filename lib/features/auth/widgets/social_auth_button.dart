@@ -23,7 +23,7 @@ class SocialAuthButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: AppSizes.buttonHeightM,
+        height: AppSizes.buttonHeightLarge,
         decoration: BoxDecoration(
           color: isApple ? AppColors.textPrimaryColor : AppColors.surfaceColor,
           borderRadius: BorderRadius.circular(AppSizes.radiusPill),
@@ -37,7 +37,7 @@ class SocialAuthButton extends StatelessWidget {
             Text(
               isApple ? '🍎' : 'G',
               style: TextStyle(
-                fontSize: isApple ? AppSizes.font3XL : AppSizes.fontXXL,
+                fontSize: isApple ? AppSizes.fontSizeLarge : AppSizes.fontSizeLarge,
                 fontWeight: FontWeight.w800,
                 color: isApple ? Colors.white : const Color(0xFF4285F4),
               ),
@@ -46,7 +46,7 @@ class SocialAuthButton extends StatelessWidget {
             AppText(
               isApple ? 'continue_with_apple'.tr : 'continue_with_google'.tr,
               variant: AppTextVariant.bodyLarge,
-              fontSize: AppSizes.fontL,
+              fontSize: AppSizes.fontSizeMedium,
               fontWeight: FontWeight.w600,
               color: isApple ? Colors.white : AppColors.textPrimaryColor,
             ),

@@ -18,7 +18,7 @@ class ChatInputBar extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
-          AppSizes.paddingL, AppSizes.paddingXS, AppSizes.paddingL, AppSizes.paddingL),
+          AppSizes.space4, AppSizes.space2, AppSizes.space4, AppSizes.space4),
       decoration: const BoxDecoration(
         color: AppColors.surfaceColor,
         border: Border(top: BorderSide(color: AppColors.borderLightColor)),

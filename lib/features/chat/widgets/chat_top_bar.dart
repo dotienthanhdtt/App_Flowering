@@ -25,7 +25,7 @@ class ChatTopBar extends StatelessWidget {
       children: [
         Container(
           height: AppSizes.topBarHeight,
-          padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+          padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
           decoration: const BoxDecoration(
             border: Border(
               bottom: BorderSide(color: AppColors.borderLightColor, width: AppSizes.borderThin),
@@ -49,8 +49,8 @@ class ChatTopBar extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimaryColor,
               ),
-              const SizedBox(width: AppSizes.spacingS),
-              Text(flagEmoji, style: const TextStyle(fontSize: AppSizes.fontXL)),
+              const SizedBox(width: AppSizes.space2),
+              Text(flagEmoji, style: const TextStyle(fontSize: AppSizes.fontSizeMedium)),
               const Spacer(),
               GestureDetector(
                 onTap: onSkip,

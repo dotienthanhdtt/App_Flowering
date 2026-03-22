@@ -44,18 +44,18 @@ class SplashScreen extends BaseScreen<SplashController> {
               },
               child: Column(
                 children: [
-                  const SizedBox(height: AppSizes.spacingL),
+                  const SizedBox(height: AppSizes.space4),
                   AppText(
                     'app_name'.tr,
                     variant: AppTextVariant.h1,
-                    fontSize: AppSizes.font10XL,
+                    fontSize: AppSizes.fontSize4XLarge,
                     color: Colors.white,
                   ),
-                  const SizedBox(height: AppSizes.spacingS),
+                  const SizedBox(height: AppSizes.space2),
                   AppText(
                     'splash_subtitle'.tr,
                     variant: AppTextVariant.bodyLarge,
-                    fontSize: AppSizes.fontL,
+                    fontSize: AppSizes.fontSizeMedium,
                     color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ],

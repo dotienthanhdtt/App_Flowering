@@ -38,37 +38,37 @@ class OnboardingValueLayout extends StatelessWidget {
             SizedBox(height: MediaQuery.of(context).padding.top),
             _buildSkipRow(),
             Image.asset(imagePath, width: double.infinity, fit: BoxFit.contain),
-            const SizedBox(height: AppSizes.spacing4XL),
+            const SizedBox(height: AppSizes.space8),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXXL),
+                padding: const EdgeInsets.symmetric(horizontal: AppSizes.space6),
                 child: Column(
                   children: [
                     AppText(
                       headlineKey.tr,
                       variant: AppTextVariant.h1,
-                      fontSize: AppSizes.font8XL,
+                      fontSize: AppSizes.fontSize4XLarge,
                       fontWeight: FontWeight.w700,
                       textAlign: TextAlign.center,
                       color: AppColors.textPrimaryColor,
                     ),
-                    const SizedBox(height: AppSizes.spacingM),
+                    const SizedBox(height: AppSizes.space3),
                     AppText(
                       bodyKey.tr,
                       variant: AppTextVariant.bodyLarge,
-                      fontSize: AppSizes.font3XL,
+                      fontSize: AppSizes.fontSizeLarge,
                       textAlign: TextAlign.center,
                       color: AppColors.neutralColor,
-                      height: AppSizes.lineHeightRelaxed,
+                      height: AppSizes.lineHeightLarge,
                     ),
                     const Spacer(),
                     AppButton(
                       text: ctaKey.tr,
                       variant: ctaVariant,
-                      height: AppSizes.buttonHeightM,
+                      height: AppSizes.buttonHeightLarge,
                       onPressed: onCtaPressed,
                     ),
-                    SizedBox(height: MediaQuery.of(context).padding.bottom + AppSizes.spacing4XL),
+                    SizedBox(height: MediaQuery.of(context).padding.bottom + AppSizes.space8),
                   ],
                 ),
               ),
@@ -81,7 +81,7 @@ class OnboardingValueLayout extends StatelessWidget {
 
   Widget _buildSkipRow() {
     return Padding(
-      padding: const EdgeInsets.only(right: AppSizes.paddingL),
+      padding: const EdgeInsets.only(right: AppSizes.space4),
       child: SizedBox(
         height: AppSizes.topBarHeight,
         child: Align(
@@ -90,13 +90,13 @@ class OnboardingValueLayout extends StatelessWidget {
             onTap: () => Get.offNamed(AppRoutes.onboardingNativeLanguage),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingL,
-                vertical: AppSizes.paddingXS,
+                horizontal: AppSizes.space4,
+                vertical: AppSizes.space2,
               ),
               child: AppText(
                 'onboarding_skip'.tr,
                 variant: AppTextVariant.bodyMedium,
-                fontSize: AppSizes.fontL,
+                fontSize: AppSizes.fontSizeMedium,
                 fontWeight: FontWeight.w600,
                 color: AppColors.neutralColor,
               ),

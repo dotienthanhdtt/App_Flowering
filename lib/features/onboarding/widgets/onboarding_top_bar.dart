@@ -12,7 +12,7 @@ class OnboardingTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          top: AppSizes.topBarHeight, left: AppSizes.padding3XL, right: AppSizes.padding3XL),
+          top: AppSizes.topBarHeight, left: AppSizes.space8, right: AppSizes.space8),
       child: Row(
         children: [
           ClipRRect(
@@ -23,11 +23,11 @@ class OnboardingTopBar extends StatelessWidget {
               height: AppSizes.avatarS,
             ),
           ),
-          const SizedBox(width: AppSizes.spacingS),
+          const SizedBox(width: AppSizes.space2),
           AppText(
             'app_name'.tr,
             variant: AppTextVariant.bodyMedium,
-            fontSize: AppSizes.font3XL,
+            fontSize: AppSizes.fontSizeLarge,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimaryColor,
           ),
@@ -37,7 +37,7 @@ class OnboardingTopBar extends StatelessWidget {
             child: AppText(
               'login_action'.tr,
               variant: AppTextVariant.bodyMedium,
-              fontSize: AppSizes.fontL,
+              fontSize: AppSizes.fontSizeMedium,
               fontWeight: FontWeight.w600,
               color: AppColors.secondaryColor,
             ),

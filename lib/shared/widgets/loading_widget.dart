@@ -52,8 +52,8 @@ class _LoadingWidgetState extends State<LoadingWidget>
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) => Container(
-              width: loadingSize + AppSizes.spacingXL,
-              height: loadingSize + AppSizes.spacingXL,
+              width: loadingSize + AppSizes.space5,
+              height: loadingSize + AppSizes.space5,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
@@ -93,7 +93,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
             ),
           ),
           if (widget.message != null) ...[
-            const SizedBox(height: AppSizes.spacingXXL),
+            const SizedBox(height: AppSizes.space6),
             AppText(
               widget.message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

@@ -36,7 +36,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
-                AppSizes.paddingXXL, AppSizes.paddingXS, AppSizes.paddingXXL, AppSizes.paddingXXL),
+                AppSizes.space6, AppSizes.space2, AppSizes.space6, AppSizes.space6),
             child: Form(
               key: controller.loginFormKey,
               child: Column(
@@ -47,24 +47,24 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                     variant: AppTextVariant.h2,
                     fontWeight: FontWeight.w700,
                   ),
-                  const SizedBox(height: AppSizes.spacingSM),
+                  const SizedBox(height: AppSizes.space2),
                   AppText(
                     'login_subtitle'.tr,
                     variant: AppTextVariant.bodyMedium,
                     color: AppColors.textSecondaryColor,
                   ),
-                  const SizedBox(height: AppSizes.spacing3XL),
+                  const SizedBox(height: AppSizes.space6),
                   // Social auth
                   SocialAuthButton(
                     provider: SocialProvider.apple,
                     onTap: controller.signInWithApple,
                   ),
-                  const SizedBox(height: AppSizes.spacingM),
+                  const SizedBox(height: AppSizes.space3),
                   SocialAuthButton(
                     provider: SocialProvider.google,
                     onTap: controller.signInWithGoogle,
                   ),
-                  const SizedBox(height: AppSizes.spacingXL),
+                  const SizedBox(height: AppSizes.space5),
                   // "or" divider
                   Row(
                     children: [
@@ -72,18 +72,18 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                           child: Divider(color: AppColors.borderLightColor)),
                       Padding(
                         padding:
-                            const EdgeInsets.symmetric(horizontal: AppSizes.paddingSM),
+                            const EdgeInsets.symmetric(horizontal: AppSizes.space3),
                         child: AppText(
                           'login_or_divider'.tr,
                           variant: AppTextVariant.caption,
-                          fontSize: AppSizes.fontSM,
+                          fontSize: AppSizes.fontSizeSmall,
                         ),
                       ),
                       const Expanded(
                           child: Divider(color: AppColors.borderLightColor)),
                     ],
                   ),
-                  const SizedBox(height: AppSizes.spacingXL),
+                  const SizedBox(height: AppSizes.space5),
                   AuthTextField(
                     label: 'email'.tr,
                     hint: 'email_hint'.tr,
@@ -91,7 +91,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                     validator: controller.validateEmail,
                     keyboardType: TextInputType.emailAddress,
                   ),
-                  const SizedBox(height: AppSizes.spacingL),
+                  const SizedBox(height: AppSizes.space4),
                   Obx(() => AuthTextField(
                         label: 'password'.tr,
                         hint: 'password_hint'.tr,
@@ -101,7 +101,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                         onToggleObscure: controller.obscurePassword.toggle,
                         textInputAction: TextInputAction.done,
                       )),
-                  const SizedBox(height: AppSizes.spacingS),
+                  const SizedBox(height: AppSizes.space2),
                   // Forgot password link
                   Align(
                     alignment: Alignment.centerRight,
@@ -110,7 +110,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                       child: AppText(
                         'forgot_password'.tr,
                         variant: AppTextVariant.caption,
-                        fontSize: AppSizes.fontSM,
+                        fontSize: AppSizes.fontSizeSmall,
                         fontWeight: FontWeight.w600,
                         color: AppColors.primaryColor,
                       ),
@@ -119,24 +119,24 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                   // Error message
                   Obx(() {
                     if (controller.errorMessage.value.isEmpty) {
-                      return const SizedBox(height: AppSizes.spacingL);
+                      return const SizedBox(height: AppSizes.space4);
                     }
                     return Padding(
-                      padding: const EdgeInsets.only(top: AppSizes.spacingM),
+                      padding: const EdgeInsets.only(top: AppSizes.space3),
                       child: AppText(
                         controller.errorMessage.value,
                         variant: AppTextVariant.caption,
-                        fontSize: AppSizes.fontSM,
+                        fontSize: AppSizes.fontSizeSmall,
                         color: AppColors.errorColor,
                       ),
                     );
                   }),
-                  const SizedBox(height: AppSizes.spacingXXL),
+                  const SizedBox(height: AppSizes.space6),
                   // Submit button
                   Obx(() => GestureDetector(
                         onTap: controller.isLoading.value ? null : controller.login,
                         child: Container(
-                          height: AppSizes.buttonHeightM,
+                          height: AppSizes.buttonHeightLarge,
                           decoration: BoxDecoration(
                             color: AppColors.primaryColor,
                             borderRadius:
@@ -155,11 +155,11 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                               : AppText(
                                   'login_cta'.tr,
                                   variant: AppTextVariant.button,
-                                  fontSize: AppSizes.fontXL,
+                                  fontSize: AppSizes.fontSizeMedium,
                                 ),
                         ),
                       )),
-                  const SizedBox(height: AppSizes.spacingXL),
+                  const SizedBox(height: AppSizes.space5),
                   // Signup link
                   GestureDetector(
                     onTap: () => Get.toNamed(AppRoutes.signup),
@@ -167,7 +167,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                       child: RichText(
                         text: TextSpan(
                           style: GoogleFonts.inter(
-                            fontSize: AppSizes.fontM,
+                            fontSize: AppSizes.fontSizeSmall,
                             color: AppColors.textSecondaryColor,
                           ),
                           children: [
@@ -184,7 +184,7 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spacingS),
+                  const SizedBox(height: AppSizes.space2),
                 ],
               ),
             ),

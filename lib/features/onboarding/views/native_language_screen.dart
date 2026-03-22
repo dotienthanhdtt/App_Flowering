@@ -24,12 +24,12 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
       children: [
         // Back button
         Padding(
-          padding: const EdgeInsets.only(top: AppSizes.paddingL, left: AppSizes.paddingXXL),
+          padding: const EdgeInsets.only(top: AppSizes.space4, left: AppSizes.space6),
           child: GestureDetector(
             onTap: () => Get.back(),
             child: Container(
-              width: AppSizes.inputHeight,
-              height: AppSizes.inputHeight,
+              width: AppSizes.buttonHeightMedium,
+              height: AppSizes.buttonHeightMedium,
               decoration: BoxDecoration(
                 color: AppColors.surfaceColor,
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -46,10 +46,10 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
         // Header
         Padding(
           padding: const EdgeInsets.only(
-            top: AppSizes.paddingXXL,
-            left: AppSizes.paddingXXL,
-            right: AppSizes.paddingXXL,
-            bottom: AppSizes.paddingL,
+            top: AppSizes.space6,
+            left: AppSizes.space6,
+            right: AppSizes.space6,
+            bottom: AppSizes.space4,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,12 +62,12 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
                 ),
                 textAlign: TextAlign.left,
               ),
-              const SizedBox(height: AppSizes.spacingS),
+              const SizedBox(height: AppSizes.space2),
               AppText(
                 'native_language_subtitle'.tr,
                 variant: AppTextVariant.bodyMedium,
                 color: AppColors.textSecondaryColor,
-                height: AppSizes.lineHeightNormal,
+                height: 1.5,
                 textAlign: TextAlign.left,
               ),
             ],
@@ -85,11 +85,11 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
             }
             return ListView.separated(
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingXXL,
-                vertical: AppSizes.paddingXS,
+                horizontal: AppSizes.space6,
+                vertical: AppSizes.space2,
               ),
               itemCount: controller.nativeLanguages.length,
-              separatorBuilder: (_, _) => const SizedBox(height: AppSizes.spacingM),
+              separatorBuilder: (_, _) => const SizedBox(height: AppSizes.space3),
               itemBuilder: (context, index) {
                 final lang = controller.nativeLanguages[index];
                 return LanguageListCard(
@@ -110,11 +110,11 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
   Widget _buildSkeleton() {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingXXL, vertical: AppSizes.paddingXS),
+          horizontal: AppSizes.space6, vertical: AppSizes.space2),
       itemCount: 7,
-      separatorBuilder: (_, _) => const SizedBox(height: AppSizes.spacingM),
+      separatorBuilder: (_, _) => const SizedBox(height: AppSizes.space3),
       itemBuilder: (_, _) => Container(
-        height: AppSizes.cardHeightCompact,
+        height: AppSizes.space16,
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
           borderRadius: BorderRadius.circular(AppSizes.radiusL),
@@ -134,7 +134,7 @@ class NativeLanguageScreen extends BaseScreen<OnboardingController> {
             variant: AppTextVariant.bodyMedium,
             color: AppColors.textSecondaryColor,
           ),
-          const SizedBox(height: AppSizes.spacingL),
+          const SizedBox(height: AppSizes.space4),
           GestureDetector(
             onTap: controller.loadLanguages,
             child: AppText(

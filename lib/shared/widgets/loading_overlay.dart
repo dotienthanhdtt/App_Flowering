@@ -40,12 +40,12 @@ void showLoadingDialog({String? message}) {
       canPop: false,
       child: Center(
         child: Container(
-          padding: const EdgeInsets.all(AppSizes.padding3XL),
+          padding: const EdgeInsets.all(AppSizes.space8),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
           ),
-          child: LoadingWidget(message: message, size: AppSizes.spacing6XL),
+          child: LoadingWidget(message: message, size: AppSizes.space16),
         ),
       ),
     ),

@@ -36,10 +36,10 @@ class _AiTypingBubbleState extends State<AiTypingBubble>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const AiAvatar(),
-        const SizedBox(width: AppSizes.spacingS),
+        const SizedBox(width: AppSizes.space2),
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AppSizes.font3XL, vertical: AppSizes.paddingM),
+              horizontal: AppSizes.fontSizeLarge, vertical: AppSizes.space4),
           decoration: BoxDecoration(
             color: AppColors.surfaceColor,
             borderRadius: const BorderRadius.only(
@@ -65,12 +65,12 @@ class _AiTypingBubbleState extends State<AiTypingBubble>
                     ((_ctrl.value - offset) % 1.0).clamp(0.0, 1.0);
                 final scale = 0.6 + 0.4 * (val < 0.5 ? val * 2 : (1 - val) * 2);
                 return Padding(
-                  padding: EdgeInsets.only(right: i < 2 ? AppSizes.spacingSM : 0),
+                  padding: EdgeInsets.only(right: i < 2 ? AppSizes.space2 : 0),
                   child: Transform.scale(
                     scale: scale,
                     child: Container(
-                      width: AppSizes.spacingS,
-                      height: AppSizes.spacingS,
+                      width: AppSizes.space2,
+                      height: AppSizes.space2,
                       decoration: BoxDecoration(
                         color: i == 1
                             ? AppColors.primaryColor

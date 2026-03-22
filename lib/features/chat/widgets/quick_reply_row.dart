@@ -17,17 +17,17 @@ class QuickReplyRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: AppSizes.inputHeight),
+      padding: const EdgeInsets.only(left: AppSizes.buttonHeightMedium),
       child: Wrap(
-        spacing: AppSizes.spacingS,
-        runSpacing: AppSizes.spacingS,
+        spacing: AppSizes.space2,
+        runSpacing: AppSizes.space2,
         children: options
             .map(
               (opt) => GestureDetector(
                 onTap: () => onSelect(opt),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AppSizes.paddingM, vertical: AppSizes.paddingXS),
+                      horizontal: AppSizes.space4, vertical: AppSizes.space2),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceColor,
                     borderRadius: BorderRadius.circular(AppSizes.radiusPill),
@@ -42,7 +42,7 @@ class QuickReplyRow extends StatelessWidget {
                   ),
                   child: AppText(
                     opt,
-                    fontSize: AppSizes.fontSM,
+                    fontSize: AppSizes.fontSizeSmall,
                     color: AppColors.textPrimaryColor,
                   ),
                 ),

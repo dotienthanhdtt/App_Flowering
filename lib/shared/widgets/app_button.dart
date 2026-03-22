@@ -32,7 +32,7 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final buttonHeight = height ?? AppSizes.icon3XL;
     final buttonPadding =
-        padding ?? const EdgeInsets.symmetric(horizontal: AppSizes.paddingXXL);
+        padding ?? const EdgeInsets.symmetric(horizontal: AppSizes.space6);
 
     Widget child = isLoading
         ? const SizedBox(
@@ -49,7 +49,7 @@ class AppButton extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 Icon(icon, size: AppSizes.iconL),
-                const SizedBox(width: AppSizes.spacingS),
+                const SizedBox(width: AppSizes.space2),
               ],
               AppText(text, style: _textStyle),
             ],
@@ -149,7 +149,7 @@ class AppButton extends StatelessWidget {
 
   TextStyle get _textStyle {
     final base = AppTextStyles.button.copyWith(
-      fontSize: AppSizes.fontL,
+      fontSize: AppSizes.fontSizeMedium,
       fontWeight: FontWeight.w600,
     );
     switch (variant) {

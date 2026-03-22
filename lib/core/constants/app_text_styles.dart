@@ -7,57 +7,80 @@ import 'app_sizes.dart';
 class AppTextStyles {
   AppTextStyles._();
 
-  static TextStyle get h1 => GoogleFonts.inter(
-        fontSize: AppSizes.font8XL,
+  static TextStyle get display => GoogleFonts.inter(
+        fontSize: AppSizes.fontSize5XLarge,
         fontWeight: FontWeight.w700,
+        height: AppSizes.lineHeight5XLarge,
+        color: AppColors.textPrimaryColor,
+      );
+
+  static TextStyle get h1 => GoogleFonts.inter(
+        fontSize: AppSizes.fontSize4XLarge,
+        fontWeight: FontWeight.w700,
+        height: AppSizes.lineHeight4XLarge,
         color: AppColors.textPrimaryColor,
       );
 
   static TextStyle get h2 => GoogleFonts.inter(
-        fontSize: AppSizes.font6XL,
+        fontSize: AppSizes.fontSize2XLarge,
         fontWeight: FontWeight.w600,
+        height: AppSizes.lineHeight2XLarge,
         color: AppColors.textPrimaryColor,
       );
 
   static TextStyle get h3 => GoogleFonts.inter(
-        fontSize: AppSizes.font4XL,
+        fontSize: AppSizes.fontSizeXLarge,
         fontWeight: FontWeight.w600,
+        height: AppSizes.lineHeightXLarge,
+        color: AppColors.textPrimaryColor,
+      );
+
+  static TextStyle get sectionHeader => GoogleFonts.inter(
+        fontSize: AppSizes.fontSize3XLarge,
+        fontWeight: FontWeight.w600,
+        height: AppSizes.lineHeight3XLarge,
         color: AppColors.textPrimaryColor,
       );
 
   static TextStyle get bodyLarge => GoogleFonts.inter(
-        fontSize: AppSizes.fontXL,
+        fontSize: AppSizes.fontSizeMedium,
         fontWeight: FontWeight.w400,
+        height: AppSizes.lineHeightMedium,
         color: AppColors.textPrimaryColor,
       );
 
   static TextStyle get bodyMedium => GoogleFonts.inter(
-        fontSize: AppSizes.fontM,
+        fontSize: AppSizes.fontSizeSmall,
         fontWeight: FontWeight.w400,
+        height: AppSizes.lineHeightSmall,
         color: AppColors.textPrimaryColor,
       );
 
   static TextStyle get bodySmall => GoogleFonts.inter(
-        fontSize: AppSizes.fontXS,
-        fontWeight: FontWeight.w400,
+        fontSize: AppSizes.fontSizeXSmall,
+        fontWeight: FontWeight.w600,
+        height: AppSizes.lineHeightXSmall,
         color: AppColors.textSecondaryColor,
       );
 
   static TextStyle get button => GoogleFonts.inter(
-        fontSize: AppSizes.font3XL,
+        fontSize: AppSizes.fontSizeLarge,
         fontWeight: FontWeight.w600,
+        height: AppSizes.lineHeightLarge,
         color: Colors.white,
       );
 
   static TextStyle get caption => GoogleFonts.inter(
-        fontSize: AppSizes.fontXS,
+        fontSize: AppSizes.fontSizeXSmall,
         fontWeight: FontWeight.w400,
+        height: AppSizes.lineHeightXSmall,
         color: AppColors.textTertiaryColor,
       );
 
   static TextStyle get label => GoogleFonts.inter(
-        fontSize: AppSizes.fontM,
+        fontSize: AppSizes.fontSizeSmall,
         fontWeight: FontWeight.w500,
+        height: AppSizes.lineHeightBase,
         color: AppColors.textSecondaryColor,
       );
 }

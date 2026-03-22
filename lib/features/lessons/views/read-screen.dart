@@ -30,8 +30,8 @@ class ReadScreen extends StatelessWidget {
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSizes.paddingXXL,
-        vertical: AppSizes.paddingL,
+        horizontal: AppSizes.space6,
+        vertical: AppSizes.space4,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,7 +61,7 @@ class ReadScreen extends StatelessWidget {
               size: AppSizes.icon3XL,
               color: AppColors.textTertiaryColor,
             ),
-            const SizedBox(height: AppSizes.spacingL),
+            const SizedBox(height: AppSizes.space4),
             AppText(
               'read_empty'.tr,
               variant: AppTextVariant.bodyMedium,
@@ -73,7 +73,7 @@ class ReadScreen extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
       itemCount: controller.sections.length,
       itemBuilder: (context, index) {
         return const SizedBox.shrink();

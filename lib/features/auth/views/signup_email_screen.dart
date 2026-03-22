@@ -36,7 +36,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
-                AppSizes.paddingXXL, AppSizes.paddingXS, AppSizes.paddingXXL, AppSizes.paddingXXL),
+                AppSizes.space6, AppSizes.space2, AppSizes.space6, AppSizes.space6),
             child: Form(
               key: controller.signupFormKey,
               child: Column(
@@ -47,20 +47,20 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                     variant: AppTextVariant.h2,
                     fontWeight: FontWeight.w700,
                   ),
-                  const SizedBox(height: AppSizes.spacingSM),
+                  const SizedBox(height: AppSizes.space2),
                   AppText(
                     'signup_subtitle'.tr,
                     variant: AppTextVariant.bodyMedium,
                     color: AppColors.textSecondaryColor,
                   ),
-                  const SizedBox(height: AppSizes.spacing3XL),
+                  const SizedBox(height: AppSizes.space6),
                   AuthTextField(
                     label: 'signup_full_name'.tr,
                     hint: 'signup_full_name_hint'.tr,
                     controller: controller.fullNameController,
                     validator: controller.validateFullName,
                   ),
-                  const SizedBox(height: AppSizes.spacingL),
+                  const SizedBox(height: AppSizes.space4),
                   AuthTextField(
                     label: 'email'.tr,
                     hint: 'email_hint'.tr,
@@ -68,7 +68,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                     validator: controller.validateEmail,
                     keyboardType: TextInputType.emailAddress,
                   ),
-                  const SizedBox(height: AppSizes.spacingL),
+                  const SizedBox(height: AppSizes.space4),
                   Obx(() => AuthTextField(
                         label: 'password'.tr,
                         hint: 'password_min_hint'.tr,
@@ -77,7 +77,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                         obscureText: controller.obscurePassword.value,
                         onToggleObscure: controller.obscurePassword.toggle,
                       )),
-                  const SizedBox(height: AppSizes.spacingL),
+                  const SizedBox(height: AppSizes.space4),
                   Obx(() => AuthTextField(
                         label: 'confirm_password'.tr,
                         hint: 'confirm_password_hint'.tr,
@@ -93,24 +93,24 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                   // Error message
                   Obx(() {
                     if (controller.errorMessage.value.isEmpty) {
-                      return const SizedBox(height: AppSizes.spacingL);
+                      return const SizedBox(height: AppSizes.space4);
                     }
                     return Padding(
-                      padding: const EdgeInsets.only(top: AppSizes.spacingM),
+                      padding: const EdgeInsets.only(top: AppSizes.space3),
                       child: AppText(
                         controller.errorMessage.value,
                         variant: AppTextVariant.caption,
-                        fontSize: AppSizes.fontSM,
+                        fontSize: AppSizes.fontSizeSmall,
                         color: AppColors.errorColor,
                       ),
                     );
                   }),
-                  const SizedBox(height: AppSizes.spacingXXL),
+                  const SizedBox(height: AppSizes.space6),
                   // Submit button
                   Obx(() => GestureDetector(
                         onTap: controller.isLoading.value ? null : controller.register,
                         child: Container(
-                          height: AppSizes.buttonHeightM,
+                          height: AppSizes.buttonHeightLarge,
                           decoration: BoxDecoration(
                             color: AppColors.primaryColor,
                             borderRadius:
@@ -129,11 +129,11 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                               : AppText(
                                   'signup_cta'.tr,
                                   variant: AppTextVariant.button,
-                                  fontSize: AppSizes.fontXL,
+                                  fontSize: AppSizes.fontSizeMedium,
                                 ),
                         ),
                       )),
-                  const SizedBox(height: AppSizes.spacingXL),
+                  const SizedBox(height: AppSizes.space5),
                   // Login link
                   GestureDetector(
                     onTap: () => Get.toNamed(AppRoutes.login),
@@ -141,7 +141,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                       child: RichText(
                         text: TextSpan(
                           style: GoogleFonts.inter(
-                            fontSize: AppSizes.fontM,
+                            fontSize: AppSizes.fontSizeSmall,
                             color: AppColors.textSecondaryColor,
                           ),
                           children: [
@@ -158,7 +158,7 @@ class SignupEmailScreen extends BaseScreen<AuthController> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spacingS),
+                  const SizedBox(height: AppSizes.space2),
                 ],
               ),
             ),

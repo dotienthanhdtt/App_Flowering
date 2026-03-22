@@ -36,7 +36,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
-                AppSizes.paddingXXL, AppSizes.paddingXS, AppSizes.paddingXXL, AppSizes.paddingXXL),
+                AppSizes.space6, AppSizes.space2, AppSizes.space6, AppSizes.space6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -45,14 +45,14 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                   variant: AppTextVariant.h2,
                   fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(height: AppSizes.spacingSM),
+                const SizedBox(height: AppSizes.space2),
                 Obx(() => AppText(
                       '${'otp_subtitle'.tr} ${controller.maskedEmail}',
                       variant: AppTextVariant.bodyMedium,
                       color: AppColors.textSecondaryColor,
-                      height: AppSizes.lineHeightNormal,
+                      height: AppSizes.lineHeightBase,
                     )),
-                const SizedBox(height: AppSizes.spacing4XL),
+                const SizedBox(height: AppSizes.space8),
                 Obx(() => OtpInputField(
                       key: otpKey,
                       onCompleted: controller.isLoading.value
@@ -67,19 +67,19 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                 // Error message
                 Obx(() {
                   if (controller.errorMessage.value.isEmpty) {
-                    return const SizedBox(height: AppSizes.spacingL);
+                    return const SizedBox(height: AppSizes.space4);
                   }
                   return Padding(
-                    padding: const EdgeInsets.only(top: AppSizes.spacingM),
+                    padding: const EdgeInsets.only(top: AppSizes.space3),
                     child: AppText(
                       controller.errorMessage.value,
                       variant: AppTextVariant.caption,
-                      fontSize: AppSizes.fontSM,
+                      fontSize: AppSizes.fontSizeSmall,
                       color: AppColors.errorColor,
                     ),
                   );
                 }),
-                const SizedBox(height: AppSizes.spacing4XL),
+                const SizedBox(height: AppSizes.space8),
                 // Loading indicator while verifying
                 Obx(() => controller.isLoading.value
                     ? const Center(
@@ -93,7 +93,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                         ),
                       )
                     : const SizedBox.shrink()),
-                const SizedBox(height: AppSizes.spacingXXL),
+                const SizedBox(height: AppSizes.space6),
                 // Resend / countdown row
                 Obx(() {
                   final seconds = controller.otpCountdown.value;
@@ -108,7 +108,7 @@ class OtpVerificationScreen extends BaseScreen<ForgotPasswordController> {
                     child: RichText(
                       text: TextSpan(
                         style: GoogleFonts.inter(
-                          fontSize: AppSizes.fontM,
+                          fontSize: AppSizes.fontSizeSmall,
                           color: AppColors.textSecondaryColor,
                         ),
                         children: [

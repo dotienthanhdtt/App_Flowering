@@ -57,11 +57,11 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          AppSizes.paddingXXL, AppSizes.paddingXXL, AppSizes.paddingXXL, AppSizes.paddingL),
+          AppSizes.space6, AppSizes.space6, AppSizes.space6, AppSizes.space4),
       child: AppText(
         'scenario_title'.tr,
         style: AppTextStyles.h3.copyWith(
-          fontSize: AppSizes.font5XL,
+          fontSize: AppSizes.fontSize2XLarge,
           fontWeight: FontWeight.w700,
           letterSpacing: AppSizes.trackingSnug,
         ),
@@ -81,13 +81,13 @@ class _ScenarioGrid extends StatelessWidget {
     if (scenarios.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding3XL),
+          padding: const EdgeInsets.symmetric(horizontal: AppSizes.space8),
           child: AppText(
             'scenario_empty'.tr,
             variant: AppTextVariant.bodyLarge,
-            fontSize: AppSizes.fontL,
+            fontSize: AppSizes.fontSizeMedium,
             color: AppColors.textTertiaryColor,
-            height: AppSizes.lineHeightLoose,
+            height: AppSizes.lineHeightBase,
             textAlign: TextAlign.center,
           ),
         ),
@@ -96,7 +96,7 @@ class _ScenarioGrid extends StatelessWidget {
 
     return GridView.builder(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingL, vertical: AppSizes.spacingS),
+          horizontal: AppSizes.space4, vertical: AppSizes.space2),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,
@@ -118,11 +118,11 @@ class _CtaButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          AppSizes.paddingSM, AppSizes.paddingXXL, AppSizes.paddingSM, AppSizes.padding3XL),
+          AppSizes.space3, AppSizes.space6, AppSizes.space3, AppSizes.space8),
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          height: AppSizes.buttonHeightM,
+          height: AppSizes.buttonHeightLarge,
           decoration: BoxDecoration(
             color: AppColors.primaryColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusPill),

@@ -18,18 +18,18 @@ class ProfileScreen extends StatelessWidget {
 
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXXL),
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.space6),
         child: Column(
           children: [
-            const SizedBox(height: AppSizes.spacingXXL),
+            const SizedBox(height: AppSizes.space6),
             _buildUserHeader(controller),
-            const SizedBox(height: AppSizes.spacingXXL),
+            const SizedBox(height: AppSizes.space6),
             _buildStatsRow(),
-            const SizedBox(height: AppSizes.spacingXXL),
+            const SizedBox(height: AppSizes.space6),
             _buildSettingsSection(),
-            const SizedBox(height: AppSizes.spacing4XL),
+            const SizedBox(height: AppSizes.space8),
             _buildLogoutButton(controller),
-            const SizedBox(height: AppSizes.spacingXXL),
+            const SizedBox(height: AppSizes.space6),
           ],
         ),
       ),
@@ -48,14 +48,14 @@ class ProfileScreen extends StatelessWidget {
             color: AppColors.primaryColor,
           ),
         ),
-        const SizedBox(height: AppSizes.spacingM),
+        const SizedBox(height: AppSizes.space3),
         Obx(() => AppText(
           controller.userName.value.isEmpty
               ? 'my_profile'.tr
               : controller.userName.value,
           variant: AppTextVariant.h3,
         )),
-        const SizedBox(height: AppSizes.spacingXS),
+        const SizedBox(height: AppSizes.space1),
         Obx(() => AppText(
           controller.userEmail.value,
           variant: AppTextVariant.caption,
@@ -80,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppText('settings'.tr, variant: AppTextVariant.h3),
-        const SizedBox(height: AppSizes.spacingM),
+        const SizedBox(height: AppSizes.space3),
         _SettingsRow(icon: LucideIcons.globe, label: 'language'.tr),
         _SettingsRow(icon: LucideIcons.bell, label: 'notifications'.tr),
         _SettingsRow(icon: LucideIcons.info, label: 'about'.tr),
@@ -98,7 +98,7 @@ class ProfileScreen extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.errorColor,
           side: const BorderSide(color: AppColors.errorColor),
-          padding: const EdgeInsets.symmetric(vertical: AppSizes.paddingM),
+          padding: const EdgeInsets.symmetric(vertical: AppSizes.space4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
           ),
@@ -119,7 +119,7 @@ class _StatItem extends StatelessWidget {
     return Column(
       children: [
         AppText(value, variant: AppTextVariant.h3, color: AppColors.primaryColor),
-        const SizedBox(height: AppSizes.spacingXS),
+        const SizedBox(height: AppSizes.space1),
         AppText(label, variant: AppTextVariant.caption),
       ],
     );

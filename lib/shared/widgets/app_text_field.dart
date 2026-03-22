@@ -75,11 +75,11 @@ class _AppTextFieldState extends State<AppTextField> {
           AppText(
             widget.label!,
             variant: AppTextVariant.label,
-            fontSize: AppSizes.fontSM,
+            fontSize: AppSizes.fontSizeSmall,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimaryColor,
           ),
-          const SizedBox(height: AppSizes.spacingSM),
+          const SizedBox(height: AppSizes.space2),
         ],
         TextFormField(
           controller: widget.controller,
@@ -117,8 +117,8 @@ class _AppTextFieldState extends State<AppTextField> {
                 : widget.suffixIcon,
             contentPadding: widget.contentPadding ??
                 const EdgeInsets.symmetric(
-                    horizontal: AppSizes.paddingL,
-                    vertical: AppSizes.paddingL),
+                    horizontal: AppSizes.space4,
+                    vertical: AppSizes.space4),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               borderSide: const BorderSide(

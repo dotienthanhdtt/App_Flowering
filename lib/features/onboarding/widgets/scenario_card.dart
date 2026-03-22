@@ -102,7 +102,7 @@ class _CardBody extends StatelessWidget {
                   scenario.title,
                   variant: AppTextVariant.bodyMedium,
                   fontWeight: FontWeight.w600,
-                  height: AppSizes.lineHeightSnug,
+                  height: 1.25,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -214,7 +214,7 @@ class _PlaceholderBg extends StatelessWidget {
       child: Center(
         child: Text(
           _iconEmoji(),
-          style: const TextStyle(fontSize: AppSizes.font7XL),
+          style: const TextStyle(fontSize: AppSizes.fontSize3XLarge),
         ),
       ),
     );

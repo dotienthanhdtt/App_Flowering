@@ -36,25 +36,25 @@ class AuthTextField extends StatelessWidget {
         AppText(
           label,
           variant: AppTextVariant.label,
-          fontSize: AppSizes.fontSM,
+          fontSize: AppSizes.fontSizeSmall,
           fontWeight: FontWeight.w600,
         ),
-        const SizedBox(height: AppSizes.spacingSM),
+        const SizedBox(height: AppSizes.space2),
         TextFormField(
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           validator: validator,
-          style: GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textPrimaryColor),
+          style: GoogleFonts.inter(fontSize: AppSizes.fontSizeMedium, color: AppColors.textPrimaryColor),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle:
-                GoogleFonts.inter(fontSize: AppSizes.fontL, color: AppColors.textTertiaryColor),
+                GoogleFonts.inter(fontSize: AppSizes.fontSizeMedium, color: AppColors.textTertiaryColor),
             filled: true,
             fillColor: AppColors.surfaceColor,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: AppSizes.paddingL, vertical: AppSizes.paddingM),
+                const EdgeInsets.symmetric(horizontal: AppSizes.space4, vertical: AppSizes.space4),
             border: _border(AppColors.borderLightColor),
             enabledBorder: _border(AppColors.borderLightColor),
             focusedBorder: _border(AppColors.primaryColor),

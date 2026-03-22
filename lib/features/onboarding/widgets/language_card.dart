@@ -26,8 +26,8 @@ class LanguageListCard extends StatelessWidget {
       child: GestureDetector(
         onTap: language.isEnabled ? onTap : null,
         child: Container(
-          height: AppSizes.cardHeightCompact,
-          padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+          height: AppSizes.space16,
+          padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.primarySoftColor : AppColors.surfaceColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
@@ -48,7 +48,7 @@ class LanguageListCard extends StatelessWidget {
           child: Row(
             children: [
               _LanguageFlag(language: language, size: AppSizes.avatarM),
-              const SizedBox(width: AppSizes.spacingM),
+              const SizedBox(width: AppSizes.space3),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +62,7 @@ class LanguageListCard extends StatelessWidget {
                     AppText(
                       language.subtitle,
                       variant: AppTextVariant.bodySmall,
-                      fontSize: AppSizes.fontSM,
+                      fontSize: AppSizes.fontSizeSmall,
                     ),
                   ],
                 ),
@@ -70,7 +70,7 @@ class LanguageListCard extends StatelessWidget {
               if (!language.isEnabled)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingXS, vertical: AppSizes.spacingXS),
+                      const EdgeInsets.symmetric(horizontal: AppSizes.space2, vertical: AppSizes.space1),
                   decoration: BoxDecoration(
                     color: AppColors.warningLightColor,
                     borderRadius: BorderRadius.circular(AppSizes.radiusS),
@@ -78,7 +78,7 @@ class LanguageListCard extends StatelessWidget {
                   child: AppText(
                     'language_coming_soon'.tr,
                     variant: AppTextVariant.caption,
-                    fontSize: AppSizes.fontXXS,
+                    fontSize: AppSizes.fontSizeXSmall,
                     fontWeight: FontWeight.w600,
                     color: AppColors.warningColor,
                   ),
@@ -144,7 +144,7 @@ class LanguageGridCard extends StatelessWidget {
       child: GestureDetector(
         onTap: language.isEnabled ? onTap : null,
         child: Container(
-          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          padding: const EdgeInsets.all(AppSizes.space5),
           decoration: BoxDecoration(
             color: AppColors.surfaceColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
@@ -157,19 +157,19 @@ class LanguageGridCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _LanguageFlag(language: language, size: AppSizes.avatarXL),
-              const SizedBox(height: AppSizes.spacingM),
+              const SizedBox(height: AppSizes.space3),
               AppText(
                 language.name,
                 variant: AppTextVariant.bodyMedium,
-                fontSize: AppSizes.font3XL,
+                fontSize: AppSizes.fontSizeLarge,
                 fontWeight: FontWeight.w700,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: AppSizes.spacingXS),
+              const SizedBox(height: AppSizes.space1),
               AppText(
                 language.subtitle,
                 variant: AppTextVariant.caption,
-                fontSize: AppSizes.fontXXS,
+                fontSize: AppSizes.fontSizeXSmall,
                 fontWeight: language.isEnabled ? FontWeight.w400 : FontWeight.w500,
                 color: language.isEnabled ? AppColors.textSecondaryColor : AppColors.textTertiaryColor,
                 textAlign: TextAlign.center,

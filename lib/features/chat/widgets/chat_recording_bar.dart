@@ -35,7 +35,7 @@ class ChatRecordingBar extends StatelessWidget {
             child: const Icon(Icons.close, size: AppSizes.iconSM, color: AppColors.textTertiaryColor),
           ),
         ),
-        const SizedBox(width: AppSizes.spacingM),
+        const SizedBox(width: AppSizes.space3),
         // Red dot
         Container(
           width: 8,
@@ -45,17 +45,17 @@ class ChatRecordingBar extends StatelessWidget {
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(width: AppSizes.spacingS),
+        const SizedBox(width: AppSizes.space2),
         // Timer
         Obx(() => AppText(
               _formatDuration(controller.recordingDuration.value),
               variant: AppTextVariant.label,
               color: AppColors.textPrimaryColor,
             )),
-        const SizedBox(width: AppSizes.spacingM),
+        const SizedBox(width: AppSizes.space3),
         // Waveform bars
         const Expanded(child: ChatWaveformBars()),
-        const SizedBox(width: AppSizes.spacingM),
+        const SizedBox(width: AppSizes.space3),
         // Send button
         GestureDetector(
           onTap: controller.stopRecording,

@@ -32,10 +32,10 @@ class VocabularyScreen extends StatelessWidget {
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.only(
-        left: AppSizes.paddingXXL,
-        right: AppSizes.paddingXXL,
-        top: AppSizes.paddingL,
-        bottom: AppSizes.paddingXS,
+        left: AppSizes.space6,
+        right: AppSizes.space6,
+        top: AppSizes.space4,
+        bottom: AppSizes.space2,
       ),
       child: AppText('vocabulary_title'.tr, variant: AppTextVariant.h2),
     );
@@ -44,8 +44,8 @@ class VocabularyScreen extends StatelessWidget {
   Widget _buildSearchBar(VocabularyController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSizes.paddingXXL,
-        vertical: AppSizes.paddingXS,
+        horizontal: AppSizes.space6,
+        vertical: AppSizes.space2,
       ),
       child: TextField(
         onChanged: controller.updateSearch,
@@ -64,7 +64,7 @@ class VocabularyScreen extends StatelessWidget {
             borderSide: BorderSide.none,
           ),
           contentPadding: const EdgeInsets.symmetric(
-            vertical: AppSizes.paddingSM,
+            vertical: AppSizes.space3,
           ),
         ),
       ),
@@ -84,7 +84,7 @@ class VocabularyScreen extends StatelessWidget {
                 size: AppSizes.icon3XL,
                 color: AppColors.textTertiaryColor,
               ),
-              const SizedBox(height: AppSizes.spacingL),
+              const SizedBox(height: AppSizes.space4),
               AppText(
                 'vocabulary_empty'.tr,
                 variant: AppTextVariant.bodyMedium,
@@ -96,7 +96,7 @@ class VocabularyScreen extends StatelessWidget {
       }
 
       return ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
         itemCount: words.length,
         itemBuilder: (context, index) {
           final word = words[index];

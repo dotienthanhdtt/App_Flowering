@@ -21,7 +21,7 @@ class AppErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.paddingXXL),
+        padding: const EdgeInsets.all(AppSizes.space6),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -30,7 +30,7 @@ class AppErrorWidget extends StatelessWidget {
               size: AppSizes.icon4XL,
               color: AppColors.errorColor,
             ),
-            const SizedBox(height: AppSizes.spacingL),
+            const SizedBox(height: AppSizes.space4),
             AppText(
               message,
               variant: AppTextVariant.bodyLarge,
@@ -38,7 +38,7 @@ class AppErrorWidget extends StatelessWidget {
               color: AppColors.textSecondaryColor,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: AppSizes.spacingXXL),
+              const SizedBox(height: AppSizes.space6),
               AppButton(
                 text: 'retry'.tr,
                 onPressed: onRetry,

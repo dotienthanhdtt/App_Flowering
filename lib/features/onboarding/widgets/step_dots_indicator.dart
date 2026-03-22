@@ -19,9 +19,9 @@ class StepDotsIndicator extends StatelessWidget {
       children: List.generate(totalSteps, (index) {
         final isActive = index == activeStep;
         return Container(
-          margin: EdgeInsets.only(right: index < totalSteps - 1 ? AppSizes.spacingS : 0),
-          width: isActive ? AppSizes.spacing3XL : AppSizes.spacingL,
-          height: AppSizes.spacingXS,
+          margin: EdgeInsets.only(right: index < totalSteps - 1 ? AppSizes.space2 : 0),
+          width: isActive ? AppSizes.space6 : AppSizes.space4,
+          height: AppSizes.space1,
           decoration: BoxDecoration(
             color: isActive ? AppColors.primaryColor : AppColors.infoColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusXS),

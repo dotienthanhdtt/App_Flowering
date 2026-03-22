@@ -39,9 +39,9 @@ class _PlaceholderScreen extends StatelessWidget {
           children: [
             Text(
               '$title - ${'coming_soon_suffix'.tr}',
-              style: const TextStyle(fontSize: AppSizes.font3XL, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: AppSizes.fontSizeLarge, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: AppSizes.spacingL),
+            const SizedBox(height: AppSizes.space4),
             ElevatedButton(
               onPressed: () => Get.back(),
               child: Text('go_back'.tr),

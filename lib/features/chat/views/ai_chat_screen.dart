@@ -67,13 +67,13 @@ class _ErrorBanner extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingL, vertical: AppSizes.paddingXS),
+          horizontal: AppSizes.space4, vertical: AppSizes.space2),
       color: const Color(0xFFFFF3CD),
       child: Row(
         children: [
           const Icon(Icons.warning_amber_rounded,
               size: AppSizes.iconSM, color: Color(0xFF856404)),
-          const SizedBox(width: AppSizes.spacingS),
+          const SizedBox(width: AppSizes.space2),
           Expanded(
             child: AppText(
               message,
@@ -82,7 +82,7 @@ class _ErrorBanner extends StatelessWidget {
             ),
           ),
           if (onRetry != null) ...[
-            const SizedBox(width: AppSizes.spacingS),
+            const SizedBox(width: AppSizes.space2),
             GestureDetector(
               onTap: onRetry,
               child: AppText(
@@ -111,10 +111,10 @@ class _ChatList extends StatelessWidget {
         children: [
           ListView.separated(
             controller: controller.scrollController,
-            padding: const EdgeInsets.all(AppSizes.paddingL),
+            padding: const EdgeInsets.all(AppSizes.space4),
             itemCount: controller.messages.length +
                 (controller.isTyping.value ? 1 : 0),
-            separatorBuilder: (_, __) => const SizedBox(height: AppSizes.spacingL),
+            separatorBuilder: (_, __) => const SizedBox(height: AppSizes.space4),
             itemBuilder: (_, index) {
               if (index == controller.messages.length) {
                 return const AiTypingBubble();

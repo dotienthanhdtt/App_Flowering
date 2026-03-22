@@ -25,7 +25,7 @@ class TextActionButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: AppSizes.iconXS, color: color),
-          const SizedBox(width: AppSizes.spacingXS),
+          const SizedBox(width: AppSizes.space1),
           AppText(
             label,
             variant: AppTextVariant.caption,

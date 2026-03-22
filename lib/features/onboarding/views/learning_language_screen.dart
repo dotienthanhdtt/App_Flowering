@@ -25,10 +25,10 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
         // Header
         Padding(
           padding: const EdgeInsets.only(
-            top: AppSizes.inputHeight,
-            left: AppSizes.paddingXXL,
-            right: AppSizes.paddingXXL,
-            bottom: AppSizes.paddingXXL,
+            top: AppSizes.buttonHeightMedium,
+            left: AppSizes.space6,
+            right: AppSizes.space6,
+            bottom: AppSizes.space6,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,12 +41,12 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
                 ),
                 textAlign: TextAlign.left,
               ),
-              const SizedBox(height: AppSizes.spacingS),
+              const SizedBox(height: AppSizes.space2),
               AppText(
                 'language_select_subtitle'.tr,
                 variant: AppTextVariant.bodyMedium,
                 color: AppColors.textSecondaryColor,
-                height: AppSizes.lineHeightNormal,
+                height: 1.5,
                 textAlign: TextAlign.left,
               ),
             ],
@@ -64,10 +64,10 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
             }
             return GridView.count(
               crossAxisCount: 2,
-              mainAxisSpacing: AppSizes.spacingL,
-              crossAxisSpacing: AppSizes.spacingL,
+              mainAxisSpacing: AppSizes.space4,
+              crossAxisSpacing: AppSizes.space4,
               childAspectRatio: 0.95,
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXXL),
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.space6),
               children: controller.learningLanguages.map((lang) {
                 return LanguageGridCard(
                   language: lang,
@@ -87,10 +87,10 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
   Widget _buildSkeleton() {
     return GridView.count(
       crossAxisCount: 2,
-      mainAxisSpacing: AppSizes.spacingL,
-      crossAxisSpacing: AppSizes.spacingL,
+      mainAxisSpacing: AppSizes.space4,
+      crossAxisSpacing: AppSizes.space4,
       childAspectRatio: 0.95,
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXXL),
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.space6),
       children: List.generate(
         6,
         (_) => Container(
@@ -114,7 +114,7 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
             variant: AppTextVariant.bodyMedium,
             color: AppColors.textSecondaryColor,
           ),
-          const SizedBox(height: AppSizes.spacingL),
+          const SizedBox(height: AppSizes.space4),
           GestureDetector(
             onTap: controller.loadLanguages,
             child: AppText(

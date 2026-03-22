@@ -30,8 +30,8 @@ class ChatHomeScreen extends StatelessWidget {
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSizes.paddingXXL,
-        vertical: AppSizes.paddingL,
+        horizontal: AppSizes.space6,
+        vertical: AppSizes.space4,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,7 +56,7 @@ class ChatHomeScreen extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
       itemCount: controller.conversations.length,
       itemBuilder: (context, index) {
         final conversation = controller.conversations[index];
@@ -80,13 +80,13 @@ class ChatHomeScreen extends StatelessWidget {
             size: AppSizes.icon3XL,
             color: AppColors.textTertiaryColor,
           ),
-          const SizedBox(height: AppSizes.spacingL),
+          const SizedBox(height: AppSizes.space4),
           AppText(
             'chat_home_empty'.tr,
             variant: AppTextVariant.bodyMedium,
             color: AppColors.textTertiaryColor,
           ),
-          const SizedBox(height: AppSizes.spacingS),
+          const SizedBox(height: AppSizes.space2),
           AppText(
             'chat_home_start'.tr,
             variant: AppTextVariant.label,

@@ -17,7 +17,7 @@ class LoginGateBottomSheet extends StatelessWidget {
       'auth_social_coming_soon'.tr,
       'auth_social_coming_soon_message'.tr,
       snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(AppSizes.paddingL),
+      margin: const EdgeInsets.all(AppSizes.space4),
       backgroundColor: AppColors.surfaceColor,
       colorText: AppColors.textPrimaryColor,
     );
@@ -31,10 +31,10 @@ class LoginGateBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.radiusXXL)),
       ),
       padding: EdgeInsets.fromLTRB(
-        AppSizes.paddingXXL,
-        AppSizes.paddingXL,
-        AppSizes.paddingXXL,
-        MediaQuery.of(context).viewInsets.bottom + AppSizes.padding3XL,
+        AppSizes.space6,
+        AppSizes.space5,
+        AppSizes.space6,
+        MediaQuery.of(context).viewInsets.bottom + AppSizes.space8,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -42,47 +42,47 @@ class LoginGateBottomSheet extends StatelessWidget {
           // Handle bar
           Container(
             width: 36,
-            height: AppSizes.spacingXS,
+            height: AppSizes.space1,
             decoration: BoxDecoration(
               color: AppColors.borderStrongColor,
               borderRadius: BorderRadius.circular(AppSizes.radiusXXS),
             ),
           ),
-          const SizedBox(height: AppSizes.spacingXXL),
+          const SizedBox(height: AppSizes.space6),
           AppText(
             'auth_gate_title'.tr,
             variant: AppTextVariant.h3,
             fontWeight: FontWeight.w700,
           ),
-          const SizedBox(height: AppSizes.spacingSM),
+          const SizedBox(height: AppSizes.space2),
           AppText(
             'auth_gate_subtitle'.tr,
             variant: AppTextVariant.bodyMedium,
             color: AppColors.textSecondaryColor,
-            height: AppSizes.lineHeightNormal,
+            height: AppSizes.lineHeightBase,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: AppSizes.spacingXXL),
+          const SizedBox(height: AppSizes.space6),
           SocialAuthButton(provider: SocialProvider.apple, onTap: _onSocialTap),
-          const SizedBox(height: AppSizes.spacingM),
+          const SizedBox(height: AppSizes.space3),
           SocialAuthButton(provider: SocialProvider.google, onTap: _onSocialTap),
-          const SizedBox(height: AppSizes.spacingL),
+          const SizedBox(height: AppSizes.space4),
           // "or" divider
           Row(
             children: [
               const Expanded(child: Divider(color: AppColors.borderLightColor)),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingSM),
+                padding: const EdgeInsets.symmetric(horizontal: AppSizes.space3),
                 child: AppText(
                   'login_or_divider'.tr,
                   variant: AppTextVariant.caption,
-                  fontSize: AppSizes.fontSM,
+                  fontSize: AppSizes.fontSizeSmall,
                 ),
               ),
               const Expanded(child: Divider(color: AppColors.borderLightColor)),
             ],
           ),
-          const SizedBox(height: AppSizes.spacingL),
+          const SizedBox(height: AppSizes.space4),
           // Email signup button
           GestureDetector(
             onTap: () {
@@ -90,7 +90,7 @@ class LoginGateBottomSheet extends StatelessWidget {
               Get.toNamed(AppRoutes.signup);
             },
             child: Container(
-              height: AppSizes.buttonHeightM,
+              height: AppSizes.buttonHeightLarge,
               decoration: BoxDecoration(
                 color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(AppSizes.radiusPill),
@@ -99,11 +99,11 @@ class LoginGateBottomSheet extends StatelessWidget {
               child: AppText(
                 'auth_continue_email'.tr,
                 variant: AppTextVariant.button,
-                fontSize: AppSizes.fontL,
+                fontSize: AppSizes.fontSizeMedium,
               ),
             ),
           ),
-          const SizedBox(height: AppSizes.spacingL),
+          const SizedBox(height: AppSizes.space4),
           // Login link
           GestureDetector(
             onTap: () {
@@ -113,7 +113,7 @@ class LoginGateBottomSheet extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 style: GoogleFonts.inter(
-                  fontSize: AppSizes.fontM,
+                  fontSize: AppSizes.fontSizeSmall,
                   color: AppColors.textSecondaryColor,
                 ),
                 children: [

@@ -29,7 +29,7 @@ class AppIcon extends StatelessWidget {
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingXS),
+          padding: const EdgeInsets.all(AppSizes.space2),
           child: iconWidget,
         ),
       );

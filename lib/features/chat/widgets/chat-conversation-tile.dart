@@ -27,8 +27,8 @@ class ChatConversationTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppSizes.radiusM),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: AppSizes.paddingSM,
-          horizontal: AppSizes.paddingXS,
+          vertical: AppSizes.space3,
+          horizontal: AppSizes.space2,
         ),
         child: Row(
           children: [
@@ -41,13 +41,13 @@ class ChatConversationTile extends StatelessWidget {
                 color: AppColors.primaryColor,
               ),
             ),
-            const SizedBox(width: AppSizes.spacingM),
+            const SizedBox(width: AppSizes.space3),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppText(title, variant: AppTextVariant.label),
-                  const SizedBox(height: AppSizes.spacingXXS),
+                  const SizedBox(height: AppSizes.space1),
                   AppText(
                     subtitle,
                     variant: AppTextVariant.caption,

@@ -24,7 +24,7 @@ class UserMessageBubble extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 260),
         padding: const EdgeInsets.symmetric(
-            horizontal: AppSizes.paddingL, vertical: AppSizes.paddingSM),
+            horizontal: AppSizes.space4, vertical: AppSizes.space3),
         decoration: const BoxDecoration(
           color: AppColors.primaryColor,
           borderRadius: BorderRadius.only(
@@ -42,7 +42,7 @@ class UserMessageBubble extends StatelessWidget {
               color: Colors.white,
             ),
             if (message.correctedText != null) ...[
-              const SizedBox(height: AppSizes.spacingS),
+              const SizedBox(height: AppSizes.space2),
               GrammarCorrectionSection(
                 correctedText: message.correctedText!,
                 isExpanded: message.showCorrection,

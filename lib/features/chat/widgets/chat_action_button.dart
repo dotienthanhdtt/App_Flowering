@@ -21,8 +21,8 @@ class ChatActionButton extends StatelessWidget {
       onTap: showSend ? onSend : onMic,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: AppSizes.inputHeight,
-        height: AppSizes.inputHeight,
+        width: AppSizes.buttonHeightMedium,
+        height: AppSizes.buttonHeightMedium,
         decoration: const BoxDecoration(
           color: AppColors.primaryColor,
           shape: BoxShape.circle,
