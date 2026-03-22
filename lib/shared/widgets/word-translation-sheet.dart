@@ -14,6 +14,7 @@ class WordTranslationSheet extends StatelessWidget {
   final VoidCallback? onRetry;
   final VoidCallback? onClose;
   final VoidCallback? onPlayAudio;
+  final VoidCallback? onSave;
 
   const WordTranslationSheet({
     super.key,
@@ -23,6 +24,7 @@ class WordTranslationSheet extends StatelessWidget {
     this.onRetry,
     this.onClose,
     this.onPlayAudio,
+    this.onSave,
   });
 
   @override
@@ -52,6 +54,10 @@ class WordTranslationSheet extends StatelessWidget {
                 _buildLoading(),
               ] else ...[
                 _buildContent(),
+                if (onSave != null) ...[
+                  const SizedBox(height: AppSizes.space4),
+                  _buildSaveButton(),
+                ],
               ],
             ],
           ),
@@ -63,7 +69,7 @@ class WordTranslationSheet extends StatelessWidget {
   Widget _buildDragHandle() {
     return Center(
       child: Container(
-        width: 40,
+        width: 36,
         height: 4,
         decoration: BoxDecoration(
           color: AppColors.borderStrongColor,
@@ -273,6 +279,32 @@ class WordTranslationSheet extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return GestureDetector(
+      onTap: onSave,
+      child: Container(
+        height: AppSizes.buttonHeightLarge,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(color: AppColors.primaryColor, width: AppSizes.borderMedium),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.bookmark_border, color: AppColors.primaryColor, size: AppSizes.iconL),
+            const SizedBox(width: AppSizes.space2),
+            AppText(
+              'chat_save_to_words'.tr,
+              fontSize: AppSizes.fontSizeLarge,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primaryColor,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

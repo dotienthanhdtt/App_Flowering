@@ -4,18 +4,20 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 
-/// Top bar for the AI chat onboarding screen.
-/// Shows logo + brand name + flag emoji + progress bar + skip button.
+/// Top bar for the AI chat screen.
+/// Shows back arrow + centered title + optional more icon.
 class ChatTopBar extends StatelessWidget {
-  final double progress;
-  final String flagEmoji;
-  final VoidCallback? onSkip;
+  final String title;
+  final VoidCallback? onBack;
+  final bool showMoreButton;
+  final VoidCallback? onMore;
 
   const ChatTopBar({
     super.key,
-    this.progress = 0.75,
-    this.flagEmoji = '🇬🇧',
-    this.onSkip,
+    required this.title,
+    this.onBack,
+    this.showMoreButton = false,
+    this.onMore,
   });
 
   @override
@@ -26,60 +28,42 @@ class ChatTopBar extends StatelessWidget {
         Container(
           height: AppSizes.topBarHeight,
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: AppColors.borderLightColor, width: AppSizes.borderThin),
-            ),
-          ),
+          color: AppColors.surfaceColor,
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppSizes.radiusXS),
-                child: Image.asset(
-                  'assets/logos/logo.png',
-                  width: AppSizes.avatarS,
-                  height: AppSizes.avatarS,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(width: 10),
-              AppText(
-                'app_name'.tr,
-                variant: AppTextVariant.bodyLarge,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimaryColor,
-              ),
-              const SizedBox(width: AppSizes.space2),
-              Text(flagEmoji, style: const TextStyle(fontSize: AppSizes.fontSizeMedium)),
-              const Spacer(),
               GestureDetector(
-                onTap: onSkip,
-                child: AppText(
-                  'chat_skip'.tr,
-                  variant: AppTextVariant.label,
-                  color: AppColors.textTertiaryColor,
+                onTap: onBack ?? () => Get.back(),
+                child: const Icon(
+                  Icons.arrow_back,
+                  size: AppSizes.iconXL,
+                  color: AppColors.neutralColor,
                 ),
               ),
+              Expanded(
+                child: Center(
+                  child: AppText(
+                    title,
+                    fontSize: AppSizes.fontSizeXLarge,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimaryColor,
+                  ),
+                ),
+              ),
+              if (showMoreButton)
+                GestureDetector(
+                  onTap: onMore,
+                  child: const Icon(
+                    Icons.more_vert,
+                    size: AppSizes.iconXL,
+                    color: AppColors.neutralColor,
+                  ),
+                )
+              else
+                const SizedBox(width: AppSizes.iconXL),
             ],
           ),
         ),
-        // Thin progress bar
-        SizedBox(
-          height: 3,
-          child: LayoutBuilder(
-            builder: (_, constraints) => Stack(
-              children: [
-                Container(color: AppColors.borderLightColor),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  curve: Curves.easeOut,
-                  width: constraints.maxWidth * progress,
-                  color: AppColors.primaryColor,
-                ),
-              ],
-            ),
-          ),
-        ),
+        const Divider(height: 1, thickness: 1, color: AppColors.infoColor),
       ],
     );
   }

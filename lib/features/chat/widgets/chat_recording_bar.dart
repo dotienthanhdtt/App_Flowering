@@ -22,17 +22,17 @@ class ChatRecordingBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Cancel button
+        // Cancel button — 48px
         GestureDetector(
           onTap: controller.cancelRecording,
           child: Container(
-            width: 36,
-            height: 36,
+            width: AppSizes.avatarXL,
+            height: AppSizes.avatarXL,
             decoration: const BoxDecoration(
               color: AppColors.surfaceMutedColor,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.close, size: AppSizes.iconSM, color: AppColors.textTertiaryColor),
+            child: const Icon(Icons.close, size: AppSizes.iconXL, color: AppColors.textTertiaryColor),
           ),
         ),
         const SizedBox(width: AppSizes.space3),
@@ -56,17 +56,17 @@ class ChatRecordingBar extends StatelessWidget {
         // Waveform bars
         const Expanded(child: ChatWaveformBars()),
         const SizedBox(width: AppSizes.space3),
-        // Send button
+        // Send button — 48px
         GestureDetector(
           onTap: controller.stopRecording,
           child: Container(
-            width: 36,
-            height: 36,
+            width: AppSizes.avatarXL,
+            height: AppSizes.avatarXL,
             decoration: const BoxDecoration(
               color: AppColors.primaryColor,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.send_rounded, size: AppSizes.iconSM, color: Colors.white),
+            child: const Icon(Icons.send_rounded, size: AppSizes.iconXL, color: Colors.white),
           ),
         ),
       ],

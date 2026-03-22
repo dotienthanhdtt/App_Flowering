@@ -33,12 +33,12 @@ class ChatTextInputField extends StatelessWidget {
         controller: textController,
         enabled: enabled,
         onSubmitted: onSubmitted,
-        style: GoogleFonts.inter(fontSize: AppSizes.fontSizeSmall, color: AppColors.textPrimaryColor),
+        style: GoogleFonts.inter(fontSize: AppSizes.fontSizeMedium, color: AppColors.textPrimaryColor),
         decoration: InputDecoration.collapsed(
           hintText: isComplete ? 'chat_complete'.tr : 'chat_type_message'.tr,
           hintStyle: GoogleFonts.inter(
-            fontSize: AppSizes.fontSizeSmall,
-            color: AppColors.textTertiaryColor,
+            fontSize: AppSizes.fontSizeMedium,
+            color: AppColors.infoColor,
           ),
         ),
       ),

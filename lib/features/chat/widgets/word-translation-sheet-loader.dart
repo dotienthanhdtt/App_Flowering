@@ -9,11 +9,13 @@ import '../../../shared/widgets/word-translation-sheet.dart';
 class WordTranslationSheetLoader extends StatefulWidget {
   final String word;
   final String? sessionToken;
+  final VoidCallback? onSave;
 
   const WordTranslationSheetLoader({
     super.key,
     required this.word,
     this.sessionToken,
+    this.onSave,
   });
 
   @override
@@ -61,6 +63,7 @@ class _WordTranslationSheetLoaderState
       error: _error,
       onRetry: _retry,
       onClose: () => Navigator.pop(context),
+      onSave: widget.onSave,
     );
   }
 }

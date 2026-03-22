@@ -25,6 +25,10 @@ class AiChatController extends BaseController {
   final isChatComplete = false.obs;
   final progress = 0.0.obs;
 
+  // Chat metadata from route arguments
+  final chatTitle = 'Chat'.obs;
+  final contextDescription = ''.obs;
+
   // Voice recording state
   final isRecording = false.obs;
   final recordingDuration = 0.obs;
@@ -38,6 +42,8 @@ class AiChatController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    chatTitle.value = Get.arguments?['chatTitle'] ?? 'Chat';
+    contextDescription.value = Get.arguments?['contextDescription'] ?? '';
     _startSession();
   }
 
@@ -174,6 +180,7 @@ class AiChatController extends BaseController {
       builder: (_) => WordTranslationSheetLoader(
         word: cleanWord,
         sessionToken: _sessionToken,
+        onSave: () => saveWord(cleanWord),
       ),
     );
   }
@@ -181,6 +188,11 @@ class AiChatController extends BaseController {
   /// Placeholder for TTS playback
   void playAudio(String messageId) {
     // TODO: Integrate TTS service
+  }
+
+  /// Save word to vocabulary list
+  void saveWord(String word) {
+    // TODO: Implement save word to vocabulary list via API
   }
 
   /// Skip onboarding and navigate directly to scenario gift

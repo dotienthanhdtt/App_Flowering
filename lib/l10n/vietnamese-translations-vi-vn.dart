@@ -265,4 +265,8 @@ const Map<String, String> viVN = {
   'corrected': 'Đã sửa',
   'hide': 'Ẩn',
   'show': 'Hiện',
+
+  // Chat UI Update (08A-08E)
+  'chat_try_instead': 'Thử lại câu này:',
+  'chat_save_to_words': 'Lưu vào từ vựng',
 };

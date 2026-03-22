@@ -265,4 +265,8 @@ const Map<String, String> enUS = {
   'corrected': 'Corrected',
   'hide': 'Hide',
   'show': 'Show',
+
+  // Chat UI Update (08A-08E)
+  'chat_try_instead': 'Try this instead:',
+  'chat_save_to_words': 'Save to My Words',
 };

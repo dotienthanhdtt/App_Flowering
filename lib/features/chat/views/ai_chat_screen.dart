@@ -7,14 +7,16 @@ import '../controllers/ai_chat_controller.dart';
 import '../models/chat_message_model.dart';
 import '../widgets/ai_message_bubble.dart';
 import '../widgets/ai_typing_bubble.dart';
+import '../widgets/chat-context-card.dart';
 import '../widgets/quick_reply_row.dart';
 import '../widgets/chat_input_bar.dart';
 import '../widgets/chat_top_bar.dart';
+import '../widgets/grammar_correction_section.dart';
 import '../widgets/user_message_bubble.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 
-/// Screen 07 — AI onboarding chat with Flora using real /onboarding/* APIs.
+/// Screen 07 — AI chat with updated design (08A-08E).
 class AiChatScreen extends BaseScreen<AiChatController> {
   const AiChatScreen({super.key});
 
@@ -33,10 +35,7 @@ class AiChatScreen extends BaseScreen<AiChatController> {
       ),
       child: Column(
         children: [
-          Obx(() => ChatTopBar(
-            progress: controller.progress.value,
-            onSkip: controller.skipOnboarding,
-          )),
+          Obx(() => ChatTopBar(title: controller.chatTitle.value)),
           Obx(() {
             if (controller.errorMessage.value.isNotEmpty) {
               return _ErrorBanner(
@@ -44,6 +43,20 @@ class AiChatScreen extends BaseScreen<AiChatController> {
                 onRetry: controller.messages.isEmpty
                     ? controller.retrySession
                     : null,
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+          // Context card
+          Obx(() {
+            if (controller.contextDescription.value.trim().isNotEmpty) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSizes.space4, AppSizes.space3, AppSizes.space4, 0,
+                ),
+                child: ChatContextCard(
+                  description: controller.contextDescription.value,
+                ),
               );
             }
             return const SizedBox.shrink();
@@ -111,10 +124,12 @@ class _ChatList extends StatelessWidget {
         children: [
           ListView.separated(
             controller: controller.scrollController,
-            padding: const EdgeInsets.all(AppSizes.space4),
+            padding: const EdgeInsets.fromLTRB(
+              AppSizes.space4, AppSizes.space3, AppSizes.space4, AppSizes.space2,
+            ),
             itemCount: controller.messages.length +
                 (controller.isTyping.value ? 1 : 0),
-            separatorBuilder: (_, __) => const SizedBox(height: AppSizes.space4),
+            separatorBuilder: (_, __) => const SizedBox(height: AppSizes.space2),
             itemBuilder: (_, index) {
               if (index == controller.messages.length) {
                 return const AiTypingBubble();
@@ -142,9 +157,20 @@ class _ChatList extends StatelessWidget {
         );
 
       case ChatMessageType.userText:
-        return UserMessageBubble(
-          message: message,
-          onToggleCorrection: () => controller.toggleCorrection(message.id),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            UserMessageBubble(message: message),
+            if (message.correctedText != null) ...[
+              const SizedBox(height: AppSizes.space2),
+              Align(
+                alignment: Alignment.centerRight,
+                child: GrammarCorrectionSection(
+                  correctedText: message.correctedText!,
+                ),
+              ),
+            ],
+          ],
         );
 
       case ChatMessageType.quickReplies:

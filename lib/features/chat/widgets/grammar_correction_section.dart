@@ -4,67 +4,56 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 
-/// Correction section shown inside user bubble when grammar errors are found.
-/// Displays corrected text with a green "Corrected" label and Hide/Show toggle.
+/// Standalone grammar correction card shown below user bubble.
+/// Red border with sparkles icon and corrected text.
 class GrammarCorrectionSection extends StatelessWidget {
   final String correctedText;
-  final bool isExpanded;
-  final VoidCallback onToggle;
 
   const GrammarCorrectionSection({
     super.key,
     required this.correctedText,
-    required this.isExpanded,
-    required this.onToggle,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: double.infinity,
-          height: AppSizes.borderThin,
-          color: AppColors.primaryLightColor,
-        ),
-        const SizedBox(height: AppSizes.space2),
-        if (isExpanded) ...[
-          Row(
-            children: [
-              const Icon(
-                Icons.check_circle,
-                size: AppSizes.iconXXS,
-                color: AppColors.successDarkColor,
-              ),
-              const SizedBox(width: AppSizes.space1),
-              AppText(
-                'corrected'.tr,
-                fontSize: AppSizes.fontSizeXSmall,
-                fontWeight: FontWeight.w600,
-                color: AppColors.successDarkColor,
-              ),
-            ],
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 240),
+      padding: const EdgeInsets.all(AppSizes.space2),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceColor,
+        border: Border.all(color: AppColors.errorColor, width: AppSizes.borderThin),
+        borderRadius: BorderRadius.circular(AppSizes.buttonRadiusSmall),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.auto_awesome,
+            size: AppSizes.iconSM,
+            color: AppColors.errorColor,
           ),
-          const SizedBox(height: AppSizes.space1),
-          AppText(
-            correctedText,
-            fontSize: AppSizes.fontSizeSmall,
-            color: Colors.white,
-            height: AppSizes.lineHeightBase,
+          const SizedBox(width: AppSizes.space2),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText(
+                  'chat_try_instead'.tr,
+                  fontSize: AppSizes.fontSizeXSmall,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.errorColor,
+                ),
+                const SizedBox(height: AppSizes.space1),
+                AppText(
+                  correctedText,
+                  fontSize: AppSizes.fontSizeSmall,
+                  color: AppColors.textPrimaryColor,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: AppSizes.space2),
         ],
-        GestureDetector(
-          onTap: onToggle,
-          child: AppText(
-            isExpanded ? 'hide'.tr : 'show'.tr,
-            fontSize: AppSizes.fontSizeXSmall,
-            fontWeight: FontWeight.w500,
-            color: AppColors.primaryLightColor,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
