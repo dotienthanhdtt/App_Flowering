@@ -67,5 +67,6 @@ flutter:
     - assets/logos/
     - assets/icons/
     - assets/images/
+    - assets/images/onboarding/
     - .env.dev
     - .env.prod
