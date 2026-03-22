@@ -6,17 +6,24 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../models/onboarding_language_model.dart';
 
-/// List variant card for Screen 2A (native language)
+/// Reusable list card for language selection screens (06 & 07).
+///
+/// [flagSize] — 36 for native language (screen 06), 48 for learning (screen 07).
+/// [cardPadding] — 12 for native, 16 for learning.
 class LanguageListCard extends StatelessWidget {
   final OnboardingLanguage language;
   final bool isSelected;
   final VoidCallback? onTap;
+  final double flagSize;
+  final double cardPadding;
 
   const LanguageListCard({
     super.key,
     required this.language,
     required this.isSelected,
     this.onTap,
+    this.flagSize = 36,
+    this.cardPadding = 12,
   });
 
   @override
@@ -26,51 +33,46 @@ class LanguageListCard extends StatelessWidget {
       child: GestureDetector(
         onTap: language.isEnabled ? onTap : null,
         child: Container(
-          height: AppSizes.space16,
-          padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
+          padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.primarySoftColor : AppColors.surfaceColor,
-            borderRadius: BorderRadius.circular(AppSizes.radiusL),
+            borderRadius: BorderRadius.circular(AppSizes.radiusM),
             border: Border.all(
               color: isSelected ? AppColors.primaryColor : AppColors.borderLightColor,
               width: isSelected ? 2 : AppSizes.borderThin,
             ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.primaryColor.withValues(alpha: 0.15),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
           ),
           child: Row(
             children: [
-              _LanguageFlag(language: language, size: AppSizes.avatarM),
-              const SizedBox(width: AppSizes.space3),
+              LanguageFlag(language: language, size: flagSize),
+              const SizedBox(width: AppSizes.space4),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AppText(
                       language.name,
                       variant: AppTextVariant.bodyLarge,
+                      fontSize: AppSizes.fontSizeMedium,
                       fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimaryColor,
                     ),
+                    const SizedBox(height: AppSizes.space1),
                     AppText(
                       language.subtitle,
                       variant: AppTextVariant.bodySmall,
                       fontSize: AppSizes.fontSizeSmall,
+                      color: AppColors.textSecondaryColor,
                     ),
                   ],
                 ),
               ),
               if (!language.isEnabled)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSizes.space2, vertical: AppSizes.space1),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.space2,
+                    vertical: AppSizes.space1,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.warningLightColor,
                     borderRadius: BorderRadius.circular(AppSizes.radiusS),
@@ -83,15 +85,11 @@ class LanguageListCard extends StatelessWidget {
                     color: AppColors.warningColor,
                   ),
                 )
-              else if (isSelected)
-                Container(
-                  width: AppSizes.avatarS,
-                  height: AppSizes.avatarS,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.check, size: AppSizes.iconXS, color: Colors.white),
+              else
+                Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: AppColors.textSecondaryColor,
                 ),
             ],
           ),
@@ -102,84 +100,29 @@ class LanguageListCard extends StatelessWidget {
 }
 
 /// Displays a language flag — network image from [flagUrl] with emoji fallback.
-class _LanguageFlag extends StatelessWidget {
+class LanguageFlag extends StatelessWidget {
   final OnboardingLanguage language;
   final double size;
 
-  const _LanguageFlag({required this.language, required this.size});
+  const LanguageFlag({super.key, required this.language, required this.size});
 
   @override
   Widget build(BuildContext context) {
     final url = language.flagUrl;
     if (url != null && url.isNotEmpty) {
-      return CachedNetworkImage(
-        imageUrl: url,
-        width: size,
-        height: size,
-        errorWidget: (_, _, _) =>
-            Text(language.flag, style: TextStyle(fontSize: size * 0.65)),
-        placeholder: (_, _) =>
-            Text(language.flag, style: TextStyle(fontSize: size * 0.65)),
+      return ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: url,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorWidget: (_, _, _) =>
+              Text(language.flag, style: TextStyle(fontSize: size * 0.65)),
+          placeholder: (_, _) =>
+              Text(language.flag, style: TextStyle(fontSize: size * 0.65)),
+        ),
       );
     }
     return Text(language.flag, style: TextStyle(fontSize: size * 0.65));
-  }
-}
-
-/// Grid variant card for Screen 2B (learning language)
-class LanguageGridCard extends StatelessWidget {
-  final OnboardingLanguage language;
-  final VoidCallback? onTap;
-
-  const LanguageGridCard({
-    super.key,
-    required this.language,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Opacity(
-      opacity: language.isEnabled ? 1.0 : 0.5,
-      child: GestureDetector(
-        onTap: language.isEnabled ? onTap : null,
-        child: Container(
-          padding: const EdgeInsets.all(AppSizes.space5),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceColor,
-            borderRadius: BorderRadius.circular(AppSizes.radiusL),
-            border: Border.all(
-              color: AppColors.borderLightColor,
-              width: AppSizes.borderThin,
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _LanguageFlag(language: language, size: AppSizes.avatarXL),
-              const SizedBox(height: AppSizes.space3),
-              AppText(
-                language.name,
-                variant: AppTextVariant.bodyMedium,
-                fontSize: AppSizes.fontSizeLarge,
-                fontWeight: FontWeight.w700,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSizes.space1),
-              AppText(
-                language.subtitle,
-                variant: AppTextVariant.caption,
-                fontSize: AppSizes.fontSizeXSmall,
-                fontWeight: language.isEnabled ? FontWeight.w400 : FontWeight.w500,
-                color: language.isEnabled ? AppColors.textSecondaryColor : AppColors.textTertiaryColor,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

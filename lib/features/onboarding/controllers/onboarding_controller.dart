@@ -8,10 +8,16 @@ import '../services/onboarding_language_service.dart';
 
 class OnboardingController extends BaseController {
   final selectedNativeLanguage = 'vi'.obs;
-  final selectedLearningLanguage = 'en'.obs;
+  final selectedLearningLanguage = ''.obs;
   final nativeLanguages = <OnboardingLanguage>[].obs;
   final learningLanguages = <OnboardingLanguage>[].obs;
   final isLoadingLanguages = true.obs;
+
+  /// Search query for native language screen filtering.
+  final nativeSearchQuery = ''.obs;
+
+  /// Whether to show all languages on learning screen.
+  final showAllLearningLanguages = false.obs;
 
   /// UUID from API; null for fallback (hardcoded) languages.
   String? selectedNativeLanguageId;
@@ -25,11 +31,38 @@ class OnboardingController extends BaseController {
 
   Timer? _navigationTimer;
 
+  /// Max languages to show before "Show all" is tapped.
+  static const int _initialLanguageCount = 7;
+
   @override
   void onInit() {
     super.onInit();
     loadLanguages();
   }
+
+  /// Native languages filtered by search query.
+  List<OnboardingLanguage> get filteredNativeLanguages {
+    final query = nativeSearchQuery.value.toLowerCase().trim();
+    if (query.isEmpty) return nativeLanguages;
+    return nativeLanguages.where((lang) {
+      return lang.name.toLowerCase().contains(query) ||
+          lang.subtitle.toLowerCase().contains(query);
+    }).toList();
+  }
+
+  /// Learning languages — limited or full list.
+  List<OnboardingLanguage> get visibleLearningLanguages {
+    if (showAllLearningLanguages.value ||
+        learningLanguages.length <= _initialLanguageCount) {
+      return learningLanguages;
+    }
+    return learningLanguages.sublist(0, _initialLanguageCount);
+  }
+
+  /// Whether "Show all" button should be visible.
+  bool get canShowMoreLanguages =>
+      !showAllLearningLanguages.value &&
+      learningLanguages.length > _initialLanguageCount;
 
   Future<void> loadLanguages() async {
     isLoadingLanguages.value = true;
@@ -41,6 +74,8 @@ class OnboardingController extends BaseController {
       ]);
       nativeLanguages.value = results[0];
       learningLanguages.value = results[1];
+    } catch (_) {
+      // Languages remain empty — views show error state with retry button
     } finally {
       isLoadingLanguages.value = false;
     }
@@ -58,10 +93,17 @@ class OnboardingController extends BaseController {
   void selectLearningLanguage(String code, {String? id}) {
     selectedLearningLanguage.value = code;
     selectedLearningLanguageId = id;
-    _navigationTimer?.cancel();
-    _navigationTimer = Timer(const Duration(milliseconds: 400), () {
+  }
+
+  /// Called by Continue button on learning language screen.
+  void confirmLearningLanguage() {
+    if (selectedLearningLanguage.value.isNotEmpty) {
       Get.toNamed(AppRoutes.chat);
-    });
+    }
+  }
+
+  void toggleShowAllLanguages() {
+    showAllLearningLanguages.value = !showAllLearningLanguages.value;
   }
 
   @override

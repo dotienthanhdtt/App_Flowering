@@ -4,9 +4,12 @@ import '../../../core/base/base_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../controllers/onboarding_controller.dart';
 import '../widgets/language_card.dart';
+import '../widgets/language_list_skeleton.dart';
+import '../widgets/language_load_error.dart';
 
 class LearningLanguageScreen extends BaseScreen<OnboardingController> {
   const LearningLanguageScreen({super.key});
@@ -22,109 +25,142 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header
+        // Back arrow
         Padding(
-          padding: const EdgeInsets.only(
-            top: AppSizes.buttonHeightMedium,
-            left: AppSizes.space6,
-            right: AppSizes.space6,
-            bottom: AppSizes.space6,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText(
-                'language_select_title'.tr,
-                style: AppTextStyles.h2.copyWith(
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: AppSizes.trackingSnug,
+          padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
+          child: SizedBox(
+            height: AppSizes.buttonHeightMedium,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                onPressed: () => Get.back(),
+                icon: const Icon(
+                  Icons.arrow_back,
+                  size: 24,
+                  color: AppColors.textSecondaryColor,
                 ),
-                textAlign: TextAlign.left,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
               ),
-              const SizedBox(height: AppSizes.space2),
-              AppText(
-                'language_select_subtitle'.tr,
-                variant: AppTextVariant.bodyMedium,
-                color: AppColors.textSecondaryColor,
-                height: 1.5,
-                textAlign: TextAlign.left,
-              ),
-            ],
+            ),
           ),
         ),
 
-        // Language grid
-        Expanded(
-          child: Obx(() {
-            if (controller.isLoadingLanguages.value) {
-              return _buildSkeleton();
-            }
-            if (controller.learningLanguages.isEmpty) {
-              return _buildError();
-            }
-            return GridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: AppSizes.space4,
-              crossAxisSpacing: AppSizes.space4,
-              childAspectRatio: 0.95,
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.space6),
-              children: controller.learningLanguages.map((lang) {
-                return LanguageGridCard(
-                  language: lang,
-                  onTap: () => controller.selectLearningLanguage(
-                    lang.code,
-                    id: lang.id,
-                  ),
-                );
-              }).toList(),
-            );
-          }),
+        // Title
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
+          child: AppText(
+            'language_select_title'.tr,
+            style: AppTextStyles.h2.copyWith(
+              fontWeight: FontWeight.w700,
+              letterSpacing: AppSizes.trackingSnug,
+            ),
+            textAlign: TextAlign.left,
+          ),
         ),
+
+        const SizedBox(height: AppSizes.space6),
+
+        // Language list + show all
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
+            child: Obx(() {
+              if (controller.isLoadingLanguages.value) {
+                return const LanguageListSkeleton(itemCount: 6);
+              }
+              if (controller.learningLanguages.isEmpty) {
+                return LanguageLoadError(onRetry: controller.loadLanguages);
+              }
+              final languages = controller.visibleLearningLanguages;
+              return ListView(
+                children: [
+                  ...List.generate(languages.length, (index) {
+                    final lang = languages[index];
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index < languages.length - 1
+                            ? AppSizes.space2
+                            : 0,
+                      ),
+                      child: LanguageListCard(
+                        language: lang,
+                        isSelected:
+                            controller.selectedLearningLanguage.value ==
+                                lang.code,
+                        flagSize: AppSizes.avatarXL,
+                        cardPadding: AppSizes.space4,
+                        onTap: () => controller.selectLearningLanguage(
+                          lang.code,
+                          id: lang.id,
+                        ),
+                      ),
+                    );
+                  }),
+                  // Show all button
+                  if (controller.canShowMoreLanguages)
+                    _buildShowAllButton(),
+                ],
+              );
+            }),
+          ),
+        ),
+
+        // Continue button
+        _buildContinueButton(context),
       ],
     );
   }
 
-  Widget _buildSkeleton() {
-    return GridView.count(
-      crossAxisCount: 2,
-      mainAxisSpacing: AppSizes.space4,
-      crossAxisSpacing: AppSizes.space4,
-      childAspectRatio: 0.95,
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.space6),
-      children: List.generate(
-        6,
-        (_) => Container(
-          decoration: BoxDecoration(
-            color: AppColors.surfaceColor,
-            borderRadius: BorderRadius.circular(AppSizes.radiusL),
-            border: Border.all(color: AppColors.borderLightColor),
-          ),
+  Widget _buildShowAllButton() {
+    return GestureDetector(
+      onTap: controller.toggleShowAllLanguages,
+      child: Container(
+        height: 36,
+        margin: const EdgeInsets.only(top: AppSizes.space2),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppText(
+              'show_all_languages'.tr,
+              variant: AppTextVariant.bodySmall,
+              fontSize: AppSizes.fontSizeSmall,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSecondaryColor,
+            ),
+            const SizedBox(width: AppSizes.space1),
+            const Icon(
+              Icons.keyboard_arrow_down,
+              size: 14,
+              color: AppColors.textSecondaryColor,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildError() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppText(
-            'language_load_error'.tr,
-            variant: AppTextVariant.bodyMedium,
-            color: AppColors.textSecondaryColor,
+  Widget _buildContinueButton(BuildContext context) {
+    return Obx(() {
+      final hasSelection =
+          controller.selectedLearningLanguage.value.isNotEmpty;
+      return Padding(
+        padding: EdgeInsets.only(
+          left: AppSizes.space4,
+          right: AppSizes.space4,
+          bottom: MediaQuery.of(context).padding.bottom + AppSizes.space8,
+        ),
+        child: Opacity(
+          opacity: hasSelection ? 1.0 : 0.5,
+          child: AppButton(
+            text: 'continue_button'.tr,
+            variant: AppButtonVariant.primary,
+            height: AppSizes.buttonHeightLarge,
+            onPressed:
+                hasSelection ? controller.confirmLearningLanguage : null,
           ),
-          const SizedBox(height: AppSizes.space4),
-          GestureDetector(
-            onTap: controller.loadLanguages,
-            child: AppText(
-              'retry'.tr,
-              variant: AppTextVariant.label,
-              color: AppColors.primaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 }

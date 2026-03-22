@@ -228,12 +228,13 @@ const Map<String, String> viVN = {
   'onboarding_ready': 'Tôi đã sẵn sàng',
 
   // Onboarding — Language Selection (Screen 05/06)
-  'language_select_title': "Bạn muốn học gì?",
-  'language_select_subtitle': "Chọn một ngôn ngữ để bắt đầu",
-  'native_language_title': "Ngôn ngữ mẹ đẻ của bạn?",
-  'native_language_subtitle': "Chúng tôi sẽ cá nhân hóa trải nghiệm học tập",
+  'language_select_title': "Bạn muốn học ngôn ngữ nào?",
+  'native_language_title': "Bạn nói ngôn ngữ nào?",
   'language_load_error': 'Không thể tải danh sách ngôn ngữ',
   'language_coming_soon': 'Sắp có',
+  'search_language': 'Tìm ngôn ngữ...',
+  'show_all_languages': 'Hiển thị tất cả ngôn ngữ',
+  'continue_button': 'Tiếp tục',
 
   // Onboarding — Top Bar
   'login_action': 'Đăng nhập',
