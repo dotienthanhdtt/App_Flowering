@@ -112,17 +112,17 @@ class AppButton extends StatelessWidget {
         button = OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            backgroundColor: AppColors.surfaceColor,
-            foregroundColor: AppColors.textSecondaryColor,
+            backgroundColor: Colors.transparent,
+            foregroundColor: AppColors.primaryColor,
             minimumSize:
                 Size(isFullWidth ? double.infinity : 0, buttonHeight),
             padding: buttonPadding,
             shape: RoundedRectangleBorder(
               borderRadius:
-                  BorderRadius.circular(AppSizes.radiusPill),
+                  BorderRadius.circular(AppSizes.radiusM),
             ),
             side: const BorderSide(
-              color: AppColors.borderStrongColor,
+              color: AppColors.primaryColor,
               width: AppSizes.borderMedium,
             ),
           ),
@@ -158,7 +158,7 @@ class AppButton extends StatelessWidget {
       case AppButtonVariant.secondary:
         return base.copyWith(color: AppColors.primaryColor);
       case AppButtonVariant.outline:
-        return base.copyWith(color: AppColors.textSecondaryColor);
+        return base.copyWith(color: AppColors.primaryColor);
       case AppButtonVariant.text:
         return base.copyWith(color: AppColors.primaryColor);
     }

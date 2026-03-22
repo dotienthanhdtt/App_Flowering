@@ -216,15 +216,16 @@ const Map<String, String> viVN = {
   'word_translation_retry': 'Thử lại',
   'translation_target_language': 'Tiếng Việt',
 
-  // Onboarding — Welcome Problem (Screen 04)
-  'welcome_headline_1': "Não bạn\nkhông được tạo ra\nđể ghi nhớ.",
-  'welcome_body_1': "Nó được tạo ra để nói. Flowering hoạt động cùng não bạn — không chống lại nó.",
-  'welcome_headline_2': "Bạn quên\nvì không có gì\nđược tạo ra cho bạn.",
-  'welcome_body_2': "Các ứng dụng thông thường cho mọi người cùng một bài học. Flowering ghi nhớ những gì bạn gặp khó khăn — và đưa nó trở lại đúng lúc.",
-  'welcome_headline_3': "Cuối cùng, một ứng dụng\nhiểu\nchỉ riêng bạn.",
-  'welcome_body_3': "Tốc độ của bạn. Sở thích của bạn. Mục tiêu của bạn. Flowering xây dựng con đường sống động phát triển cùng bạn — không ai khác có được điều tương tự.",
-  'welcome_cta': "Bắt đầu ngay",
-  'welcome_tap_continue': 'Chạm bất kỳ đâu để tiếp tục',
+  // Onboarding — Value Screens (Screens 03/04/05)
+  'onboarding_skip': 'Bỏ qua',
+  'onboarding_value_headline_1': 'Con đường được tạo riêng cho bạn',
+  'onboarding_value_body_1': 'Bạn dẫn đường. Flowering theo sau.\nMỗi bài học thích ứng với nơi bạn đang đứng và nơi bạn muốn đến',
+  'onboarding_value_headline_2': 'Học một lần. Nhớ mãi mãi.',
+  'onboarding_value_body_2': 'Bí quyết? Thời điểm. Flowering ôn lại từ vựng đúng lúc não bạn cần nhất — không gì bị bỏ sót.',
+  'onboarding_value_headline_3': 'Lưu loát không phải bài kiểm tra. Đó là cảm giác.',
+  'onboarding_value_body_3': 'Không còn dịch trong đầu. Không còn đứng hình. Chỉ là bạn, nói chính xác điều bạn muốn.',
+  'onboarding_next': 'Tiếp',
+  'onboarding_ready': 'Tôi đã sẵn sàng',
 
   // Onboarding — Language Selection (Screen 05/06)
   'language_select_title': "Bạn muốn học gì?",

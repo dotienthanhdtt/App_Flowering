@@ -216,15 +216,16 @@ const Map<String, String> enUS = {
   'word_translation_retry': 'Retry',
   'translation_target_language': 'Vietnamese',
 
-  // Onboarding — Welcome Problem (Screen 04)
-  'welcome_headline_1': "Your brain\nwasn't built\nto memorize.",
-  'welcome_body_1': "It was built to speak. Flowering works with your brain — not against it.",
-  'welcome_headline_2': "You forget\nbecause nothing\nwas built for you.",
-  'welcome_body_2': "Generic apps give everyone the same lesson. Flowering remembers what you struggled with — and brings it back at the right moment.",
-  'welcome_headline_3': "Finally, an app\nthat knows\nonly you.",
-  'welcome_body_3': "Your pace. Your interests. Your goals. Flowering builds a living path that evolves as you do — nobody else gets the same one.",
-  'welcome_cta': "Make it mine",
-  'welcome_tap_continue': 'Tap anywhere to continue',
+  // Onboarding — Value Screens (Screens 03/04/05)
+  'onboarding_skip': 'Skip',
+  'onboarding_value_headline_1': 'A path shaped around you',
+  'onboarding_value_body_1': 'You lead. Flowering follows.\nEvery lesson adapts to where you are and where you\'re headed',
+  'onboarding_value_headline_2': 'Learn once. Remember forever.',
+  'onboarding_value_body_2': 'The secret? Timing. Flowering reviews words right when your brain needs it most — so nothing slips through.',
+  'onboarding_value_headline_3': 'Fluency isn\'t a test. It\'s a feeling.',
+  'onboarding_value_body_3': 'No more translating in your head. No more freezing up. Just you, saying exactly what you mean.',
+  'onboarding_next': 'Next',
+  'onboarding_ready': 'I\'m Ready',
 
   // Onboarding — Language Selection (Screen 05/06)
   'language_select_title': "What do you want to learn?",

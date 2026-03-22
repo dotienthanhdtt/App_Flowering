@@ -7,7 +7,9 @@ import 'app-route-constants.dart';
 import '../../features/onboarding/bindings/onboarding_binding.dart';
 import '../../features/onboarding/bindings/splash_binding.dart';
 import '../../features/onboarding/views/splash_screen.dart';
-import '../../features/onboarding/views/welcome_problem_screen.dart';
+import '../../features/onboarding/views/onboarding_value_screen_1.dart';
+import '../../features/onboarding/views/onboarding_value_screen_2.dart';
+import '../../features/onboarding/views/onboarding_value_screen_3.dart';
 import '../../features/onboarding/views/native_language_screen.dart';
 import '../../features/onboarding/views/learning_language_screen.dart';
 import '../../features/chat/bindings/ai_chat_binding.dart';
@@ -72,13 +74,33 @@ abstract class AppPages {
       transitionDuration: const Duration(milliseconds: 500),
     ),
 
-    // Onboarding — welcome screens (single route, internal PageView handles steps)
+    // Onboarding — value screen 1 (Screen 03)
     GetPage(
       name: AppRoutes.onboardingWelcome,
-      page: () => const WelcomeProblemScreen(),
+      page: () => const OnboardingValueScreen1(),
       binding: OnboardingBinding(),
       transition: Transition.fade,
       transitionDuration: defaultDuration,
+    ),
+
+    // Onboarding — value screen 2 (Screen 04)
+    GetPage(
+      name: AppRoutes.onboardingWelcome2,
+      page: () => const OnboardingValueScreen2(),
+      binding: OnboardingBinding(),
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
+    ),
+
+    // Onboarding — value screen 3 (Screen 05)
+    GetPage(
+      name: AppRoutes.onboardingWelcome3,
+      page: () => const OnboardingValueScreen3(),
+      binding: OnboardingBinding(),
+      transition: defaultTransition,
+      transitionDuration: defaultDuration,
+      curve: defaultCurve,
     ),
 
     // Onboarding — language selection
