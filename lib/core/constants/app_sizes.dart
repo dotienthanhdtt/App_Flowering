@@ -82,7 +82,8 @@ class AppSizes {
   static const double cardRadius = 12;
   static const double cardPadding = 16;
   static const double cardGap = 16;
-  static const double cardFlagSize = 48;
+  static const double cardFlagSize = 36;
+  static const double cardFlagSizeLarge = 48;
   static const double cardTitleFont = 16;
   static const double cardSubtitleFont = 14;
   static const double cardChevronSize = 20;
