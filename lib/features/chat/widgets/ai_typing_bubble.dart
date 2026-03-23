@@ -49,7 +49,7 @@ class _AiTypingBubbleState extends State<AiTypingBubble>
             ),
             boxShadow: const [
               BoxShadow(
-                color: Color(0x08191919),
+                color: AppColors.shadowSubtleColor,
                 blurRadius: 4,
                 offset: Offset(0, 1),
               ),

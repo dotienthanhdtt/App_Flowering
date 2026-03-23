@@ -34,7 +34,7 @@ class QuickReplyRow extends StatelessWidget {
                     border: Border.all(color: AppColors.borderLightColor),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color(0x08191919),
+                        color: AppColors.shadowSubtleColor,
                         blurRadius: 2,
                         offset: Offset(0, 1),
                       ),

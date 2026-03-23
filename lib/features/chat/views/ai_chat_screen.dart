@@ -81,17 +81,17 @@ class _ErrorBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.space4, vertical: AppSizes.space2),
-      color: const Color(0xFFFFF3CD),
+      color: AppColors.warningBannerColor,
       child: Row(
         children: [
           const Icon(Icons.warning_amber_rounded,
-              size: AppSizes.iconSM, color: Color(0xFF856404)),
+              size: AppSizes.iconSM, color: AppColors.warningDarkColor),
           const SizedBox(width: AppSizes.space2),
           Expanded(
             child: AppText(
               message,
               variant: AppTextVariant.caption,
-              color: const Color(0xFF856404),
+              color: AppColors.warningDarkColor,
             ),
           ),
           if (onRetry != null) ...[
@@ -102,7 +102,7 @@ class _ErrorBanner extends StatelessWidget {
                 'retry'.tr,
                 variant: AppTextVariant.caption,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF856404),
+                color: AppColors.warningDarkColor,
               ),
             ),
           ],
