@@ -61,8 +61,18 @@ class AppColors {
   static const Color lavenderLightColor = Color(0xFFEDE8F5);
   static const Color roseLightColor = Color(0xFFFBE8E8);
 
+  // Warning — dark text for warning banners
+  static const Color warningDarkColor = Color(0xFF856404);
+  static const Color warningBannerColor = Color(0xFFFFF3CD);
+
   // Shadow
   static const Color shadowColor = Color(0x10191919);
+  static const Color shadowSubtleColor = Color(0x08191919);
+  static const Color shadowLightColor = Color(0x08000000);
+  static const Color shadowMediumColor = Color(0x1A000000);
+
+  // Glow
+  static const Color primaryGlowColor = Color(0x30FF7A27);
 
   // Radius constants (delegated to AppSizes for single source of truth)
   static const double radiusS = AppSizes.radiusS;

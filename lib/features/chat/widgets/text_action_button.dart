@@ -50,7 +50,7 @@ class TextActionButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppSizes.buttonRadiusSmall),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x08000000),
+                    color: AppColors.shadowLightColor,
                     blurRadius: 2,
                     offset: Offset(0, 1),
                   ),

@@ -38,7 +38,7 @@ class AiMessageBubble extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x1A000000),
+                  color: AppColors.shadowMediumColor,
                   blurRadius: 4,
                   offset: Offset(0, 1),
                 ),

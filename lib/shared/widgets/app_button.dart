@@ -64,7 +64,7 @@ class AppButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppSizes.radiusPill),
             boxShadow: const [
               BoxShadow(
-                color: Color(0x30FF7A27),
+                color: AppColors.primaryGlowColor,
                 blurRadius: 8,
                 offset: Offset(0, 2),
               ),
