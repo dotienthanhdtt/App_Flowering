@@ -2,6 +2,104 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-03-28] API JSON Keys Migration: camelCase → snake_case ✅ COMPLETED
+
+#### Overview
+Backend switched all API JSON keys to `snake_case`. Flutter app manual `fromJson`/`toJson` serialization updated to match new contract. All models now parse request/response bodies with snake_case keys. Backward-compatible fallback reads added for cached data during transition.
+
+#### Added
+- **Backward compatibility fallbacks** in all models to read old camelCase keys from cached Hive data
+- Proper snake_case field mapping across all request payloads
+
+#### Changed
+- **UserModel** (`lib/shared/models/user_model.dart`)
+  - `displayName` → `name`
+  - `avatarUrl` → `profile_picture`
+  - Removed: `nativeLanguageId`, `nativeLanguageCode`, `nativeLanguageName`
+  - Added: `emailVerified` (bool), `updatedAt` (DateTime)
+
+- **AuthResponse** (`lib/features/auth/models/auth_response.dart`)
+  - `accessToken` → `access_token`
+  - `refreshToken` → `refresh_token`
+
+- **OnboardingLanguage** (`lib/features/onboarding/models/onboarding_language.dart`)
+  - `isNativeAvailable` → `is_active` (native languages)
+  - `isLearningAvailable` → `is_active` (learning languages)
+  - `flagUrl` → `flag_url`
+  - `nativeName` → `native_name`
+
+- **OnboardingSession** (`lib/features/onboarding/models/onboarding_session.dart`)
+  - `sessionToken` → `session_id`
+  - `turnNumber` → `turn_count`
+  - `reply` → `response`
+  - Added: `maxTurns` (int), `expiresAt` (DateTime)
+  - Kept: `quickReplies` list unchanged
+
+- **OnboardingProfile** (`lib/features/onboarding/models/onboarding_profile.dart`)
+  - Removed: `userId`
+  - Added: `extractedProfile` (nested object)
+  - Kept: `scenarios` list unchanged
+
+- **Scenario** (`lib/features/onboarding/models/scenario.dart`)
+  - `accentColor` → `accent_color` (HEX string)
+  - `imageUrl` → `image_url`
+
+- **SubscriptionModel** (`lib/features/subscription/models/subscription_model.dart`)
+  - `expiresAt` → split into `currentPeriodStart` + `currentPeriodEnd`
+  - `isActive` → `is_active`
+  - `cancelAtPeriodEnd` → `cancel_at_period_end`
+
+- **WordTranslationModel** (`lib/features/chat/models/word_translation_model.dart`)
+  - `partOfSpeech` → `part_of_speech`
+  - `vocabularyId` → `vocabulary_id`
+
+- **SentenceTranslationModel** (`lib/features/chat/models/sentence_translation_model.dart`)
+  - `messageId` → `message_id`
+  - `translation` → `translated_content`
+
+- **Request payloads** updated in:
+  - `AuthController` — login, signup, forgot password endpoints
+  - `ForgotPasswordController` — OTP and reset endpoints
+  - `AiChatController` — chat, translate, correction endpoints
+  - `TranslationService` — word/sentence translation requests
+
+#### Phases Completed
+1. ✅ **Phase 1 (Complete):** All 9 model files updated with snake_case keys + fallback reads
+2. ✅ **Phase 2 (Complete):** All 4 controller/service files updated with snake_case request payloads
+3. ✅ **Phase 3 (Complete):** Auth interceptor token handling verified
+
+#### Files Modified (13 total)
+- `lib/shared/models/user_model.dart`
+- `lib/features/auth/models/auth_response.dart`
+- `lib/features/onboarding/models/onboarding_language.dart`
+- `lib/features/onboarding/models/onboarding_session.dart`
+- `lib/features/onboarding/models/onboarding_profile.dart`
+- `lib/features/onboarding/models/scenario.dart`
+- `lib/features/subscription/models/subscription_model.dart`
+- `lib/features/chat/models/word_translation_model.dart`
+- `lib/features/chat/models/sentence_translation_model.dart`
+- `lib/features/auth/controllers/auth_controller.dart`
+- `lib/features/auth/controllers/forgot_password_controller.dart`
+- `lib/features/chat/controllers/ai_chat_controller.dart`
+- `lib/shared/services/translation_service.dart`
+
+#### Breaking Changes
+- **API Contract:** All JSON keys now use `snake_case`. Update backend responses before deploying this app version.
+- **Cache Impact:** Old camelCase cached data will be read using fallback keys; no manual cache clear required.
+- **Onboarding:** Field names in OnboardingSession changed (`sessionToken`→`session_id`, `reply`→`response`). Ensure backend sends correct field names.
+
+#### Backward Compatibility
+- Models gracefully fall back to reading old camelCase keys from Hive cache
+- Supports mixed old/new key formats during transition period
+- Recommended: Clear app cache on first launch of new version (optional)
+
+#### Testing
+- All models tested with both old (camelCase) and new (snake_case) JSON
+- Request payload validation confirmed in staging environment
+- Auth token flow (access_token/refresh_token) verified
+
+---
+
 ### [2026-03-23] AI Chat Screen UI Redesign (Screens 08A-08E) ✅ COMPLETED
 
 #### Added

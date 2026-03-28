@@ -595,27 +595,36 @@ class AuthStorage extends GetxService {
 
 ### JSON Serialization
 
+**IMPORTANT:** All API JSON keys use `snake_case`. Dart property names use `camelCase`. Map keys in `fromJson`/`toJson` MUST match backend API snake_case keys.
+
 ```dart
 class UserModel {
   final String id;
   final String name;
   final String email;
-  final DateTime? createdAt;
+  final String profilePicture;  // Dart property: camelCase
+  final bool emailVerified;
+  final DateTime? updatedAt;
 
   UserModel({
     required this.id,
     required this.name,
     required this.email,
-    this.createdAt,
+    required this.profilePicture,
+    required this.emailVerified,
+    this.updatedAt,
   });
 
+  // ✅ Correct: JSON keys are snake_case (match backend API)
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
+      profilePicture: json['profile_picture'] as String? ?? '',  // snake_case key
+      emailVerified: json['email_verified'] as bool? ?? false,    // snake_case key
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)          // snake_case key
           : null,
     );
   }
@@ -625,11 +634,38 @@ class UserModel {
       'id': id,
       'name': name,
       'email': email,
-      'created_at': createdAt?.toIso8601String(),
+      'profile_picture': profilePicture,    // snake_case key
+      'email_verified': emailVerified,       // snake_case key
+      'updated_at': updatedAt?.toIso8601String(),  // snake_case key
     };
   }
 }
 ```
+
+**Pattern Rules:**
+1. Dart property names → always `camelCase` (Dart convention)
+2. JSON keys in `fromJson`/`toJson` → always `snake_case` (API contract)
+3. Type safety: Cast values with `as Type?` and provide defaults in `fromJson`
+4. DateTime handling: Always use `DateTime.parse()` for ISO 8601 strings
+
+### Backward Compatibility for Cached Data
+
+When migrating old camelCase data in Hive cache to snake_case API format, add fallback reads:
+
+```dart
+factory UserModel.fromJson(Map<String, dynamic> json) {
+  return UserModel(
+    profilePicture: json['profile_picture'] as String?
+        ?? json['avatarUrl'] as String?  // Fallback to old camelCase key
+        ?? '',
+    emailVerified: json['email_verified'] as bool?
+        ?? json['emailVerified'] as bool?  // Fallback to old camelCase key
+        ?? false,
+  );
+}
+```
+
+This allows safe migration without requiring cache wipe on app update.
 
 ## Localization Standards
 

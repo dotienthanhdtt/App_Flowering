@@ -481,6 +481,25 @@ try {
 - Status 5xx → `ServerException`
 - Others → `ApiErrorException`
 
+### API Contract
+
+**JSON Key Naming Convention:** All API request/response JSON keys use `snake_case` (as of 2026-03-28).
+
+**Key Migration Reference:**
+- **AuthResponse:** `accessToken` → `access_token`, `refreshToken` → `refresh_token`
+- **UserModel:** `displayName` → `name`, `avatarUrl` → `profile_picture`, added `email_verified`, `updated_at`
+- **OnboardingLanguage:** `isNativeAvailable`/`isLearningAvailable` → `is_active`, `flagUrl` → `flag_url`, `nativeName` → `native_name`
+- **OnboardingSession:** `sessionToken` → `session_id`, `turnNumber` → `turn_count`, `reply` → `response`, added `max_turns`, `expires_at`
+- **SubscriptionModel:** `expiresAt` → `current_period_start`/`current_period_end`, `isActive` → `is_active`, `cancelAtPeriodEnd` → `cancel_at_period_end`
+- **WordTranslationModel:** `partOfSpeech` → `part_of_speech`, `vocabularyId` → `vocabulary_id`
+- **SentenceTranslationModel:** `messageId` → `message_id`, `translation` → `translated_content`
+
+**Model Pattern:** All models use manual `fromJson`/`toJson` with snake_case JSON keys. Dart properties remain camelCase. See `docs/code-standards.md` → "JSON Serialization" for implementation details.
+
+**Backward Compatibility:** Models include fallback reads for cached data with old camelCase keys, enabling safe migration without cache wipes.
+
+---
+
 ### API Response Format
 
 **Server Response:**

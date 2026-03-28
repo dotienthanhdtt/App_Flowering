@@ -44,6 +44,27 @@
 - **Linting:** flutter_lints 6.0.0
 - **Code Generation:** hive_generator 2.0.1, build_runner 2.4.8
 
+## API Contract
+
+**Current Status:** All API JSON keys use `snake_case` (as of 2026-03-28)
+
+**Base URL:**
+- Development: `http://localhost:3000`
+- Production: Set via environment config
+
+**Auth:** `Authorization: Bearer <access_token>` header (auto-injected via AuthInterceptor)
+
+**Response Format:** All responses wrapped in `{code, message, data}` with `code: 1` = success, `0` = error
+
+**Key Models & Fields (snake_case):**
+- UserModel: `id`, `email`, `name`, `profile_picture`, `email_verified`, `created_at`, `updated_at`
+- AuthResponse: `access_token`, `refresh_token`
+- OnboardingLanguage: `id`, `code`, `name`, `native_name`, `flag_url`, `is_active`
+- OnboardingSession: `session_id`, `turn_count`, `max_turns`, `response`, `expires_at`
+- SubscriptionModel: `id`, `plan`, `status`, `is_active`, `current_period_start`, `current_period_end`, `cancel_at_period_end`
+
+**Complete Reference:** See `docs/api_docs/mobile-api-reference.md` for full endpoint documentation with request/response examples.
+
 ## Project Structure
 
 ```
