@@ -165,6 +165,7 @@ Flowering is a Flutter-based AI-powered language learning application focused on
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.0.0-beta1 | 2026-03-28 | Phases 1-6.8 complete: Foundation, network, services, onboarding, auth, bottom nav, chat with grammar correction, all API JSON keys migrated to snake_case |
 | 1.0.0 | 2026-03-11 | Onboarding & Auth complete, chat with grammar correction, bottom nav, typography system |
 
 ### 11. Acceptance Criteria

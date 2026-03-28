@@ -366,15 +366,18 @@ Future<void> clearTranslationCache();
 ```
 
 **Caching Strategy:**
-- Translations cached in StorageService with LRU eviction
+- Translations cached in StorageService's `lessons_cache` box (100MB LRU)
 - Cache key: word hash (lowercase)
 - Reduces repeated API calls for same word
-- 24-hour cache expiration (implementation may vary)
+- No explicit expiration; relies on LRU eviction when cache exceeds 100MB
+- Automatic cache wipe via `clearTranslationCache()` method
 
 **API Contract:**
 - Endpoint: `POST /ai/translate`
-- Request: `{messageId: UUID, word: String}`
-- Response: `{translations: [String], phoneticSimilar: String, phoneticOriginal: String}`
+- Request JSON: `{message_id: UUID, word: String}`
+- Response JSON: `{translations: [String], phonetic_similar: String, phonetic_original: String}`
+- Model: `WordTranslationModel` with snake_case JSON serialization
+- Fallback reads: Supports old camelCase keys from cached data during migration
 
 ### 4. Infrastructure Layer
 

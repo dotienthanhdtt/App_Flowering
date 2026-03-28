@@ -3,17 +3,18 @@
 ## Project Info
 - **Name:** Flowering - AI Language Learning App
 - **Framework:** Flutter 3.10.3+ with GetX 4.6.6
-- **Status:** Phase 6 complete (March 11, 2026)
+- **Status:** Phase 6.8 complete (March 28, 2026) - All API JSON keys migrated to snake_case
 - **Architecture:** Feature-first clean architecture
 - **Localization:** English & Vietnamese (99+ keys per language)
 
 ## Key Stats
-- **Implemented:** 106 Dart files across 7 feature modules
+- **Implemented:** 126 Dart files across 8 feature modules
 - **Routes:** 16 named routes with transitions
 - **Screens:** 14 screens (8 onboarding, 5 auth, 1 shell)
-- **Services:** 5 core services (API, Storage, Auth, Connectivity, Audio)
-- **Tests:** 7 infrastructure tests (0% feature coverage)
+- **Services:** 5 core services (API, Storage, Auth, Connectivity, Audio) + TranslationService
+- **Tests:** Integration tests for core services (0% feature coverage)
 - **Design:** Warm neutral palette with Warm Orange (#FF7A27) primary
+- **Latest Changes:** All API JSON keys migrated to snake_case (March 28, 2026)
 
 ## Core Features Completed
 1. **Authentication** - Login, signup, forgot password, OTP, password reset
@@ -118,7 +119,8 @@ if (response.isSuccess) {
 | Text Primary | #292F36 (Charcoal) |
 | Success | #CAFFBF (Mint) |
 | Error | #FF4444 (Red) |
-| Font | Inter 12-32px |
+| Font | Inter 12-32px (google_fonts 6.1.0) |
+| Icons | lucide_icons (Material Design) |
 | Min Touch Target | 44x44 |
 
 ## Common Issues
@@ -150,4 +152,4 @@ flutter pub run build_runner build --delete-conflicting-outputs
 - `codebase-summary.md` - Implementation status
 
 ---
-Last updated: 2026-03-11
+Last updated: 2026-03-28

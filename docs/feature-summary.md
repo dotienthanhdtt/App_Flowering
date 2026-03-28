@@ -1,6 +1,6 @@
 # Flowering — Feature Summary
 
-**Last Updated:** March 11, 2026
+**Last Updated:** March 28, 2026
 
 ---
 
@@ -30,13 +30,14 @@
 
 ## In Progress
 
-| Feature | Description |
-|---------|-------------|
-| **Lessons & Exercises API** | Backend endpoints for creating, reading, and managing lessons and exercises. Without this, the app has no structured learning content to serve. |
-| **Social Authentication (Mobile)** | Google Sign-In and Apple Sign-In on the mobile app. Users expect one-tap login with their existing accounts instead of creating yet another password. |
-| **Push Notifications (Mobile)** | Wiring Firebase push notifications end-to-end so users actually receive reminders, streaks, and learning prompts on their devices. |
-| **Premium Subscription Flow** | Connecting RevenueCat to the mobile app so users can purchase and activate premium plans. Needed to unlock revenue. |
-| **Testing Infrastructure** | Building out unit and integration tests for both backend and mobile. Currently at 0% coverage — the safety net needed before launching to real users. |
+| Feature | % Complete | Description |
+|---------|---------|-------------|
+| **API JSON Migration** | 100% | ✅ COMPLETED (Mar 28) - All JSON keys migrated from camelCase to snake_case. All 13 model files updated with backward-compatible fallbacks for cached data. |
+| **Lessons & Exercises API** | 5% | Backend endpoints for creating, reading, and managing lessons and exercises. Without this, the app has no structured learning content to serve. |
+| **Social Authentication (Mobile)** | 15% | Google Sign-In and Apple Sign-In dependencies added. UI integration pending. Users expect one-tap login with their existing accounts instead of creating yet another password. |
+| **Push Notifications (Mobile)** | 10% | Firebase integration backend complete. Mobile Firebase SDK wiring pending. Push notifications end-to-end so users receive reminders and updates. |
+| **Premium Subscription Flow** | 25% | RevenueCat service created and integrated. Mobile paywall UI and subscription management pending. Needed to unlock revenue. |
+| **Testing Infrastructure** | 0% | Building out unit and integration tests for both backend and mobile. Currently at minimal coverage — the safety net needed before launching to real users. |
 
 ---
 
@@ -63,5 +64,12 @@
 
 ---
 
-**Overall MVP Progress: ~65%**
+## Progress Summary
+
+**Completed (Done):** 16 features
+**In Progress:** 6 features (API migration 100% complete, others ~15% avg)
+**Todo:** 13 features
+
+**Overall MVP Progress: ~70%** (increased from 65% due to API migration completion)
 **Target Launch: June 2026**
+**Latest Milestone:** All API JSON keys migrated to snake_case (March 28, 2026)

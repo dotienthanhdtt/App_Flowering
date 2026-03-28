@@ -11,38 +11,40 @@
 ## Technology Stack
 
 ### Core Framework
-- **Flutter SDK:** ^3.10.3
-- **Dart:** ^3.10.3
+- **Flutter SDK:** 3.10.3+
+- **Dart:** 3.10.3+
 - **State Management:** GetX 4.6.6
 
 ### Networking & Storage
 - **HTTP Client:** Dio 5.4.0
 - **Local Cache:** Hive 2.2.3, Hive Flutter 1.1.0
-- **Token Storage:** AuthStorage (Hive-based) ✅
+- **Token Storage:** AuthStorage (Hive-based, separate 'auth' box)
 
 ### Audio & Media
-- **Audio Recording:** record 5.0.4
+- **Audio Recording:** record 6.2.0
 - **Audio Playback:** audioplayers 5.2.1
 - **Image Caching:** cached_network_image 3.3.1
 - **SVG Support:** flutter_svg 2.0.9
 
 ### Localization & UI
 - **Internationalization:** intl 0.19.0
-- **Typography:** google_fonts 6.1.0
-- **Icons:** cupertino_icons 1.0.8
+- **Typography:** google_fonts 6.1.0 (Inter font)
+- **Icons:** lucide_icons 0.257.0, cupertino_icons 1.0.8
 
-### Authentication
-- **Google Sign In:** google_sign_in
-- **Apple Sign In:** sign_in_with_apple
+### Authentication & Subscriptions
+- **Google Sign In:** google_sign_in 6.2.2
+- **Apple Sign In:** sign_in_with_apple 6.1.4
+- **In-App Purchases:** purchases_flutter 8.0.0 (RevenueCat)
 
 ### Utilities
 - **Environment Config:** flutter_dotenv 5.1.0
 - **Network Status:** connectivity_plus 6.0.3
+- **File Path:** path_provider 2.1.2
 - **UUID Generation:** uuid 4.3.3
 
 ### Development Tools
 - **Linting:** flutter_lints 6.0.0
-- **Code Generation:** hive_generator 2.0.1, build_runner 2.4.8
+- **Code Generation:** hive_generator 2.0.1
 
 ## API Contract
 

@@ -6,30 +6,30 @@
 **Framework:** Flutter 3.10.3+
 **Architecture:** Feature-first with GetX
 **Start Date:** 2026-02-05
-**Current Status Date:** 2026-03-11
-**Completion Estimate:** Phase 6 complete, Phase 7+ pending
+**Current Status Date:** 2026-03-28
+**Completion Estimate:** Phases 1-6.8 complete, Phases 7-10 pending
 
 ## Roadmap Overview
 
 ```
-Phase 1: Setup ████████████ 100% (1h) ✅ COMPLETED
-Phase 2: Network ████████████ 100% (2h) ✅ COMPLETED
-Phase 3: Services ████████████ 100% (2h) ✅ COMPLETED
-Phase 4: Base/Widgets ████████████ 100% (2h) ✅ COMPLETED
-Phase 5: Routes/i18n ████████████ 100% (1.5h) ✅ COMPLETED
-Phase 6: Onboarding & Auth ████████████ 100% (6h) ✅ COMPLETED (screens 01-14)
-Phase 6.5: Bottom Navigation ████████████ 100% (1h) ✅ COMPLETED
-Phase 6.7: Text→AppText Refactor ████████████ 100% (3h) ✅ COMPLETED
-Phase 6.8: Chat Grammar Correction ████████████ 100% (1h) ✅ COMPLETED
-Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
-Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending
-Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending
-Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending
+Phase 1: Setup ████████████ 100% (1h) ✅ COMPLETED 2026-02-05
+Phase 2: Network ████████████ 100% (2h) ✅ COMPLETED 2026-02-05
+Phase 3: Services ████████████ 100% (2h) ✅ COMPLETED 2026-02-06
+Phase 4: Base/Widgets ████████████ 100% (2h) ✅ COMPLETED 2026-02-07
+Phase 5: Routes/i18n ████████████ 100% (1.5h) ✅ COMPLETED 2026-02-09
+Phase 6: Onboarding & Auth ████████████ 100% (6h) ✅ COMPLETED 2026-03-11
+Phase 6.5: Bottom Navigation ████████████ 100% (1h) ✅ COMPLETED 2026-03-13
+Phase 6.7: Text→AppText Refactor ████████████ 100% (3h) ✅ COMPLETED 2026-03-18
+Phase 6.8: API JSON Migration ████████████ 100% (2h) ✅ COMPLETED 2026-03-28
+Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-15
+Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-04-25
+Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-05
+Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-15
 ```
 
 **Overall Progress:** 100% of foundation + onboarding + auth + chat features (Phases 1-6.8 complete)
-**Completed:** 22.5+ hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, chat with grammar correction)
-**Remaining:** Home dashboard, expanded chat, lessons, profile/settings
+**Completed:** 23.5 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, chat with grammar correction, API migration)
+**Remaining:** Home dashboard, expanded chat, lessons, profile/settings (~8.5 hours estimated)
 
 ## Phase Details
 

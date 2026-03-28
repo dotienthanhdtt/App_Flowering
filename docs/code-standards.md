@@ -781,7 +781,7 @@ Before committing code, verify:
 - ✅ Constants used (no magic numbers)
 - ✅ Meaningful variable names
 - ✅ Comments for complex logic
-- ✅ app size, color, constants always use in `\core\constants\` and `\core\utils\`
+- ✅ app size, color, constants always use in `lib/core/constants/` and `lib/core/utils/`
 
 ## Git Commit Standards
 
