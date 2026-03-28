@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -44,10 +45,13 @@ class GrammarCorrectionSection extends StatelessWidget {
                   color: AppColors.errorColor,
                 ),
                 const SizedBox(height: AppSizes.space1),
-                AppText(
+                HtmlWidget(
                   correctedText,
-                  fontSize: AppSizes.fontSizeSmall,
-                  color: AppColors.textPrimaryColor,
+                  textStyle: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: AppSizes.fontSizeSmall,
+                    color: AppColors.textPrimaryColor,
+                  ),
                 ),
               ],
             ),

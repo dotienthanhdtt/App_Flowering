@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/routes/app-route-constants.dart';
@@ -6,6 +5,7 @@ import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
+import '../../../core/services/audio_service.dart';
 import '../../../core/services/storage_service.dart';
 import '../../onboarding/controllers/onboarding_controller.dart';
 import '../../onboarding/models/onboarding_profile_model.dart';
@@ -17,6 +17,7 @@ import '../widgets/word-translation-sheet-loader.dart';
 /// Session lifecycle: start → chat turns → complete → navigate to scenario gift.
 class AiChatController extends BaseController {
   final ApiClient _apiClient = Get.find();
+  final AudioService _audioService = Get.find();
   final OnboardingController _onboardingCtrl = Get.find();
   final StorageService _storageService = Get.find();
 
@@ -29,10 +30,10 @@ class AiChatController extends BaseController {
   final chatTitle = 'Chat'.obs;
   final contextDescription = ''.obs;
 
-  // Voice recording state
-  final isRecording = false.obs;
-  final recordingDuration = 0.obs;
-  Timer? _recordingTimer;
+  // Voice recording state (delegated to AudioService)
+  RxBool get isRecording => _audioService.isRecording;
+  RxDouble get recordingAmplitude => _audioService.amplitude;
+  Rx<Duration> get recordingDuration => _audioService.recordingDuration;
 
   final ScrollController scrollController = ScrollController();
   final TextEditingController textEditingController = TextEditingController();
@@ -69,6 +70,9 @@ class AiChatController extends BaseController {
         if (session.quickReplies.isNotEmpty) {
           _addQuickReplies(session.quickReplies);
         }
+
+        // Immediately call onboarding/chat with empty data to get first prompt
+        _sendInitialChat();
       } else {
         errorMessage.value = response.message;
       }
@@ -78,6 +82,37 @@ class AiChatController extends BaseController {
       errorMessage.value = 'unknown_error'.tr;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Calls onboarding/chat with empty message right after session start
+  Future<void> _sendInitialChat() async {
+    if (_sessionToken == null) return;
+    isTyping.value = true;
+    try {
+      final response = await _apiClient.post<OnboardingSession>(
+        ApiEndpoints.onboardingChat,
+        data: {'sessionToken': _sessionToken, 'message': ''},
+        fromJson: (data) =>
+            OnboardingSession.fromJson(data as Map<String, dynamic>),
+      );
+      if (response.isSuccess && response.data != null) {
+        final session = response.data!;
+        progress.value = (session.turnNumber / 10).clamp(0.0, 1.0);
+
+        _addAiMessage(session.reply ?? '', messageId: session.messageId);
+        if (session.quickReplies.isNotEmpty) {
+          _addQuickReplies(session.quickReplies);
+        }
+
+        if (session.isLastTurn) {
+          await _completeOnboarding();
+        }
+      }
+    } catch (_) {
+      // Non-blocking — user can still interact normally
+    } finally {
+      isTyping.value = false;
     }
   }
 
@@ -201,26 +236,19 @@ class AiChatController extends BaseController {
   }
 
   // Voice recording methods
-  void startRecording() {
-    isRecording.value = true;
-    recordingDuration.value = 0;
-    _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      recordingDuration.value++;
-    });
+  Future<void> startRecording() async {
+    await _audioService.startRecording();
   }
 
-  void stopRecording() {
-    _recordingTimer?.cancel();
-    _recordingTimer = null;
-    isRecording.value = false;
-    // TODO: Process recorded audio and send as message
+  Future<void> stopRecording() async {
+    final path = await _audioService.stopRecording();
+    if (path != null) {
+      // TODO: Process recorded audio file and send as message
+    }
   }
 
-  void cancelRecording() {
-    _recordingTimer?.cancel();
-    _recordingTimer = null;
-    isRecording.value = false;
-    recordingDuration.value = 0;
+  Future<void> cancelRecording() async {
+    await _audioService.cancelRecording();
   }
 
   /// Toggle grammar correction visibility for a user message
@@ -337,7 +365,6 @@ class AiChatController extends BaseController {
 
   @override
   void onClose() {
-    _recordingTimer?.cancel();
     scrollController.dispose();
     textEditingController.dispose();
     super.onClose();
