@@ -20,16 +20,18 @@ class WordTranslationModel {
 
   factory WordTranslationModel.fromJson(Map<String, dynamic> json) {
     return WordTranslationModel(
-      original: json['original'] as String? ?? '',
+      original: json['word'] as String? ?? json['original'] as String? ?? '',
       translation: json['translation'] as String? ?? '',
-      partOfSpeech: json['partOfSpeech'] as String?,
+      partOfSpeech: json['part_of_speech'] as String? ??
+          json['partOfSpeech'] as String?,
       pronunciation: json['pronunciation'] as String?,
       definition: json['definition'] as String?,
       examples: (json['examples'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      vocabularyId: json['vocabularyId'] as String?,
+      vocabularyId: json['vocabulary_id'] as String? ??
+          json['vocabularyId'] as String?,
     );
   }
 }

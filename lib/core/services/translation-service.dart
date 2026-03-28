@@ -25,11 +25,11 @@ class TranslationService extends GetxService {
     final response = await _apiClient.post<WordTranslationModel>(
       ApiEndpoints.translate,
       data: {
-        'type': 'word',
+        'type': 'WORD',
         'text': word,
-        'sourceLang': sourceLang,
-        'targetLang': targetLang,
-        if (sessionToken != null) 'sessionToken': sessionToken,
+        'source_lang': sourceLang,
+        'target_lang': targetLang,
+        if (sessionToken != null) 'session_token': sessionToken,
       },
       fromJson: (data) =>
           WordTranslationModel.fromJson(data as Map<String, dynamic>),
@@ -59,11 +59,11 @@ class TranslationService extends GetxService {
     final response = await _apiClient.post<SentenceTranslationModel>(
       ApiEndpoints.translate,
       data: {
-        'type': 'sentence',
-        'messageId': messageId,
-        'sourceLang': sourceLang,
-        'targetLang': targetLang,
-        if (sessionToken != null) 'sessionToken': sessionToken,
+        'type': 'SENTENCE',
+        'message_id': messageId,
+        'source_lang': sourceLang,
+        'target_lang': targetLang,
+        if (sessionToken != null) 'session_token': sessionToken,
       },
       fromJson: (data) =>
           SentenceTranslationModel.fromJson(data as Map<String, dynamic>),

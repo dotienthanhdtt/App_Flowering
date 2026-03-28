@@ -6,7 +6,8 @@ class SubscriptionModel {
   final String? id;
   final SubscriptionPlan plan;
   final SubscriptionStatus status;
-  final DateTime? expiresAt;
+  final DateTime? currentPeriodStart;
+  final DateTime? currentPeriodEnd;
   final bool isActive;
   final bool cancelAtPeriodEnd;
 
@@ -14,7 +15,8 @@ class SubscriptionModel {
     this.id,
     required this.plan,
     required this.status,
-    this.expiresAt,
+    this.currentPeriodStart,
+    this.currentPeriodEnd,
     required this.isActive,
     this.cancelAtPeriodEnd = false,
   });
@@ -24,11 +26,20 @@ class SubscriptionModel {
       id: json['id'] as String?,
       plan: _parsePlan(json['plan'] as String?),
       status: _parseStatus(json['status'] as String?),
-      expiresAt: json['expiresAt'] != null
-          ? DateTime.tryParse(json['expiresAt'] as String)
+      currentPeriodStart: json['current_period_start'] != null
+          ? DateTime.tryParse(json['current_period_start'] as String)
           : null,
-      isActive: json['isActive'] as bool? ?? false,
-      cancelAtPeriodEnd: json['cancelAtPeriodEnd'] as bool? ?? false,
+      currentPeriodEnd: json['current_period_end'] != null
+          ? DateTime.tryParse(json['current_period_end'] as String)
+          : json['expiresAt'] != null
+              ? DateTime.tryParse(json['expiresAt'] as String)
+              : null,
+      isActive: json['is_active'] as bool? ??
+          json['isActive'] as bool? ??
+          false,
+      cancelAtPeriodEnd: json['cancel_at_period_end'] as bool? ??
+          json['cancelAtPeriodEnd'] as bool? ??
+          false,
     );
   }
 
@@ -47,9 +58,10 @@ class SubscriptionModel {
       'id': id,
       'plan': plan.name.toUpperCase(),
       'status': status.name.toUpperCase(),
-      'expiresAt': expiresAt?.toIso8601String(),
-      'isActive': isActive,
-      'cancelAtPeriodEnd': cancelAtPeriodEnd,
+      'current_period_start': currentPeriodStart?.toIso8601String(),
+      'current_period_end': currentPeriodEnd?.toIso8601String(),
+      'is_active': isActive,
+      'cancel_at_period_end': cancelAtPeriodEnd,
     };
   }
 

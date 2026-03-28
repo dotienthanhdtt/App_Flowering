@@ -12,9 +12,13 @@ class SentenceTranslationModel {
 
   factory SentenceTranslationModel.fromJson(Map<String, dynamic> json) {
     return SentenceTranslationModel(
-      messageId: json['messageId'] as String? ?? '',
+      messageId: json['message_id'] as String? ??
+          json['messageId'] as String? ??
+          '',
       original: json['original'] as String? ?? '',
-      translation: json['translation'] as String? ?? '',
+      translation: json['translated_content'] as String? ??
+          json['translation'] as String? ??
+          '',
     );
   }
 }

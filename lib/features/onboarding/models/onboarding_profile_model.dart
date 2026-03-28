@@ -2,26 +2,28 @@ import 'scenario_model.dart';
 
 /// Onboarding completion profile returned by POST /onboarding/complete.
 ///
-/// [scenarios] — 5 AI-generated learning scenarios displayed on Screen 08.
+/// [scenarios] — AI-generated learning scenarios displayed on Screen 08.
+/// [extractedProfile] — new API shape with languages, interests, level.
 class OnboardingProfile {
-  final String? userId;
   final List<Scenario> scenarios;
-  final Map<String, dynamic>? preferences;
+  final Map<String, dynamic>? extractedProfile;
 
   const OnboardingProfile({
-    this.userId,
     required this.scenarios,
-    this.preferences,
+    this.extractedProfile,
   });
 
   factory OnboardingProfile.fromJson(Map<String, dynamic> json) {
+    // New API returns extracted_profile with different shape
+    final extracted = json['extracted_profile'] as Map<String, dynamic>? ??
+        json['extractedProfile'] as Map<String, dynamic>?;
+
     return OnboardingProfile(
-      userId: json['userId'] as String?,
       scenarios: (json['scenarios'] as List<dynamic>?)
               ?.map((e) => Scenario.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      preferences: json['preferences'] as Map<String, dynamic>?,
+      extractedProfile: extracted,
     );
   }
 }

@@ -54,8 +54,8 @@ class AiChatController extends BaseController {
       final response = await _apiClient.post<OnboardingSession>(
         ApiEndpoints.onboardingStart,
         data: {
-          'nativeLanguage': _onboardingCtrl.selectedNativeLanguage.value,
-          'targetLanguage': _onboardingCtrl.selectedLearningLanguage.value,
+          'native_language': _onboardingCtrl.selectedNativeLanguage.value,
+          'target_language': _onboardingCtrl.selectedLearningLanguage.value,
         },
         fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
       );
@@ -102,7 +102,7 @@ class AiChatController extends BaseController {
     try {
       final response = await _apiClient.post<OnboardingSession>(
         ApiEndpoints.onboardingChat,
-        data: {'sessionToken': _sessionToken, 'message': trimmed},
+        data: {'session_id': _sessionToken, 'message': trimmed},
         fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
       );
       if (response.isSuccess && response.data != null) {
@@ -146,16 +146,17 @@ class AiChatController extends BaseController {
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiEndpoints.translate,
         data: {
-          'type': 'sentence',
-          'messageId': messageId,
-          'sourceLang': _onboardingCtrl.selectedLearningLanguage.value,
-          'targetLang': _onboardingCtrl.selectedNativeLanguage.value,
-          'sessionToken': _sessionToken,
+          'type': 'SENTENCE',
+          'message_id': messageId,
+          'source_lang': _onboardingCtrl.selectedLearningLanguage.value,
+          'target_lang': _onboardingCtrl.selectedNativeLanguage.value,
+          if (_sessionToken != null) 'session_token': _sessionToken,
         },
         fromJson: (data) => data as Map<String, dynamic>,
       );
       if (response.isSuccess && response.data != null) {
-        msg.translatedText = response.data!['translation'] as String?;
+        msg.translatedText = response.data!['translated_content'] as String? ??
+            response.data!['translation'] as String?;
         msg.showTranslation = true;
         messages.refresh();
       } else {
@@ -252,14 +253,14 @@ class AiChatController extends BaseController {
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiEndpoints.chatCorrect,
         data: {
-          'previousAiMessage': previousAiMessage,
-          'userMessage': userText,
-          'targetLanguage': _onboardingCtrl.selectedLearningLanguage.value,
+          'previous_ai_message': previousAiMessage,
+          'user_message': userText,
+          'target_language': _onboardingCtrl.selectedLearningLanguage.value,
         },
         fromJson: (data) => data as Map<String, dynamic>,
       );
       if (response.isSuccess && response.data != null) {
-        final corrected = response.data!['correctedText'] as String?;
+        final corrected = response.data!['corrected_text'] as String?;
         if (corrected != null) {
           final idx = messages.indexWhere((m) => m.id == messageId);
           if (idx != -1) {
@@ -279,7 +280,7 @@ class AiChatController extends BaseController {
     try {
       final response = await _apiClient.post<OnboardingProfile>(
         ApiEndpoints.onboardingComplete,
-        data: {'sessionToken': _sessionToken},
+        data: {'session_id': _sessionToken},
         fromJson: (data) => OnboardingProfile.fromJson(data as Map<String, dynamic>),
       );
       if (response.isSuccess && response.data != null) {

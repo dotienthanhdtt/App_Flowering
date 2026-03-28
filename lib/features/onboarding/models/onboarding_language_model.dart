@@ -32,30 +32,29 @@ class OnboardingLanguage {
     String? type,
   }) {
     final bool isEnabled;
-    if (type == 'native') {
-      isEnabled = json['isNativeAvailable'] as bool? ??
-          json['isEnabled'] as bool? ??
-          false;
-    } else if (type == 'learning') {
-      isEnabled = json['isLearningAvailable'] as bool? ??
+    if (type == 'native' || type == 'learning') {
+      isEnabled = json['is_active'] as bool? ??
+          json['isNativeAvailable'] as bool? ??
+          json['isLearningAvailable'] as bool? ??
           json['isEnabled'] as bool? ??
           false;
     } else {
-      // Cache format uses 'isEnabled' directly.
-      isEnabled = json['isEnabled'] as bool? ??
-          json['isNativeAvailable'] as bool? ??
-          json['isLearningAvailable'] as bool? ??
+      // Cache format uses 'is_active' or legacy 'isEnabled'.
+      isEnabled = json['is_active'] as bool? ??
+          json['isEnabled'] as bool? ??
           true;
     }
 
     return OnboardingLanguage(
       id: json['id'] as String?,
       code: json['code'] as String,
-      flag: json['flag'] as String? ?? '', // not in API; emoji set by fallback
-      flagUrl: json['flagUrl'] as String?,
+      flag: json['flag'] as String? ?? '',
+      flagUrl: json['flag_url'] as String? ?? json['flagUrl'] as String?,
       name: json['name'] as String,
-      // API returns 'nativeName'; cache uses 'subtitle'.
-      subtitle: json['nativeName'] as String? ?? json['subtitle'] as String? ?? '',
+      subtitle: json['native_name'] as String? ??
+          json['nativeName'] as String? ??
+          json['subtitle'] as String? ??
+          '',
       isEnabled: isEnabled,
     );
   }
@@ -64,10 +63,10 @@ class OnboardingLanguage {
         if (id != null) 'id': id,
         'code': code,
         'flag': flag,
-        if (flagUrl != null) 'flagUrl': flagUrl,
+        if (flagUrl != null) 'flag_url': flagUrl,
         'name': name,
         'subtitle': subtitle,
-        'isEnabled': isEnabled,
+        'is_active': isEnabled,
       };
 
   // ── Offline fallback lists ────────────────────────────────────────────────

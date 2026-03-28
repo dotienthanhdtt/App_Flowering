@@ -29,8 +29,10 @@ class Scenario {
       title: json['title'] as String,
       description: json['description'] as String,
       icon: json['icon'] as String? ?? 'star',
-      accentColor: json['accentColor'] as String? ?? 'primary',
-      imageUrl: json['imageUrl'] as String?,
+      accentColor: json['accent_color'] as String? ??
+          json['accentColor'] as String? ??
+          'primary',
+      imageUrl: json['image_url'] as String? ?? json['imageUrl'] as String?,
       level: json['level'] as int? ?? 1,
       learned: json['learned'] as bool? ?? false,
     );

@@ -68,10 +68,10 @@ class AuthController extends BaseController {
       final response = await _apiClient.post<AuthResponse>(
         ApiEndpoints.register,
         data: {
-          'fullName': fullNameController.text.trim(),
+          'name': fullNameController.text.trim(),
           'email': emailController.text.trim(),
           'password': passwordController.text,
-          if (_sessionToken != null) 'sessionToken': _sessionToken,
+          if (_sessionToken != null) 'session_token': _sessionToken,
         },
         fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
       );
@@ -101,7 +101,7 @@ class AuthController extends BaseController {
         data: {
           'email': loginEmailController.text.trim(),
           'password': loginPasswordController.text,
-          if (_sessionToken != null) 'sessionToken': _sessionToken,
+          if (_sessionToken != null) 'session_token': _sessionToken,
         },
         fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
       );

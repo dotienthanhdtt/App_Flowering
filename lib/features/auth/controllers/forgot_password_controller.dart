@@ -117,7 +117,7 @@ class ForgotPasswordController extends BaseController {
         fromJson: (data) => data as Map<String, dynamic>,
       );
       if (response.isSuccess && response.data != null) {
-        _resetToken = response.data!['resetToken'] as String?;
+        _resetToken = response.data!['reset_token'] as String?;
         Get.toNamed(AppRoutes.newPassword);
       } else {
         errorMessage.value = response.message;
@@ -139,8 +139,8 @@ class ForgotPasswordController extends BaseController {
       final response = await _apiClient.post<dynamic>(
         ApiEndpoints.resetPassword,
         data: {
-          'resetToken': _resetToken,
-          'newPassword': newPasswordController.text,
+          'reset_token': _resetToken,
+          'new_password': newPasswordController.text,
         },
       );
       if (response.isSuccess) {
