@@ -18,7 +18,11 @@ class AudioService extends GetxService {
   final playbackPosition = Duration.zero.obs;
   final playbackDuration = Duration.zero.obs;
 
+  /// Current amplitude normalized to 0.0–1.0 (0 = silence, 1 = loud).
+  final amplitude = 0.0.obs;
+
   Timer? _recordingTimer;
+  Timer? _amplitudeTimer;
   String? _currentRecordingPath;
 
   // Stream subscriptions for proper cleanup
@@ -76,11 +80,18 @@ class AudioService extends GetxService {
 
       isRecording.value = true;
       recordingDuration.value = Duration.zero;
+      amplitude.value = 0.0;
 
       // Track recording duration
       _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         recordingDuration.value += const Duration(seconds: 1);
       });
+
+      // Poll amplitude every 100ms for waveform visualization
+      _amplitudeTimer = Timer.periodic(
+        const Duration(milliseconds: 100),
+        (_) => _pollAmplitude(),
+      );
 
       return _currentRecordingPath;
     } catch (e) {
@@ -92,6 +103,25 @@ class AudioService extends GetxService {
     }
   }
 
+  /// Poll microphone amplitude and normalize to 0.0–1.0.
+  Future<void> _pollAmplitude() async {
+    try {
+      final amp = await _recorder.getAmplitude();
+      // amp.current is in dBFS: -160 (silence) to 0 (max).
+      // Map -60..0 dBFS → 0.0..1.0 for useful visual range.
+      final db = amp.current;
+      amplitude.value = ((db + 60) / 60).clamp(0.0, 1.0);
+    } catch (_) {
+      amplitude.value = 0.0;
+    }
+  }
+
+  void _stopAmplitudePolling() {
+    _amplitudeTimer?.cancel();
+    _amplitudeTimer = null;
+    amplitude.value = 0.0;
+  }
+
   /// Stop recording and return file path
   Future<String?> stopRecording() async {
     if (!isRecording.value) return null;
@@ -99,6 +129,7 @@ class AudioService extends GetxService {
     try {
       _recordingTimer?.cancel();
       _recordingTimer = null;
+      _stopAmplitudePolling();
 
       final path = await _recorder.stop();
       isRecording.value = false;
@@ -120,6 +151,7 @@ class AudioService extends GetxService {
     try {
       _recordingTimer?.cancel();
       _recordingTimer = null;
+      _stopAmplitudePolling();
 
       await _recorder.stop();
       isRecording.value = false;
@@ -239,6 +271,7 @@ class AudioService extends GetxService {
   @override
   void onClose() {
     _recordingTimer?.cancel();
+    _amplitudeTimer?.cancel();
     _stateSubscription?.cancel();
     _positionSubscription?.cancel();
     _durationSubscription?.cancel();

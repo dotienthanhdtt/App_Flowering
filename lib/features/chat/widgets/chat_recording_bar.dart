@@ -48,13 +48,15 @@ class ChatRecordingBar extends StatelessWidget {
         const SizedBox(width: AppSizes.space2),
         // Timer
         Obx(() => AppText(
-              _formatDuration(controller.recordingDuration.value),
+              _formatDuration(controller.recordingDuration.value.inSeconds),
               variant: AppTextVariant.label,
               color: AppColors.textPrimaryColor,
             )),
         const SizedBox(width: AppSizes.space3),
-        // Waveform bars
-        const Expanded(child: ChatWaveformBars()),
+        // Waveform bars driven by real microphone amplitude
+        Expanded(child: Obx(() => ChatWaveformBars(
+          amplitude: controller.recordingAmplitude.value,
+        ))),
         const SizedBox(width: AppSizes.space3),
         // Send button — 48px
         GestureDetector(
