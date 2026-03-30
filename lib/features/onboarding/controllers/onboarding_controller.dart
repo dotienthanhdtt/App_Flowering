@@ -24,7 +24,7 @@ class OnboardingController extends BaseController {
   String? selectedLearningLanguageId;
 
   /// Persisted across onboarding screens; set by AiChatController on session start.
-  String? sessionToken;
+  String? conversationId;
 
   /// Set by AiChatController after POST /onboarding/complete.
   OnboardingProfile? onboardingProfile;

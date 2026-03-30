@@ -8,13 +8,13 @@ import '../../../shared/widgets/word-translation-sheet.dart';
 /// Shows loading → populated/error states automatically.
 class WordTranslationSheetLoader extends StatefulWidget {
   final String word;
-  final String? sessionToken;
+  final String? conversationId;
   final VoidCallback? onSave;
 
   const WordTranslationSheetLoader({
     super.key,
     required this.word,
-    this.sessionToken,
+    this.conversationId,
     this.onSave,
   });
 
@@ -39,7 +39,7 @@ class _WordTranslationSheetLoaderState
       final result =
           await Get.find<TranslationService>().translateWord(
             widget.word,
-            sessionToken: widget.sessionToken,
+            conversationId: widget.conversationId,
           );
       if (mounted) setState(() => _data = result);
     } catch (e) {

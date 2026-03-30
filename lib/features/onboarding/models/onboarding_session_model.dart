@@ -1,10 +1,10 @@
 /// Response model for POST /onboarding/start and POST /onboarding/chat.
 ///
-/// [sessionToken] — returned by /start; null in /chat responses.
+/// [conversationId] — returned by /start; null in /chat responses.
 /// [isLastTurn] — when true, caller should trigger POST /onboarding/complete.
 /// [reply] — AI message text.
 class OnboardingSession {
-  final String? sessionToken;
+  final String? conversationId;
   final String? messageId;
   final int turnNumber;
   final int maxTurns;
@@ -14,7 +14,7 @@ class OnboardingSession {
   final DateTime? expiresAt;
 
   const OnboardingSession({
-    this.sessionToken,
+    this.conversationId,
     this.messageId,
     required this.turnNumber,
     this.maxTurns = 10,
@@ -32,9 +32,8 @@ class OnboardingSession {
     final maxTurns = json['max_turns'] as int? ?? 10;
 
     return OnboardingSession(
-      sessionToken: json['session_token'] as String? ??
-          json['session_id'] as String? ??
-          json['sessionToken'] as String?,
+      conversationId: json['conversation_id'] as String? ??
+          json['session_token'] as String?,
       messageId: json['message_id'] as String? ??
           json['messageId'] as String?,
       turnNumber: turnCount,

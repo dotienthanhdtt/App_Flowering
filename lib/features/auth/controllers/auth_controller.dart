@@ -10,7 +10,7 @@ import '../../../core/services/storage_service.dart';
 import '../models/auth_response_model.dart';
 
 /// Manages email/password auth + social auth stubs.
-/// Reads sessionToken from StorageService to link onboarding with account.
+/// Reads conversationId from StorageService to link onboarding with account.
 class AuthController extends BaseController {
   final ApiClient _apiClient = Get.find();
   final AuthStorage _authStorage = Get.find();
@@ -31,8 +31,8 @@ class AuthController extends BaseController {
   final loginEmailController = TextEditingController();
   final loginPasswordController = TextEditingController();
 
-  String? get _sessionToken =>
-      _storageService.getPreference<String>('onboarding_session_token');
+  String? get _conversationId =>
+      _storageService.getPreference<String>('onboarding_conversation_id');
 
   // ── Validators ──────────────────────────────────────────────────
 
@@ -71,7 +71,7 @@ class AuthController extends BaseController {
           'name': fullNameController.text.trim(),
           'email': emailController.text.trim(),
           'password': passwordController.text,
-          if (_sessionToken != null) 'session_token': _sessionToken,
+          if (_conversationId != null) 'conversation_id': _conversationId,
         },
         fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
       );
@@ -101,7 +101,7 @@ class AuthController extends BaseController {
         data: {
           'email': loginEmailController.text.trim(),
           'password': loginPasswordController.text,
-          if (_sessionToken != null) 'session_token': _sessionToken,
+          if (_conversationId != null) 'conversation_id': _conversationId,
         },
         fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
       );
@@ -125,7 +125,7 @@ class AuthController extends BaseController {
       refreshToken: auth.refreshToken,
     );
     await _authStorage.saveUserId(auth.user.id);
-    await _storageService.removePreference('onboarding_session_token');
+    await _storageService.removePreference('onboarding_conversation_id');
     Get.offAllNamed(AppRoutes.home);
   }
 

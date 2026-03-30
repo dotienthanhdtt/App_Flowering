@@ -17,7 +17,7 @@ class TranslationService extends GetxService {
     String word, {
     String sourceLang = 'en',
     String targetLang = 'vi',
-    String? sessionToken,
+    String? conversationId,
   }) async {
     final key = word.toLowerCase().trim();
     if (_wordCache.containsKey(key)) return _wordCache[key]!;
@@ -29,7 +29,7 @@ class TranslationService extends GetxService {
         'text': word,
         'source_lang': sourceLang,
         'target_lang': targetLang,
-        if (sessionToken != null) 'session_token': sessionToken,
+        if (conversationId != null) 'conversation_id': conversationId,
       },
       fromJson: (data) =>
           WordTranslationModel.fromJson(data as Map<String, dynamic>),
@@ -50,7 +50,7 @@ class TranslationService extends GetxService {
     String messageId, {
     String sourceLang = 'en',
     String targetLang = 'vi',
-    String? sessionToken,
+    String? conversationId,
   }) async {
     if (_sentenceCache.containsKey(messageId)) {
       return _sentenceCache[messageId]!;
@@ -63,7 +63,7 @@ class TranslationService extends GetxService {
         'message_id': messageId,
         'source_lang': sourceLang,
         'target_lang': targetLang,
-        if (sessionToken != null) 'session_token': sessionToken,
+        if (conversationId != null) 'conversation_id': conversationId,
       },
       fromJson: (data) =>
           SentenceTranslationModel.fromJson(data as Map<String, dynamic>),

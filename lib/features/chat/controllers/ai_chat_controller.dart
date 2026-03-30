@@ -38,7 +38,7 @@ class AiChatController extends BaseController {
   final ScrollController scrollController = ScrollController();
   final TextEditingController textEditingController = TextEditingController();
 
-  String? _sessionToken;
+  String? _conversationId;
 
   @override
   void onInit() {
@@ -49,7 +49,7 @@ class AiChatController extends BaseController {
   }
 
   Future<void> _startSession() async {
-    isLoading.value = true;
+    isTyping.value = true;
     errorMessage.value = '';
     try {
       final response = await _apiClient.post<OnboardingSession>(
@@ -62,52 +62,42 @@ class AiChatController extends BaseController {
       );
       if (response.isSuccess && response.data != null) {
         final session = response.data!;
-        _sessionToken = session.sessionToken;
-        await _storageService.setPreference('onboarding_session_token', _sessionToken);
-        _onboardingCtrl.sessionToken = _sessionToken;
+        _conversationId = session.conversationId;
+        await _storageService.setPreference('onboarding_conversation_id', _conversationId);
+        _onboardingCtrl.conversationId = _conversationId;
 
         _addAiMessage(session.reply ?? '');
         if (session.quickReplies.isNotEmpty) {
           _addQuickReplies(session.quickReplies);
         }
 
-        // Immediately call onboarding/chat with empty data to get first prompt
+        // _sendInitialChat manages its own isTyping lifecycle
         _sendInitialChat();
       } else {
+        isTyping.value = false;
         errorMessage.value = response.message;
       }
     } on ApiException catch (e) {
+      isTyping.value = false;
       errorMessage.value = e.userMessage;
     } catch (_) {
-      errorMessage.value = 'unknown_error'.tr;
-    } finally {
       isTyping.value = false;
+      errorMessage.value = 'unknown_error'.tr;
     }
   }
 
   /// Calls onboarding/chat with empty message right after session start
   Future<void> _sendInitialChat() async {
-    if (_sessionToken == null) return;
+    if (_conversationId == null) return;
     isTyping.value = true;
     try {
       final response = await _apiClient.post<OnboardingSession>(
         ApiEndpoints.onboardingChat,
-        data: {'sessionToken': _sessionToken, 'message': ''},
-        fromJson: (data) =>
-            OnboardingSession.fromJson(data as Map<String, dynamic>),
+        data: {'conversation_id': _conversationId, 'message': ''},
+        fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
       );
       if (response.isSuccess && response.data != null) {
-        final session = response.data!;
-        progress.value = (session.turnNumber / 10).clamp(0.0, 1.0);
-
-        _addAiMessage(session.reply ?? '', messageId: session.messageId);
-        if (session.quickReplies.isNotEmpty) {
-          _addQuickReplies(session.quickReplies);
-        }
-
-        if (session.isLastTurn) {
-          await _completeOnboarding();
-        }
+        await _handleChatResponse(response.data!);
       }
     } catch (_) {
       // Non-blocking — user can still interact normally
@@ -120,7 +110,7 @@ class AiChatController extends BaseController {
 
   Future<void> sendMessage(String text) async {
     final trimmed = text.trim();
-    if (_sessionToken == null || isChatComplete.value) return;
+    if (_conversationId == null || isChatComplete.value) return;
 
     textEditingController.clear();
     messages.removeWhere((m) => m.type == ChatMessageType.quickReplies);
@@ -137,21 +127,11 @@ class AiChatController extends BaseController {
     try {
       final response = await _apiClient.post<OnboardingSession>(
         ApiEndpoints.onboardingChat,
-        data: {'session_token': _sessionToken, 'message': trimmed},
+        data: {'conversation_id': _conversationId, 'message': trimmed},
         fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
       );
       if (response.isSuccess && response.data != null) {
-        final session = response.data!;
-        progress.value = (session.turnNumber / 10).clamp(0.0, 1.0);
-
-        _addAiMessage(session.reply ?? '', messageId: session.messageId);
-        if (session.quickReplies.isNotEmpty) {
-          _addQuickReplies(session.quickReplies);
-        }
-
-        if (session.isLastTurn) {
-          await _completeOnboarding();
-        }
+        await _handleChatResponse(response.data!);
       } else {
         errorMessage.value = response.message;
       }
@@ -161,6 +141,18 @@ class AiChatController extends BaseController {
       errorMessage.value = 'unknown_error'.tr;
     } finally {
       isTyping.value = false;
+    }
+  }
+
+  /// Shared handler for chat API responses — updates progress, adds AI message, handles completion.
+  Future<void> _handleChatResponse(OnboardingSession session) async {
+    progress.value = (session.turnNumber / 10).clamp(0.0, 1.0);
+    _addAiMessage(session.reply ?? '', messageId: session.messageId);
+    if (session.quickReplies.isNotEmpty) {
+      _addQuickReplies(session.quickReplies);
+    }
+    if (session.isLastTurn) {
+      await _completeOnboarding();
     }
   }
 
@@ -174,6 +166,7 @@ class AiChatController extends BaseController {
     if (msg.translatedText != null) {
       msg.showTranslation = !msg.showTranslation;
       messages.refresh();
+      if (msg.showTranslation) _scrollToBottom();
       return;
     }
 
@@ -185,7 +178,7 @@ class AiChatController extends BaseController {
           'message_id': messageId,
           'source_lang': _onboardingCtrl.selectedLearningLanguage.value,
           'target_lang': _onboardingCtrl.selectedNativeLanguage.value,
-          if (_sessionToken != null) 'session_token': _sessionToken,
+          if (_conversationId != null) 'conversation_id': _conversationId,
         },
         fromJson: (data) => data as Map<String, dynamic>,
       );
@@ -194,6 +187,7 @@ class AiChatController extends BaseController {
             response.data!['translation'] as String?;
         msg.showTranslation = true;
         messages.refresh();
+        _scrollToBottom();
       } else {
         Get.snackbar('', response.message,
             snackPosition: SnackPosition.BOTTOM);
@@ -215,7 +209,7 @@ class AiChatController extends BaseController {
       backgroundColor: Colors.transparent,
       builder: (_) => WordTranslationSheetLoader(
         word: cleanWord,
-        sessionToken: _sessionToken,
+        conversationId: _conversationId,
         onSave: () => saveWord(cleanWord),
       ),
     );
@@ -258,6 +252,7 @@ class AiChatController extends BaseController {
     if (index == -1) return;
     messages[index].showCorrection = !messages[index].showCorrection;
     messages.refresh();
+    if (messages[index].showCorrection) _scrollToBottom();
   }
 
   /// Get the last AI message text for grammar correction context
@@ -284,6 +279,7 @@ class AiChatController extends BaseController {
           'previous_ai_message': previousAiMessage,
           'user_message': userText,
           'target_language': _onboardingCtrl.selectedLearningLanguage.value,
+          if (_conversationId != null) 'conversation_id': _conversationId,
         },
         fromJson: (data) => data as Map<String, dynamic>,
       );
@@ -308,7 +304,7 @@ class AiChatController extends BaseController {
     try {
       final response = await _apiClient.post<OnboardingProfile>(
         ApiEndpoints.onboardingComplete,
-        data: {'session_token': _sessionToken},
+        data: {'conversation_id': _conversationId},
         fromJson: (data) => OnboardingProfile.fromJson(data as Map<String, dynamic>),
       );
       if (response.isSuccess && response.data != null) {
