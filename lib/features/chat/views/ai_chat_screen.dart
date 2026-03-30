@@ -137,8 +137,6 @@ class _ChatList extends StatelessWidget {
               return _buildMessageItem(controller.messages[index]);
             },
           ),
-          if (controller.isLoading.value)
-            const Center(child: CircularProgressIndicator()),
         ],
       ),
     );

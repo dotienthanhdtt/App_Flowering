@@ -81,7 +81,7 @@ class AiChatController extends BaseController {
     } catch (_) {
       errorMessage.value = 'unknown_error'.tr;
     } finally {
-      isLoading.value = false;
+      isTyping.value = false;
     }
   }
 
@@ -120,7 +120,7 @@ class AiChatController extends BaseController {
 
   Future<void> sendMessage(String text) async {
     final trimmed = text.trim();
-    if (trimmed.isEmpty || _sessionToken == null || isChatComplete.value) return;
+    if (_sessionToken == null || isChatComplete.value) return;
 
     textEditingController.clear();
     messages.removeWhere((m) => m.type == ChatMessageType.quickReplies);
@@ -137,7 +137,7 @@ class AiChatController extends BaseController {
     try {
       final response = await _apiClient.post<OnboardingSession>(
         ApiEndpoints.onboardingChat,
-        data: {'session_id': _sessionToken, 'message': trimmed},
+        data: {'session_token': _sessionToken, 'message': trimmed},
         fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
       );
       if (response.isSuccess && response.data != null) {
@@ -206,7 +206,7 @@ class AiChatController extends BaseController {
 
   /// Open word translation bottom sheet for tapped word
   void onWordTap(String word, BuildContext context) {
-    final cleanWord = word.replaceAll(RegExp(r"[^\w'\-]"), '').trim();
+    final cleanWord = word.replaceAll(RegExp(r"[^\p{L}\p{N}'\-]", unicode: true), '').trim();
     if (cleanWord.isEmpty) return;
 
     showModalBottomSheet(
@@ -308,7 +308,7 @@ class AiChatController extends BaseController {
     try {
       final response = await _apiClient.post<OnboardingProfile>(
         ApiEndpoints.onboardingComplete,
-        data: {'session_id': _sessionToken},
+        data: {'session_token': _sessionToken},
         fromJson: (data) => OnboardingProfile.fromJson(data as Map<String, dynamic>),
       );
       if (response.isSuccess && response.data != null) {
@@ -323,6 +323,7 @@ class AiChatController extends BaseController {
   }
 
   void _addAiMessage(String text, {String? messageId}) {
+    if (text.trim().isEmpty) return;
     messages.add(ChatMessage(
       id: messageId ?? 'ai_${DateTime.now().millisecondsSinceEpoch}',
       type: ChatMessageType.aiText,

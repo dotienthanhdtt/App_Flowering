@@ -4,7 +4,6 @@ import '../../../core/base/base_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_button.dart';
-import '../../../shared/widgets/app_text.dart';
 import '../controllers/onboarding_controller.dart';
 import '../widgets/language_selection_layout.dart';
 
@@ -22,15 +21,13 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
     return Obx(() => LanguageSelectionLayout(
           title: 'language_select_title'.tr,
           isLoading: controller.isLoadingLanguages.value,
-          languages: controller.visibleLearningLanguages,
+          languages: controller.learningLanguages,
           selectedCode: controller.selectedLearningLanguage.value,
           onSelect: (lang) =>
               controller.selectLearningLanguage(lang.code, id: lang.id),
           onRetry: controller.loadLanguages,
           skeletonCount: 6,
           topBar: _buildBackButton(),
-          listFooter:
-              controller.canShowMoreLanguages ? _buildShowAllButton() : null,
           bottomWidget: _buildContinueButton(context),
         ));
   }
@@ -52,34 +49,6 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShowAllButton() {
-    return GestureDetector(
-      onTap: controller.toggleShowAllLanguages,
-      child: Container(
-        height: 36,
-        margin: const EdgeInsets.only(top: AppSizes.space2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppText(
-              'show_all_languages'.tr,
-              variant: AppTextVariant.bodySmall,
-              fontSize: AppSizes.fontSizeSmall,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textSecondaryColor,
-            ),
-            const SizedBox(width: AppSizes.space1),
-            const Icon(
-              Icons.keyboard_arrow_down,
-              size: 14,
-              color: AppColors.textSecondaryColor,
-            ),
-          ],
         ),
       ),
     );

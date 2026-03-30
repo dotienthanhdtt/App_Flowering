@@ -229,7 +229,7 @@ const Map<String, String> enUS = {
 
   // Onboarding — Language Selection (Screen 05/06)
   'language_select_title': "What language do you want to learn?",
-  'native_language_title': "What language do you speak?",
+  'native_language_title': "What is your native language?",
   'language_load_error': 'Failed to load languages',
   'language_coming_soon': 'Soon',
   'search_language': 'Search language...',

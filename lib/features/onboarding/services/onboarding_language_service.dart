@@ -14,25 +14,18 @@ class OnboardingLanguageService {
 
   OnboardingLanguageService(this._apiClient, this._storageService);
 
-  /// Returns native languages — API → cache → fallback.
+  /// Returns native languages — API → cache.
   Future<List<OnboardingLanguage>> getNativeLanguages() {
-    return _getLanguages(
-      type: 'native',
-      fallback: OnboardingLanguage.nativeLanguages,
-    );
+    return _getLanguages(type: 'native');
   }
 
-  /// Returns learning languages — API → cache → fallback.
+  /// Returns learning languages — API → cache.
   Future<List<OnboardingLanguage>> getLearningLanguages() {
-    return _getLanguages(
-      type: 'learning',
-      fallback: OnboardingLanguage.learningLanguages,
-    );
+    return _getLanguages(type: 'learning');
   }
 
   Future<List<OnboardingLanguage>> _getLanguages({
     required String type,
-    required List<OnboardingLanguage> fallback,
   }) async {
     final cacheKey = 'languages_cache_$type';
     final timestampKey = 'languages_cache_ts_$type';
@@ -70,8 +63,8 @@ class OnboardingLanguageService {
       if (kDebugMode) print('OnboardingLanguageService[$type]: $e');
     }
 
-    // Fallback: expired cache or static list
-    return _readCache(cacheKey, timestampKey, ignoreExpiry: true) ?? fallback;
+    // Fallback: expired cache only
+    return _readCache(cacheKey, timestampKey, ignoreExpiry: true) ?? [];
   }
 
   List<OnboardingLanguage>? _readCache(

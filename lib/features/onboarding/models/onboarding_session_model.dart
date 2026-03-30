@@ -25,13 +25,15 @@ class OnboardingSession {
   });
 
   factory OnboardingSession.fromJson(Map<String, dynamic> json) {
-    final turnCount = json['turn_count'] as int? ??
+    final turnCount = json['turn_number'] as int? ??
+        json['turn_count'] as int? ??
         json['turnNumber'] as int? ??
         0;
     final maxTurns = json['max_turns'] as int? ?? 10;
 
     return OnboardingSession(
-      sessionToken: json['session_id'] as String? ??
+      sessionToken: json['session_token'] as String? ??
+          json['session_id'] as String? ??
           json['sessionToken'] as String?,
       messageId: json['message_id'] as String? ??
           json['messageId'] as String?,

@@ -31,7 +31,8 @@
       "Bash(git commit -m \"$\\(cat <<'EOF'\nfeat: implement pencil design system sync with warm neutral palette\n\nReplace Gen Z color palette with Pencil warm neutral colors, migrate typography from Inter to Outfit font family, and restyled core UI components \\(buttons: 48px height with pill radius and shadow; text inputs: 12px radius with 1.5px borders\\). Updated all broken color references in theme configuration and documentation.\n\nChanges:\n- app_colors.dart: New warm neutral palette \\(cream, taupe, warm grey, accent peach\\)\n- app_text_styles.dart: Outfit font family with adjusted sizing\n- app_button.dart: 48px height, pill radius, shadow elevation, new variants\n- app_text_field.dart: 12px border radius, 1.5px borders, error state fill\n- flowering-app-widget-with-getx.dart: Fixed theme color references\n- Updated docs for architecture, code standards, and changelog\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)"
     ]
   }
 }

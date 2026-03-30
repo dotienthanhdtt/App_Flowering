@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-import 'ai_avatar.dart';
-
 /// Animated three-dot AI typing indicator.
 class AiTypingBubble extends StatefulWidget {
   const AiTypingBubble({super.key});
@@ -35,8 +33,6 @@ class _AiTypingBubbleState extends State<AiTypingBubble>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AiAvatar(),
-        const SizedBox(width: AppSizes.space2),
         Container(
           padding: const EdgeInsets.symmetric(
               horizontal: AppSizes.fontSizeLarge, vertical: AppSizes.space4),

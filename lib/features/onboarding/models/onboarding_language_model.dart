@@ -32,11 +32,13 @@ class OnboardingLanguage {
     String? type,
   }) {
     final bool isEnabled;
-    if (type == 'native' || type == 'learning') {
-      isEnabled = json['is_active'] as bool? ??
+    if (type == 'native') {
+      isEnabled = json['is_native_available'] as bool? ??
           json['isNativeAvailable'] as bool? ??
+          false;
+    } else if (type == 'learning') {
+      isEnabled = json['is_learning_available'] as bool? ??
           json['isLearningAvailable'] as bool? ??
-          json['isEnabled'] as bool? ??
           false;
     } else {
       // Cache format uses 'is_active' or legacy 'isEnabled'.

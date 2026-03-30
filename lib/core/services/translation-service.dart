@@ -25,7 +25,7 @@ class TranslationService extends GetxService {
     final response = await _apiClient.post<WordTranslationModel>(
       ApiEndpoints.translate,
       data: {
-        'type': 'WORD',
+        'type': 'word',
         'text': word,
         'source_lang': sourceLang,
         'target_lang': targetLang,
@@ -59,7 +59,7 @@ class TranslationService extends GetxService {
     final response = await _apiClient.post<SentenceTranslationModel>(
       ApiEndpoints.translate,
       data: {
-        'type': 'SENTENCE',
+        'type': 'sentence',
         'message_id': messageId,
         'source_lang': sourceLang,
         'target_lang': targetLang,

@@ -35,11 +35,11 @@ class LanguageListCard extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primarySoftColor : AppColors.surfaceColor,
+            color: AppColors.surfaceColor,
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
             border: Border.all(
-              color: isSelected ? AppColors.primaryColor : AppColors.borderLightColor,
-              width: isSelected ? 2 : AppSizes.borderThin,
+              color: AppColors.borderLightColor,
+              width: AppSizes.borderThin,
             ),
           ),
           child: Row(
