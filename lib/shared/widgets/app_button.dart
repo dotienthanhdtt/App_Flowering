@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_text_styles.dart';
@@ -55,6 +56,13 @@ class AppButton extends StatelessWidget {
             ],
           );
 
+    final effectiveOnPressed = (isLoading || onPressed == null)
+        ? null
+        : () {
+            HapticFeedback.lightImpact();
+            onPressed!();
+          };
+
     Widget button;
 
     switch (variant) {
@@ -71,7 +79,7 @@ class AppButton extends StatelessWidget {
             ],
           ),
           child: ElevatedButton(
-            onPressed: isLoading ? null : onPressed,
+            onPressed: effectiveOnPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
               foregroundColor: AppColors.textOnPrimaryColor,
@@ -91,7 +99,7 @@ class AppButton extends StatelessWidget {
 
       case AppButtonVariant.secondary:
         button = ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primarySoftColor,
             foregroundColor: AppColors.primaryColor,
@@ -110,7 +118,7 @@ class AppButton extends StatelessWidget {
 
       case AppButtonVariant.outline:
         button = OutlinedButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: OutlinedButton.styleFrom(
             backgroundColor: Colors.transparent,
             foregroundColor: AppColors.primaryColor,
@@ -132,7 +140,7 @@ class AppButton extends StatelessWidget {
 
       case AppButtonVariant.text:
         button = TextButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: TextButton.styleFrom(
             foregroundColor: AppColors.primaryColor,
             minimumSize:
@@ -144,7 +152,12 @@ class AppButton extends StatelessWidget {
         break;
     }
 
-    return button;
+    return Semantics(
+      button: true,
+      enabled: !isLoading,
+      label: isLoading ? '$text, loading' : text,
+      child: button,
+    );
   }
 
   TextStyle get _textStyle {

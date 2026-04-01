@@ -33,7 +33,7 @@ class AppColors {
   // Text
   static const Color textPrimaryColor = Color(0xFF191919);
   static const Color textSecondaryColor = Color(0xFF5C5646);
-  static const Color textTertiaryColor = Color(0xFF9C9585);
+  static const Color textTertiaryColor = Color(0xFF746D5E);
   static const Color textOnPrimaryColor = Color(0xFFFFFFFF);
 
   // Borders
@@ -47,7 +47,7 @@ class AppColors {
   static const Color successLightColor = Color(0xFFE2F3E5);
 
   // Warning — warning_color
-  static const Color warningColor = Color(0xFFFFB830);
+  static const Color warningColor = Color(0xFFF59E0B);
   static const Color warningLightColor = Color(0xFFFDF5DC);
 
   // Error — error_color
@@ -55,7 +55,7 @@ class AppColors {
   static const Color errorLightColor = Color(0xFFFBEAEA);
 
   // Info — info_color
-  static const Color infoColor = Color(0xFF9CB0CF);
+  static const Color infoColor = Color(0xFF6B89AD);
 
   // Accent
   static const Color lavenderLightColor = Color(0xFFEDE8F5);
@@ -70,6 +70,8 @@ class AppColors {
   static const Color shadowSubtleColor = Color(0x08191919);
   static const Color shadowLightColor = Color(0x08000000);
   static const Color shadowMediumColor = Color(0x1A000000);
+  static const Color shadowElevatedColor = Color(0x1A191919);
+  static const Color shadowModalColor = Color(0x33191919);
 
   // Glow
   static const Color primaryGlowColor = Color(0x30FF7A27);

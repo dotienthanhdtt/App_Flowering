@@ -109,6 +109,7 @@ class _AppTextFieldState extends State<AppTextField> {
                     icon: Icon(
                       _obscureText ? Icons.visibility_off : Icons.visibility,
                       color: AppColors.textSecondaryColor,
+                      semanticLabel: _obscureText ? 'Show password' : 'Hide password',
                     ),
                     onPressed: () {
                       setState(() => _obscureText = !_obscureText);

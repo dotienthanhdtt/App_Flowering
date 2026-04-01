@@ -18,14 +18,32 @@ class _AiTypingBubbleState extends State<AiTypingBubble>
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat();
+      duration: const Duration(milliseconds: 800),
+    );
   }
 
   @override
   void dispose() {
     _ctrl.dispose();
     super.dispose();
+  }
+
+  /// Sentinel `true` ensures first didChangeDependencies always triggers start.
+  bool _reduceMotion = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduce = MediaQuery.of(context).disableAnimations;
+    if (reduce != _reduceMotion) {
+      _reduceMotion = reduce;
+      if (_reduceMotion) {
+        _ctrl.stop();
+        _ctrl.value = 0;
+      } else {
+        _ctrl.repeat();
+      }
+    }
   }
 
   @override
@@ -59,7 +77,7 @@ class _AiTypingBubbleState extends State<AiTypingBubble>
                 final offset = (i / 3);
                 final val =
                     ((_ctrl.value - offset) % 1.0).clamp(0.0, 1.0);
-                final scale = 0.6 + 0.4 * (val < 0.5 ? val * 2 : (1 - val) * 2);
+                final scale = _reduceMotion ? 1.0 : 0.6 + 0.4 * (val < 0.5 ? val * 2 : (1 - val) * 2);
                 return Padding(
                   padding: EdgeInsets.only(right: i < 2 ? AppSizes.space2 : 0),
                   child: Transform.scale(

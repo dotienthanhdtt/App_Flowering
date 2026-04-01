@@ -269,4 +269,15 @@ const Map<String, String> enUS = {
   // Chat UI Update (08A-08E)
   'chat_try_instead': 'Try this instead:',
   'chat_save_to_words': 'Save to My Words',
+
+  // Empty States
+  'empty_no_conversations': 'No conversations yet',
+  'empty_start_first_conversation': 'Start your first conversation with Flora',
+  'empty_start_chat': 'Start Chat',
+  'empty_no_vocabulary': 'No words saved yet',
+  'empty_start_learning_vocabulary': 'Save words from your conversations',
+  'empty_no_lessons_completed': 'No lessons completed yet',
+  'empty_explore_lessons': 'Explore Lessons',
+  'empty_no_internet': 'No internet connection',
+  'empty_check_connection': 'Check your connection and try again',
 };

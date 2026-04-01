@@ -29,9 +29,9 @@ class _LoadingWidgetState extends State<LoadingWidget>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
-    )..repeat();
+    );
   }
 
   @override
@@ -40,12 +40,33 @@ class _LoadingWidgetState extends State<LoadingWidget>
     super.dispose();
   }
 
+  /// Sentinel `true` ensures first didChangeDependencies always triggers start.
+  bool _reduceMotion = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduce = MediaQuery.of(context).disableAnimations;
+    if (reduce != _reduceMotion) {
+      _reduceMotion = reduce;
+      if (_reduceMotion) {
+        _controller.stop();
+        _controller.value = 0;
+      } else {
+        _controller.repeat();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final glowColor = widget.glowColor ?? AppColors.primaryColor;
     final loadingSize = widget.size ?? 80.0;
 
-    return Center(
+    return Semantics(
+      label: widget.message ?? 'Loading',
+      liveRegion: true,
+      child: Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -85,10 +106,12 @@ class _LoadingWidgetState extends State<LoadingWidget>
                 shape: BoxShape.circle,
                 color: glowColor.withValues(alpha: 0.1),
               ),
-              child: Icon(
-                Icons.local_florist,
-                size: loadingSize * 0.6,
-                color: glowColor,
+              child: ExcludeSemantics(
+                child: Icon(
+                  Icons.local_florist,
+                  size: loadingSize * 0.6,
+                  color: glowColor,
+                ),
               ),
             ),
           ),
@@ -103,6 +126,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
           ],
         ],
       ),
+    ),
     );
   }
 }

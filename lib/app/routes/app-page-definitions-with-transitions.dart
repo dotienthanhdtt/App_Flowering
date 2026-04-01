@@ -57,7 +57,7 @@ class _PlaceholderScreen extends StatelessWidget {
 abstract class AppPages {
   /// Default transition configuration
   static const Transition defaultTransition = Transition.rightToLeft;
-  static const Duration defaultDuration = Duration(milliseconds: 300);
+  static const Duration defaultDuration = Duration(milliseconds: 250);
   static const Curve defaultCurve = Curves.easeInOut;
 
   /// Initial route — splash handles auth check + routing
@@ -71,7 +71,7 @@ abstract class AppPages {
       page: () => const SplashScreen(),
       binding: SplashBinding(),
       transition: Transition.fade,
-      transitionDuration: const Duration(milliseconds: 500),
+      transitionDuration: const Duration(milliseconds: 400),
     ),
 
     // Onboarding — value screen 1 (Screen 03)

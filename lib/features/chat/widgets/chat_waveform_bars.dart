@@ -28,13 +28,31 @@ class _ChatWaveformBarsState extends State<ChatWaveformBars>
     _ctrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
-    )..repeat();
+    );
   }
 
   @override
   void dispose() {
     _ctrl.dispose();
     super.dispose();
+  }
+
+  /// Sentinel `true` ensures first didChangeDependencies always triggers start.
+  bool _reduceMotion = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduce = MediaQuery.of(context).disableAnimations;
+    if (reduce != _reduceMotion) {
+      _reduceMotion = reduce;
+      if (_reduceMotion) {
+        _ctrl.stop();
+        _ctrl.value = 0;
+      } else {
+        _ctrl.repeat();
+      }
+    }
   }
 
   @override
@@ -48,7 +66,7 @@ class _ChatWaveformBarsState extends State<ChatWaveformBars>
           children: List.generate(_barCount, (i) {
             // Each bar gets a slight phase offset for a wave effect.
             final phase = (i / _barCount + _ctrl.value) % 1.0;
-            final wave = 0.5 + 0.5 * _sin(phase * 3.14159 * 2);
+            final wave = _reduceMotion ? 0.5 : 0.5 + 0.5 * _sin(phase * 3.14159 * 2);
             // Scale the wave by the real amplitude.
             final height =
                 _minHeight + (_maxHeight - _minHeight) * amp * wave;

@@ -60,6 +60,9 @@ class OtpInputFieldState extends State<OtpInputField> {
   }
 
   void _onChanged(int index, String value) {
+    if (value.isNotEmpty) {
+      HapticFeedback.selectionClick();
+    }
     if (value.length > 1) {
       final digits = value.replaceAll(RegExp(r'\D'), '');
       for (var i = 0; i < _length && i < digits.length; i++) {
@@ -85,14 +88,17 @@ class OtpInputFieldState extends State<OtpInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(
-        _length,
-        (i) => _OtpBox(
-          controller: _controllers[i],
-          focusNode: _focusNodes[i],
-          onChanged: (v) => _onChanged(i, v),
+    return Semantics(
+      label: 'Verification code, 6 digits',
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(
+          _length,
+          (i) => _OtpBox(
+            controller: _controllers[i],
+            focusNode: _focusNodes[i],
+            onChanged: (v) => _onChanged(i, v),
+          ),
         ),
       ),
     );

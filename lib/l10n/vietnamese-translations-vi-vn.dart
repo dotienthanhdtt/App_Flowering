@@ -269,4 +269,15 @@ const Map<String, String> viVN = {
   // Chat UI Update (08A-08E)
   'chat_try_instead': 'Thử lại câu này:',
   'chat_save_to_words': 'Lưu vào từ vựng',
+
+  // Empty States
+  'empty_no_conversations': 'Chưa có cuộc trò chuyện nào',
+  'empty_start_first_conversation': 'Bắt đầu cuộc trò chuyện đầu tiên với Flora',
+  'empty_start_chat': 'Bắt đầu trò chuyện',
+  'empty_no_vocabulary': 'Chưa có từ nào được lưu',
+  'empty_start_learning_vocabulary': 'Lưu từ vựng từ các cuộc trò chuyện',
+  'empty_no_lessons_completed': 'Chưa hoàn thành bài học nào',
+  'empty_explore_lessons': 'Khám phá bài học',
+  'empty_no_internet': 'Không có kết nối internet',
+  'empty_check_connection': 'Kiểm tra kết nối và thử lại',
 };
