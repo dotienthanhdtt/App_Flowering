@@ -32,7 +32,16 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git reset:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(grep:*)",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"education language learning mobile app\" --design-system -p \"Flowering\")",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"education language learning\" --stack flutter)",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"animation accessibility loading\" --domain ux)",
+      "Bash(echo \"EXIT:$?\")"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "figma"
+  ],
+  "enableAllProjectMcpServers": true
 }

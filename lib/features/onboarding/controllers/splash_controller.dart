@@ -16,6 +16,8 @@ class SplashController extends BaseController {
   }
 
   Future<void> _checkAuthAndNavigate() async {
+    final hasToken = _authStorage.isLoggedIn;
+
     final results = await Future.wait([
       Future.delayed(const Duration(seconds: 3)),
       _validateToken(),
@@ -24,7 +26,10 @@ class SplashController extends BaseController {
     final isValid = results[1] as bool;
 
     if (isValid) {
-      Get.offAllNamed(AppRoutes.home);
+      Get.offAllNamed(AppRoutes.onboardingWelcomeBack);
+    } else if (hasToken) {
+      // Had a session before but token expired — show welcome back
+      Get.offAllNamed(AppRoutes.onboardingWelcomeBack);
     } else {
       Get.offAllNamed(AppRoutes.onboardingWelcome);
     }

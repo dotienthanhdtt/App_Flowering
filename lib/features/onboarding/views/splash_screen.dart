@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_screen.dart';
-import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../controllers/splash_controller.dart';
 
 class SplashScreen extends BaseScreen<SplashController> {
   const SplashScreen({super.key});
+
+  static const Color _splashBg = Color(0xFFFF8762);
 
   @override
   bool get useSafeArea => false;
@@ -17,7 +18,7 @@ class SplashScreen extends BaseScreen<SplashController> {
   bool get showLoadingOverlay => false;
 
   @override
-  Color? get backgroundColor => AppColors.primaryColor;
+  Color? get backgroundColor => _splashBg;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -27,41 +28,20 @@ class SplashScreen extends BaseScreen<SplashController> {
         statusBarIconBrightness: Brightness.light,
       ),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/logos/logo.png',
-              width: 180,
-              height: 180,
-            ),
-            TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0.0, end: 1.0),
-              duration: const Duration(milliseconds: 600),
-              curve: Curves.easeIn,
-              builder: (context, opacity, child) {
-                return Opacity(opacity: opacity, child: child);
-              },
-              child: Column(
-                children: [
-                  const SizedBox(height: AppSizes.space4),
-                  AppText(
-                    'app_name'.tr,
-                    variant: AppTextVariant.h1,
-                    fontSize: AppSizes.fontSize4XLarge,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(height: AppSizes.space2),
-                  AppText(
-                    'splash_subtitle'.tr,
-                    variant: AppTextVariant.bodyLarge,
-                    fontSize: AppSizes.fontSizeMedium,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeIn,
+          builder: (context, opacity, child) {
+            return Opacity(opacity: opacity, child: child);
+          },
+          child: AppText(
+            'app_name'.tr,
+            variant: AppTextVariant.h1,
+            fontSize: AppSizes.fontSize5XLarge,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
         ),
       ),
     );

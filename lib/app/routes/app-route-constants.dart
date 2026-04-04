@@ -30,6 +30,7 @@ abstract class AppRoutes {
 
   // Onboarding routes
   static const String onboardingWelcome = '/onboarding/welcome';
+  static const String onboardingWelcomeBack = '/onboarding/welcome-back';
   static const String onboardingWelcome2 = '/onboarding/welcome-2';
   static const String onboardingWelcome3 = '/onboarding/welcome-3';
   static const String onboardingNativeLanguage = '/onboarding/native-language';
