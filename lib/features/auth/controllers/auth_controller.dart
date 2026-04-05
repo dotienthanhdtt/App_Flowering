@@ -1,5 +1,10 @@
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
@@ -129,13 +134,89 @@ class AuthController extends BaseController {
     Get.offAllNamed(AppRoutes.home);
   }
 
-  // Social auth — implemented when native SDKs are configured
+  // ── Social auth via Firebase ──────────────────────────────────
+
   Future<void> signInWithGoogle() async {
-    // TODO: implement google_sign_in
+    isLoading.value = true;
+    errorMessage.value = '';
+    try {
+      // Use iosClientId from Firebase options for iOS Google Sign-In
+      final googleSignIn = GoogleSignIn(
+        scopes: ['email'],
+        serverClientId: null, // Firebase handles this via GoogleService-Info.plist
+      );
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        isLoading.value = false;
+        return; // user cancelled
+      }
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await _authenticateWithFirebase(credential);
+    } on FirebaseAuthException catch (e) {
+      errorMessage.value = e.message ?? 'google_sign_in_failed'.tr;
+    } catch (e) {
+      debugPrint('Google sign-in error: $e');
+      errorMessage.value = 'google_sign_in_failed'.tr;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> signInWithApple() async {
-    // TODO: implement sign_in_with_apple
+    if (!Platform.isIOS) return;
+    isLoading.value = true;
+    errorMessage.value = '';
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+      await _authenticateWithFirebase(oauthCredential);
+    } on SignInWithAppleAuthorizationException {
+      // user cancelled — do nothing
+    } on FirebaseAuthException catch (e) {
+      errorMessage.value = e.message ?? 'apple_sign_in_failed'.tr;
+    } catch (e) {
+      debugPrint('Apple sign-in error: $e');
+      errorMessage.value = 'apple_sign_in_failed'.tr;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Signs in to Firebase, gets ID token, then calls backend /auth/firebase.
+  Future<void> _authenticateWithFirebase(AuthCredential credential) async {
+    final userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    final idToken = await userCredential.user?.getIdToken();
+    if (idToken == null) {
+      errorMessage.value = 'firebase_token_error'.tr;
+      return;
+    }
+    final response = await _apiClient.post<AuthResponse>(
+      ApiEndpoints.loginFirebase,
+      data: {
+        'idToken': idToken,
+        'displayName': userCredential.user?.displayName,
+        if (_conversationId != null) 'conversationId': _conversationId,
+      },
+      fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
+    );
+    if (response.isSuccess && response.data != null) {
+      await _handleAuthSuccess(response.data!);
+    } else {
+      errorMessage.value = response.message;
+    }
   }
 
   @override

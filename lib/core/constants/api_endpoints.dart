@@ -7,8 +7,7 @@ class ApiEndpoints {
   static const String register = '/auth/register';
   static const String refreshToken = '/auth/refresh';
   static const String logout = '/auth/logout';
-  static const String loginGoogle = '/auth/google'; // POST
-  static const String loginApple = '/auth/apple'; // POST
+  static const String loginFirebase = '/auth/firebase'; // POST (Google & Apple)
   static const String forgotPassword = '/auth/forgot-password'; // POST
   static const String verifyOtp = '/auth/verify-otp'; // POST
   static const String resetPassword = '/auth/reset-password'; // POST

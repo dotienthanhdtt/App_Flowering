@@ -37,11 +37,20 @@
       "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"education language learning mobile app\" --design-system -p \"Flowering\")",
       "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"education language learning\" --stack flutter)",
       "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"animation accessibility loading\" --domain ux)",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(xargs cat:*)",
+      "Bash(xcrun simctl:*)",
+      "Bash(xcodebuild -version)",
+      "Bash(xcode-select -p)",
+      "Bash(xcodebuild -showsdks)",
+      "Bash(xcodebuild -destination \"platform=iOS Simulator,id=178E7127-657B-4782-B2B6-4591BC179945\" -showdestinations -scheme Runner -project ios/Runner.xcodeproj)",
+      "Bash(xcodebuild -workspace ios/Runner.xcworkspace -showdestinations -scheme Runner)",
+      "Bash(xcodebuild -downloadPlatform iOS)",
+      "Bash(curl -sL \"https://developers.google.com/identity/images/g-logo.png\" -o /Users/tienthanh/Documents/new_flowering/app_flowering/flowering/assets/logos/google_logo.png)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "figma"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

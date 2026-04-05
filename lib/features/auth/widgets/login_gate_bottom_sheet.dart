@@ -1,26 +1,24 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
-import 'social_auth_button.dart';
+import '../controllers/auth_controller.dart';
 
 /// Screen 09 — Login Gate shown as a bottom sheet over the Scenario Gift screen.
-/// Social auth buttons are UI-only stubs; email routes to Signup/Login screens.
+/// Social auth via Firebase; email routes to Signup/Login screens.
 class LoginGateBottomSheet extends StatelessWidget {
   const LoginGateBottomSheet({super.key});
 
-  void _onSocialTap() {
-    Get.snackbar(
-      'auth_social_coming_soon'.tr,
-      'auth_social_coming_soon_message'.tr,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(AppSizes.space4),
-      backgroundColor: AppColors.surfaceColor,
-      colorText: AppColors.textPrimaryColor,
-    );
+  AuthController _getAuthController() {
+    if (!Get.isRegistered<AuthController>()) {
+      Get.put(AuthController());
+    }
+    return Get.find<AuthController>();
   }
 
   @override
@@ -63,9 +61,46 @@ class LoginGateBottomSheet extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSizes.space6),
-          SocialAuthButton(provider: SocialProvider.apple, onTap: _onSocialTap),
-          const SizedBox(height: AppSizes.space3),
-          SocialAuthButton(provider: SocialProvider.google, onTap: _onSocialTap),
+          // Error message
+          Obx(() {
+            final err = _getAuthController().errorMessage.value;
+            if (err.isEmpty) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSizes.space3),
+              child: AppText(
+                err,
+                variant: AppTextVariant.caption,
+                color: AppColors.errorColor,
+                textAlign: TextAlign.center,
+              ),
+            );
+          }),
+          // Loading indicator
+          Obx(() {
+            if (!_getAuthController().isLoading.value) return const SizedBox.shrink();
+            return const Padding(
+              padding: EdgeInsets.only(bottom: AppSizes.space3),
+              child: SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            );
+          }),
+          // Apple Sign-In (iOS only)
+          if (Platform.isIOS)
+            SignInWithAppleButton(
+              onPressed: () => _getAuthController().signInWithApple(),
+              style: SignInWithAppleButtonStyle.black,
+              height: AppSizes.buttonHeightLarge,
+              borderRadius: BorderRadius.circular(AppSizes.radiusPill),
+            ),
+          if (Platform.isIOS)
+            const SizedBox(height: AppSizes.space3),
+          // Google Sign-In
+          _GoogleSignInButton(
+            onTap: () => _getAuthController().signInWithGoogle(),
+          ),
           const SizedBox(height: AppSizes.space4),
           // "or" divider
           Row(
@@ -130,6 +165,38 @@ class LoginGateBottomSheet extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Google sign-in button matching Google branding guidelines.
+class _GoogleSignInButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _GoogleSignInButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: AppSizes.buttonHeightLarge,
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: AppColors.surfaceColor,
+          side: const BorderSide(color: AppColors.borderLightColor, width: AppSizes.borderMedium),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizes.radiusPill),
+          ),
+        ),
+        icon: Image.asset('assets/logos/google_logo.png', height: 20, width: 20),
+        label: AppText(
+          'continue_with_google'.tr,
+          variant: AppTextVariant.bodyLarge,
+          fontSize: AppSizes.fontSizeMedium,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimaryColor,
+        ),
       ),
     );
   }
