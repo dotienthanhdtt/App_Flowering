@@ -30,8 +30,8 @@ class DefaultFirebaseOptions {
 
   // TODO: Add Android config from google-services.json when available
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '',
-    appId: '',
+    apiKey: 'AIzaSyCdRjCVZlhrq72RuEklEyyxYlBRCYhI2Sw',
+    appId: '1:406099696497:android:0d4ed619c031c0ac3574d0',
     messagingSenderId: '898715197112',
     projectId: 'flowering-74b9e',
     storageBucket: 'flowering-74b9e.firebasestorage.app',
