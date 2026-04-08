@@ -72,7 +72,12 @@ lib/
 │   │   ├── storage_service.dart       # Hive operations
 │   │   ├── auth_storage.dart          # Secure token storage
 │   │   ├── connectivity_service.dart  # Network monitoring
-│   │   └── audio_service.dart         # Audio I/O
+│   │   └── audio/                     # Audio I/O (TTS & STT)
+│   │       ├── models/                # TtsEvent, SttResult, VoiceInputResult
+│   │       ├── contracts/             # TtsProviderContract, SttProviderContract, AudioRecorderProviderContract
+│   │       ├── providers/             # FlutterTtsProvider, SpeechToTextProvider, RecordAudioProvider
+│   │       ├── tts-service.dart       # TTS queue-based service
+│   │       └── voice-input-service.dart  # STT + recording service
 │   ├── utils/                         # Utilities
 │   │   ├── extensions.dart            # Dart extensions
 │   │   └── validators.dart            # Input validation
@@ -300,47 +305,94 @@ Future<ConnectivityService> init();
 Future<bool> checkConnection();
 ```
 
-#### AudioService
-Audio recording and playback with permission handling.
+#### Audio Architecture (Phase 6.9 ✅)
+
+**Pattern:** Abstract provider pattern with platform-specific implementations and GetX services.
+
+**Core Components:**
+- **Models** (`lib/core/services/audio/models/`) — TtsEvent, SttResult, VoiceInputResult
+- **Contracts** (`lib/core/services/audio/contracts/`) — TtsProviderContract, SttProviderContract, AudioRecorderProviderContract
+- **Providers** (`lib/core/services/audio/providers/`) — FlutterTtsProvider, SpeechToTextProvider, RecordAudioProvider
+- **Services** (`lib/core/services/audio/`) — TtsService (GetxService), VoiceInputService (GetxService)
+
+**Key Behaviors:**
+- TTS auto-plays AI messages when `tts_auto_play` preference is enabled
+- VoiceInputService: iOS records audio + STT simultaneously; Android STT only
+- TTS stops before STT starts (prevents audio session conflicts)
+- 55s timeout on STT (Apple 60s hard limit)
+- iOS sends audio files to POST /ai/transcribe for accuracy
+
+##### TtsService (Text-to-Speech)
 
 **Observable State:**
 ```dart
-final isRecording = false.obs;
-final isPlaying = false.obs;
-final recordingDuration = Duration.zero.obs;
-final playbackPosition = Duration.zero.obs;
-final playbackDuration = Duration.zero.obs;
+final isSpeaking = false.obs;
+final currentText = ''.obs;
 ```
 
-**Recording Configuration:**
-- Encoder: AAC-LC
-- Bitrate: 128kbps
-- Sample rate: 44.1kHz
-- Output: Temp directory with timestamp
+**Queue Mechanism:**
+- Auto-queue up to 10 pending messages
+- Sequential playback with automatic queue processing
+- Stops immediately when `stopForVoiceInput()` called (voice input priority)
 
 **Key Methods:**
 ```dart
-// Recording
-Future<bool> hasRecordPermission();
-Future<String?> startRecording();
-Future<String?> stopRecording();
-Future<void> cancelRecording();
-
-// Playback
-Future<void> playFile(String path);
-Future<void> playUrl(String url);
+Future<void> speak(String text, {String? language});
+Future<void> stopForVoiceInput();  // Clears queue, stops playback
+Future<void> stop();  // Alias for stopForVoiceInput()
 Future<void> pause();
 Future<void> resume();
-Future<void> stop();
-Future<void> seek(Duration position);
-Future<void> setPlaybackRate(double rate);
+bool get autoPlayEnabled;
+Future<void> setAutoPlay(bool value);
+Future<void> setRate(double rate);
+Future<void> setPitch(double pitch);
 ```
 
-**Resource Management:**
-- Timer cleanup on stop/cancel
-- Proper disposal of recorder and player
-- Stream subscription cleanup
-- Memory leak fixes applied
+**Storage (Hive preferences):**
+- `tts_auto_play` — Boolean; defaults to false
+- `tts_rate` — Double (0.0–2.0); defaults to 0.5
+- `tts_pitch` — Double (0.0–2.0); defaults to 1.0
+
+##### VoiceInputService (Speech-to-Text + Recording)
+
+**Observable State:**
+```dart
+final isListening = false.obs;
+final partialText = ''.obs;
+final amplitude = 0.0.obs;
+final sttAvailable = false.obs;
+final listeningDuration = Duration.zero.obs;
+```
+
+**Platform-Specific Behavior:**
+- **iOS:** Records audio to file + runs STT in parallel; amplitude stream from recorder
+- **Android:** STT only; no simultaneous recording
+
+**Timeout:**
+- 55s maximum listening duration (safety margin before Apple's 60s limit)
+- Auto-stops via timer when exceeded
+
+**Key Methods:**
+```dart
+Future<void> startVoiceInput({String? language});
+Future<VoiceInputResult> stopVoiceInput();
+```
+
+**Return Object (VoiceInputResult):**
+```dart
+class VoiceInputResult {
+  final String transcribedText;
+  final String? audioFilePath;  // iOS only
+  final bool isPartial;
+}
+```
+
+**Audio Submission Flow (iOS):**
+1. User speaks → STT generates transcription + audio file saved
+2. Call `stopVoiceInput()` → returns transcribed text + audio path
+3. Submit form with transcribed text + audio path to backend
+4. Backend: POST /ai/transcribe with audio file (cloud transcription for accuracy)
+5. Backend returns canonical transcription → update UI
 
 #### TranslationService
 Word and sentence translation via backend API with caching.
@@ -603,20 +655,37 @@ await apiClient.uploadFile(
 
 ## Audio Architecture
 
-### Voice Input Flow
+### Voice Input & Text-to-Speech Flow
 
+**Text-to-Speech (TTS):**
 ```
-User Press → Request Permission → Start Recording →
-Convert to WAV → Send to API → Receive Response → Play Audio
+AI Response → Check tts_auto_play pref → Queue text → 
+TtsService processes queue → FlutterTtsProvider speaks → Event callbacks
 ```
 
-### Audio Service Responsibilities
+**Voice Input (STT):**
+```
+User Press Start → Stop TTS → Start STT → 
+(iOS: Record audio in parallel) → User speaks → 55s timeout or manual stop →
+StopVoiceInput() → Return transcribed text + audio path (iOS) → Submit to backend
+```
 
-- Microphone permission handling
-- Audio recording with record package
-- Audio playback with audioplayers package
-- Format conversion (if needed)
-- Error handling (permission denied, codec issues)
+**Platform Differences:**
+
+| Feature | iOS | Android |
+|---------|-----|---------|
+| STT (Speech-to-Text) | ✅ Yes | ✅ Yes |
+| Recording during STT | ✅ Yes | ❌ No |
+| Audio session conflict prevention | ✅ Stops TTS before STT | ✅ Stops TTS before STT |
+| Max listening duration | 55s timeout (Apple 60s limit) | 55s timeout |
+| Backend transcription | POST /ai/transcribe with audio file | Text only (device STT) |
+
+**Service Responsibilities:**
+- **TtsService:** Queue management, auto-play preference, rate/pitch control
+- **VoiceInputService:** STT initialization, simultaneous recording (iOS), timeout, amplitude tracking
+- **FlutterTtsProvider:** Platform TTS engine abstraction (flutter_tts package)
+- **SpeechToTextProvider:** Platform STT engine abstraction (speech_to_text package)
+- **RecordAudioProvider:** Audio recording abstraction (record package)
 
 ## Offline-First Strategy
 
@@ -678,7 +747,15 @@ Get.lazyPut(() => ApiClient());
 Get.lazyPut(() => StorageService());
 Get.lazyPut(() => AuthStorage());
 Get.lazyPut(() => ConnectivityService());
-Get.lazyPut(() => AudioService());
+
+// Audio providers (contracts)
+Get.lazyPut<TtsProviderContract>(() => FlutterTtsProvider());
+Get.lazyPut<SttProviderContract>(() => SpeechToTextProvider());
+Get.lazyPut<AudioRecorderProviderContract>(() => RecordAudioProvider());
+
+// Audio services
+Get.lazyPut(() => TtsService());
+Get.lazyPut(() => VoiceInputService());
 ```
 
 **Service Initialization:**
@@ -686,7 +763,22 @@ All services extend `GetxService` and implement `init()` method:
 ```dart
 final storage = Get.find<StorageService>();
 await storage.init();
+
+final ttsService = Get.find<TtsService>();
+await ttsService.init();
+
+final voiceInputService = Get.find<VoiceInputService>();
+await voiceInputService.init();
 ```
+
+**Initialization Order:**
+1. ApiClient
+2. StorageService (loads preferences)
+3. AuthStorage
+4. ConnectivityService
+5. Audio providers (TtsProvider, SttProvider, RecorderProvider)
+6. TtsService (initializes provider, loads user preferences)
+7. VoiceInputService (initializes providers)
 
 ### Feature Bindings
 
@@ -884,8 +976,9 @@ Get.updateLocale(const Locale('vi', 'VN'))  // Switch language
 | Networking | Dio 5.4.0 |
 | Cache Storage | Hive 2.2.3 |
 | Token Storage | Hive (AuthStorage) |
-| Audio Recording | record 5.0.4 |
-| Audio Playback | audioplayers 5.2.1 |
+| Text-to-Speech | flutter_tts 4.2.5 |
+| Speech-to-Text | speech_to_text 7.3.0 |
+| Audio Recording | record 5.0.4 (iOS), flutter_tts recording (Android) |
 | In-App Subscriptions | purchases_flutter 8.11.0 |
 | Localization | intl 0.19.0 |
 | Typography | google_fonts 6.1.0 |

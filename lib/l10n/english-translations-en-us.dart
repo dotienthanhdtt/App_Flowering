@@ -146,8 +146,15 @@ const Map<String, String> enUS = {
   'chat_translate': 'Translate',
   'chat_hide_translation': 'Hide',
   'chat_play_audio': 'Play',
+  'chat_playing': 'Playing...',
   'chat_type_message': 'Type a message...',
   'chat_complete': 'Chat complete',
+  'chat_listening': 'Listening...',
+  'chat_tap_to_speak': 'Hold to speak',
+  'chat_stt_unavailable': 'Voice input not available on this device',
+  'chat_stt_timeout': 'Recording time limit reached',
+  'chat_tts_auto_play': 'Auto-play messages',
+  'chat_transcribing': 'Transcribing...',
 
   // Onboarding — Scenario Gift (Screen 08)
   'scenario_title': 'Your Scenarios',

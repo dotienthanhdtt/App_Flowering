@@ -146,8 +146,15 @@ const Map<String, String> viVN = {
   'chat_translate': 'Dịch',
   'chat_hide_translation': 'Ẩn',
   'chat_play_audio': 'Phát',
+  'chat_playing': 'Đang phát...',
   'chat_type_message': 'Nhập tin nhắn...',
   'chat_complete': 'Hoàn thành',
+  'chat_listening': 'Đang nghe...',
+  'chat_tap_to_speak': 'Giữ để nói',
+  'chat_stt_unavailable': 'Nhập giọng nói không khả dụng trên thiết bị này',
+  'chat_stt_timeout': 'Đã đạt giới hạn thời gian ghi âm',
+  'chat_tts_auto_play': 'Tự động phát tin nhắn',
+  'chat_transcribing': 'Đang chuyển âm...',
 
   // Onboarding — Scenario Gift (Screen 08)
   'scenario_title': 'Kịch bản của bạn',

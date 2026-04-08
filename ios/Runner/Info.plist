@@ -58,5 +58,9 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSSpeechRecognitionUsageDescription</key>
+		<string>Flowering uses speech recognition to transcribe your voice messages</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Flowering needs microphone access to record voice messages</string>
 	</dict>
 </plist>

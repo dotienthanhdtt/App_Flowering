@@ -21,14 +21,15 @@ Phase 6: Onboarding & Auth ████████████ 100% (6h) ✅ CO
 Phase 6.5: Bottom Navigation ████████████ 100% (1h) ✅ COMPLETED 2026-03-13
 Phase 6.7: Text→AppText Refactor ████████████ 100% (3h) ✅ COMPLETED 2026-03-18
 Phase 6.8: API JSON Migration ████████████ 100% (2h) ✅ COMPLETED 2026-03-28
+Phase 6.9: Audio Architecture (TTS/STT) ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-06
 Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-15
 Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-04-25
 Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-05
 Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-15
 ```
 
-**Overall Progress:** 100% of foundation + onboarding + auth + chat features (Phases 1-6.8 complete)
-**Completed:** 23.5 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, chat with grammar correction, API migration)
+**Overall Progress:** 100% of foundation + onboarding + auth + audio architecture (Phases 1-6.9 complete)
+**Completed:** 25 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture)
 **Remaining:** Home dashboard, expanded chat, lessons, profile/settings (~8.5 hours estimated)
 
 ## Phase Details
@@ -593,6 +594,144 @@ Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 P
 - ✅ API failures don't break chat functionality
 - ✅ Zero compile errors
 - ✅ App runs normally with feature active
+
+---
+
+### Phase 6.9: Audio Architecture (TTS & STT) ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 1.5 hours
+**Completion Date:** 2026-04-06
+**Dependencies:** Phase 3 (StorageService) ✅
+**Priority:** P1 - Critical (Chat voice I/O)
+
+**Deliverables:**
+- ✅ Abstract provider pattern (contracts) for TTS, STT, audio recording
+- ✅ `flutter_tts` provider implementation (`FlutterTtsProvider`)
+- ✅ `speech_to_text` provider implementation (`SpeechToTextProvider`)
+- ✅ `record` package provider implementation (`RecordAudioProvider`)
+- ✅ `TtsService` (GetxService) with queue-based auto-play
+- ✅ `VoiceInputService` (GetxService) with platform-aware recording + STT
+- ✅ Data models: `TtsEvent`, `SttResult`, `VoiceInputResult`
+- ✅ Global dependency injection for all audio services
+- ✅ New dependencies: `flutter_tts: ^4.2.5`, `speech_to_text: ^7.3.0`
+
+**Key Achievements:**
+- Replaced monolithic `AudioService` (283 LOC) with modular provider pattern
+- Implemented TTS auto-play with user preference persistence
+- Platform-specific STT: iOS records audio for backend transcription, Android STT only
+- Audio session conflict prevention: TTS auto-stops before STT starts
+- 55s timeout on STT (safety margin before Apple's 60s limit)
+- Amplitude tracking and duration monitoring for voice input
+- Queue-based TTS with up to 10 pending messages
+
+**Architecture:**
+```
+lib/core/services/audio/
+├── models/
+│   ├── tts-event.dart
+│   ├── stt-result.dart
+│   └── voice-input-result.dart
+├── contracts/
+│   ├── tts-provider-contract.dart
+│   ├── stt-provider-contract.dart
+│   └── audio-recorder-provider-contract.dart
+├── providers/
+│   ├── flutter-tts-provider.dart
+│   ├── speech-to-text-provider.dart
+│   └── record-audio-provider.dart
+├── tts-service.dart
+└── voice-input-service.dart
+```
+
+**TtsService Observable State:**
+```dart
+final isSpeaking = false.obs;
+final currentText = ''.obs;
+```
+
+**Key Methods:**
+- `speak(String text, {String? language})` — Queue message for playback
+- `stopForVoiceInput()` — Stop TTS and clear queue (for voice input priority)
+- `setAutoPlay(bool value)` — Enable/disable auto-play for AI responses
+- `setRate(double rate)`, `setPitch(double pitch)` — Playback controls
+
+**VoiceInputService Observable State:**
+```dart
+final isListening = false.obs;
+final partialText = ''.obs;
+final amplitude = 0.0.obs;
+final sttAvailable = false.obs;
+final listeningDuration = Duration.zero.obs;
+```
+
+**Key Methods:**
+- `startVoiceInput({String? language})` — Start STT, optionally record (iOS)
+- `stopVoiceInput()` → VoiceInputResult — Stop STT, return transcribed text + audio path
+
+**Platform Differences:**
+
+| Feature | iOS | Android |
+|---------|-----|---------|
+| STT | ✅ Yes | ✅ Yes |
+| Recording during STT | ✅ Yes | ❌ No |
+| Timeout | 55s (Apple 60s limit) | 55s |
+| Backend transcription | POST /ai/transcribe with audio file | Text only |
+
+**Preferences Stored (Hive):**
+- `tts_auto_play` — Boolean (default: false)
+- `tts_rate` — Double 0.0–2.0 (default: 0.5)
+- `tts_pitch` — Double 0.0–2.0 (default: 1.0)
+
+**Files Created:**
+- `/lib/core/services/audio/models/` - 3 model files (TtsEvent, SttResult, VoiceInputResult)
+- `/lib/core/services/audio/contracts/` - 3 contract files (TtsProviderContract, SttProviderContract, AudioRecorderProviderContract)
+- `/lib/core/services/audio/providers/` - 3 provider files (FlutterTtsProvider, SpeechToTextProvider, RecordAudioProvider)
+- `/lib/core/services/audio/tts-service.dart` - TtsService
+- `/lib/core/services/audio/voice-input-service.dart` - VoiceInputService
+
+**Files Deleted:**
+- `/lib/core/services/audio_service.dart` (monolithic, replaced by modular pattern)
+
+**Dependencies Added:**
+- `flutter_tts: ^4.2.5`
+- `speech_to_text: ^7.3.0`
+
+**Global Dependency Injection:**
+```dart
+Get.lazyPut<TtsProviderContract>(() => FlutterTtsProvider());
+Get.lazyPut<SttProviderContract>(() => SpeechToTextProvider());
+Get.lazyPut<AudioRecorderProviderContract>(() => RecordAudioProvider());
+Get.lazyPut(() => TtsService());
+Get.lazyPut(() => VoiceInputService());
+```
+
+**Initialization Order:**
+1. Audio providers (contracts)
+2. TtsService (initializes provider, loads preferences)
+3. VoiceInputService (initializes providers)
+
+**Technical Decisions:**
+- **Provider Pattern:** Contracts enable platform-specific implementations and testing
+- **Queue-Based TTS:** Prevents rapid audio playback overlaps; user preference persisted
+- **iOS Recording:** Simultaneous STT + recording for backend cloud transcription (higher accuracy)
+- **Timeout Design:** 55s safety margin before Apple's 60s hard limit
+- **Audio Session:** Explicit stop of TTS before STT to prevent session conflicts
+
+**Integration Points:**
+- Chat controller: `ttsService.speak()` when AI response arrives (if auto-play enabled)
+- Chat UI: Voice input button calls `voiceInputService.startVoiceInput()` and `stopVoiceInput()`
+- Settings screen: TTS rate/pitch/auto-play toggles
+
+**Success Criteria Met:**
+- ✅ TTS service queues and plays messages sequentially
+- ✅ STT initializes correctly on both platforms
+- ✅ iOS records audio while listening to STT
+- ✅ TTS stops before STT starts (no audio session conflicts)
+- ✅ 55s timeout prevents exceeding Apple limits
+- ✅ Preferences persist across app sessions
+- ✅ All files compile without errors
+- ✅ Services register correctly in GetX
 
 ---
 

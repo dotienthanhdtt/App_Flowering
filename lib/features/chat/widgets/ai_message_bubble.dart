@@ -14,6 +14,7 @@ class AiMessageBubble extends StatelessWidget {
   final VoidCallback? onTranslate;
   final VoidCallback? onPlayAudio;
   final void Function(String word)? onWordTap;
+  final bool isSpeaking;
 
   const AiMessageBubble({
     super.key,
@@ -21,6 +22,7 @@ class AiMessageBubble extends StatelessWidget {
     this.onTranslate,
     this.onPlayAudio,
     this.onWordTap,
+    this.isSpeaking = false,
   });
 
   @override
@@ -102,9 +104,15 @@ class AiMessageBubble extends StatelessWidget {
               ),
               const SizedBox(width: AppSizes.space4),
               TextActionButton(
-                icon: Icons.volume_up_rounded,
-                label: 'chat_play_audio'.tr,
-                color: AppColors.textTertiaryColor,
+                icon: isSpeaking
+                    ? Icons.volume_up_rounded
+                    : Icons.volume_up_outlined,
+                label: isSpeaking
+                    ? 'chat_playing'.tr
+                    : 'chat_play_audio'.tr,
+                color: isSpeaking
+                    ? AppColors.primaryColor
+                    : AppColors.textTertiaryColor,
                 onTap: onPlayAudio,
                 hasPillBackground: true,
               ),

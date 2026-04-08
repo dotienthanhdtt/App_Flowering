@@ -2,7 +2,14 @@ import 'package:get/get.dart';
 import '../core/services/storage_service.dart';
 import '../core/services/auth_storage.dart';
 import '../core/services/connectivity_service.dart';
-import '../core/services/audio_service.dart';
+import '../core/services/audio/contracts/tts-provider-contract.dart';
+import '../core/services/audio/contracts/stt-provider-contract.dart';
+import '../core/services/audio/contracts/audio-recorder-provider-contract.dart';
+import '../core/services/audio/providers/flutter-tts-provider.dart';
+import '../core/services/audio/providers/speech-to-text-provider.dart';
+import '../core/services/audio/providers/record-audio-provider.dart';
+import '../core/services/audio/tts-service.dart';
+import '../core/services/audio/voice-input-service.dart';
 import '../core/network/api_client.dart';
 import '../features/subscription/controllers/subscription-controller.dart';
 import '../features/subscription/services/revenuecat-service.dart';
@@ -33,9 +40,30 @@ class AppBindings extends Bindings {
       fenix: true,
     );
 
-    // Audio playback and recording
-    Get.lazyPut<AudioService>(
-      () => AudioService(),
+    // Audio providers — registered by contract type for swappability
+    Get.lazyPut<TtsProviderContract>(
+      () => FlutterTtsProvider(),
+      fenix: true,
+    );
+
+    Get.lazyPut<SttProviderContract>(
+      () => SpeechToTextProvider(),
+      fenix: true,
+    );
+
+    Get.lazyPut<AudioRecorderProviderContract>(
+      () => RecordAudioProvider(),
+      fenix: true,
+    );
+
+    // Audio services
+    Get.lazyPut<TtsService>(
+      () => TtsService(),
+      fenix: true,
+    );
+
+    Get.lazyPut<VoiceInputService>(
+      () => VoiceInputService(),
       fenix: true,
     );
 
@@ -82,9 +110,17 @@ Future<void> initializeServices() async {
   final connectivityService = Get.put(ConnectivityService());
   await connectivityService.init();
 
-  // Audio services for voice messages
-  final audioService = Get.put(AudioService());
-  await audioService.init();
+  // Audio providers (lazy — initialized by services)
+  Get.put<TtsProviderContract>(FlutterTtsProvider());
+  Get.put<SttProviderContract>(SpeechToTextProvider());
+  Get.put<AudioRecorderProviderContract>(RecordAudioProvider());
+
+  // Audio services — TTS before VoiceInput (VoiceInput depends on TTS)
+  final ttsService = Get.put(TtsService());
+  await ttsService.init();
+
+  final voiceInputService = Get.put(VoiceInputService());
+  await voiceInputService.init();
 
   // API client last (depends on auth storage)
   final apiClient = Get.put(ApiClient());

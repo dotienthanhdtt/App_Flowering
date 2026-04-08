@@ -2,6 +2,135 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-04-06] Audio Architecture Refactor: Monolithic → Provider Pattern ✅ COMPLETED
+
+#### Overview
+Replaced the monolithic `AudioService` (283 LOC) with a modular provider-based architecture supporting Text-to-Speech (TTS) and Speech-to-Text (STT) with platform-specific optimizations. New architecture enables TTS auto-play, queue-based message playback, iOS audio recording during STT, and proper audio session conflict prevention.
+
+#### Added
+- **Audio Models** (`lib/core/services/audio/models/`)
+  - `TtsEvent` — Events from TTS provider (start, complete, cancel, error)
+  - `SttResult` — Partial/final transcription from STT provider
+  - `VoiceInputResult` — Combined result: transcribed text + audio path (iOS)
+
+- **Audio Contracts** (`lib/core/services/audio/contracts/`)
+  - `TtsProviderContract` — Abstract TTS interface (flutter_tts implementation)
+  - `SttProviderContract` — Abstract STT interface (speech_to_text implementation)
+  - `AudioRecorderProviderContract` — Abstract recorder interface (record package implementation)
+
+- **Audio Providers** (`lib/core/services/audio/providers/`)
+  - `FlutterTtsProvider` — Wraps flutter_tts with contract compliance
+  - `SpeechToTextProvider` — Wraps speech_to_text with contract compliance
+  - `RecordAudioProvider` — Wraps record package with amplitude tracking
+
+- **TtsService** (`lib/core/services/audio/tts-service.dart`)
+  - Queue-based message playback (up to 10 pending)
+  - Auto-play preference persistence in Hive (`tts_auto_play`)
+  - Rate and pitch control with preferences
+  - Automatic queue processing on message completion
+  - Immediate stop/clear when voice input starts
+
+- **VoiceInputService** (`lib/core/services/audio/voice-input-service.dart`)
+  - STT initialization and platform availability checking
+  - iOS-specific: simultaneous recording + STT for backend transcription
+  - Android-specific: STT only (no recording)
+  - 55s timeout (safety margin before Apple's 60s limit)
+  - Amplitude tracking and listening duration monitoring
+  - Explicit TTS stop before STT start (audio session conflict prevention)
+
+- **New Dependencies**
+  - `flutter_tts: ^4.2.5` — Cross-platform TTS engine
+  - `speech_to_text: ^7.3.0` — Cross-platform STT engine
+
+#### Changed
+- **Audio Service Registration** (`global-dependency-injection-bindings.dart`)
+  - Providers registered as contracts before services
+  - TtsService and VoiceInputService depend on contracts
+
+#### Removed
+- **Monolithic AudioService** (`lib/core/services/audio_service.dart`)
+  - Replaced by modular TtsService + VoiceInputService
+  - Recording/playback functionality migrated to providers
+
+#### Platform-Specific Behavior
+
+| Feature | iOS | Android |
+|---------|-----|---------|
+| TTS Engine | flutter_tts | flutter_tts |
+| STT Engine | speech_to_text | speech_to_text |
+| Audio Recording | YES (during STT) | NO |
+| Amplitude Tracking | YES | NO |
+| Max Listening Duration | 55s (Apple 60s limit) | 55s |
+| Backend Transcription | POST /ai/transcribe + audio file | Text only |
+
+#### Storage Updates
+- **New Hive Preferences:**
+  - `tts_auto_play` — Boolean; enables auto-play of AI responses
+  - `tts_rate` — Double 0.0–2.0; playback speed (default: 0.5)
+  - `tts_pitch` — Double 0.0–2.0; voice pitch (default: 1.0)
+
+#### Integration Points
+1. **Chat Controller** — Calls `ttsService.speak()` when AI responds (if auto-play enabled)
+2. **Chat UI** — Voice input button triggers `voiceInputService.startVoiceInput()`
+3. **Settings Screen** — TTS rate/pitch/auto-play toggles (future)
+4. **Audio Session Management** — `voiceInputService.startVoiceInput()` auto-stops TTS
+
+#### Breaking Changes
+- `AudioService` removed; clients must use `TtsService` and `VoiceInputService` separately
+- Recording is now iOS-specific (Android has no recording during STT)
+- Audio file paths returned only on iOS via `VoiceInputResult.audioFilePath`
+
+#### Technical Decisions
+1. **Provider Pattern:** Enables platform-specific implementations and easy testing via mocks
+2. **Queue-Based TTS:** Prevents audio overlaps; respects user preference for auto-play
+3. **iOS Recording:** Simultaneous STT + recording for cloud transcription (higher accuracy than device STT)
+4. **Timeout Design:** 55s limit prevents exceeding Apple's 60s hard constraint
+5. **Audio Session Priority:** TTS explicitly stops before STT to avoid session conflicts
+
+#### Files Created
+- `/lib/core/services/audio/models/tts-event.dart`
+- `/lib/core/services/audio/models/stt-result.dart`
+- `/lib/core/services/audio/models/voice-input-result.dart`
+- `/lib/core/services/audio/contracts/tts-provider-contract.dart`
+- `/lib/core/services/audio/contracts/stt-provider-contract.dart`
+- `/lib/core/services/audio/contracts/audio-recorder-provider-contract.dart`
+- `/lib/core/services/audio/providers/flutter-tts-provider.dart`
+- `/lib/core/services/audio/providers/speech-to-text-provider.dart`
+- `/lib/core/services/audio/providers/record-audio-provider.dart`
+- `/lib/core/services/audio/tts-service.dart`
+- `/lib/core/services/audio/voice-input-service.dart`
+
+#### Files Deleted
+- `/lib/core/services/audio_service.dart`
+
+#### Testing Notes
+- TTS initialization tested on iOS and Android simulators
+- STT availability varies by platform (iOS: always available, Android: requires Google Speech plugin)
+- Recording during STT tested on iOS simulator
+- 55s timeout verified with manual timer tests
+- Queue-based TTS verified with multiple rapid `speak()` calls
+
+#### Migration Guide
+For existing chat features using the old `AudioService`:
+```dart
+// OLD (removed)
+final audioService = Get.find<AudioService>();
+await audioService.playFile(path);
+
+// NEW (TtsService for text output)
+final ttsService = Get.find<TtsService>();
+await ttsService.speak('Hello world');
+
+// NEW (VoiceInputService for voice input)
+final voiceInputService = Get.find<VoiceInputService>();
+await voiceInputService.startVoiceInput();
+final result = await voiceInputService.stopVoiceInput();
+final transcribedText = result.transcribedText;
+final audioPath = result.audioFilePath;  // iOS only
+```
+
+---
+
 ### [2026-03-28] API JSON Keys Migration: camelCase → snake_case ✅ COMPLETED
 
 #### Overview

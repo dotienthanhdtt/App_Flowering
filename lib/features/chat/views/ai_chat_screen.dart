@@ -62,7 +62,48 @@ class AiChatScreen extends BaseScreen<AiChatController> {
             return const SizedBox.shrink();
           }),
           Expanded(child: _ChatList(controller: controller)),
+          // Partial text overlay during voice input
+          Obx(() {
+            final isListening = controller.voiceInputService.isListening.value;
+            final partial = controller.voiceInputService.partialText.value;
+            if (!isListening) return const SizedBox.shrink();
+            return _VoiceInputOverlay(partial: partial);
+          }),
           const ChatInputBar(),
+        ],
+      ),
+    );
+  }
+}
+
+class _VoiceInputOverlay extends StatelessWidget {
+  final String partial;
+  const _VoiceInputOverlay({required this.partial});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.space4,
+        vertical: AppSizes.space2,
+      ),
+      color: AppColors.surfaceMutedColor,
+      child: Row(
+        children: [
+          const Icon(
+            Icons.mic_rounded,
+            size: AppSizes.iconSM,
+            color: AppColors.errorColor,
+          ),
+          const SizedBox(width: AppSizes.space2),
+          Expanded(
+            child: AppText(
+              partial.isEmpty ? 'chat_listening'.tr : partial,
+              variant: AppTextVariant.bodyLarge,
+              color: AppColors.textSecondaryColor,
+            ),
+          ),
         ],
       ),
     );
@@ -129,12 +170,12 @@ class _ChatList extends StatelessWidget {
             ),
             itemCount: controller.messages.length +
                 (controller.isTyping.value ? 1 : 0),
-            separatorBuilder: (_, __) => const SizedBox(height: AppSizes.space2),
+            separatorBuilder: (context, index) => const SizedBox(height: AppSizes.space2),
             itemBuilder: (_, index) {
               if (index == controller.messages.length) {
                 return const AiTypingBubble();
               }
-              return _buildMessageItem(controller.messages[index]);
+              return _buildMessageItem(controller, controller.messages[index]);
             },
           ),
         ],
@@ -142,16 +183,17 @@ class _ChatList extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageItem(ChatMessage message) {
+  Widget _buildMessageItem(AiChatController controller, ChatMessage message) {
     switch (message.type) {
       case ChatMessageType.aiText:
         return Builder(
-          builder: (context) => AiMessageBubble(
-            message: message,
-            onTranslate: () => controller.toggleTranslation(message.id),
-            onPlayAudio: () => controller.playAudio(message.id),
-            onWordTap: (word) => controller.onWordTap(word, context),
-          ),
+          builder: (context) => Obx(() => AiMessageBubble(
+                message: message,
+                onTranslate: () => controller.toggleTranslation(message.id),
+                onPlayAudio: () => controller.playAudio(message.id),
+                onWordTap: (word) => controller.onWordTap(word, context),
+                isSpeaking: controller.ttsService.currentText.value == message.text,
+              )),
         );
 
       case ChatMessageType.userText:

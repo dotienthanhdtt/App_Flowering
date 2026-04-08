@@ -1,11 +1,13 @@
+import 'package:dio/dio.dart' hide Options;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile, Response;
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
-import '../../../core/services/audio_service.dart';
+import '../../../core/services/audio/tts-service.dart';
+import '../../../core/services/audio/voice-input-service.dart';
 import '../../../core/services/storage_service.dart';
 import '../../onboarding/controllers/onboarding_controller.dart';
 import '../../onboarding/models/onboarding_profile_model.dart';
@@ -17,7 +19,8 @@ import '../widgets/word-translation-sheet-loader.dart';
 /// Session lifecycle: start → chat turns → complete → navigate to scenario gift.
 class AiChatController extends BaseController {
   final ApiClient _apiClient = Get.find();
-  final AudioService _audioService = Get.find();
+  final TtsService _ttsService = Get.find();
+  final VoiceInputService _voiceInputService = Get.find();
   final OnboardingController _onboardingCtrl = Get.find();
   final StorageService _storageService = Get.find();
 
@@ -30,15 +33,22 @@ class AiChatController extends BaseController {
   final chatTitle = 'Chat'.obs;
   final contextDescription = ''.obs;
 
-  // Voice recording state (delegated to AudioService)
-  RxBool get isRecording => _audioService.isRecording;
-  RxDouble get recordingAmplitude => _audioService.amplitude;
-  Rx<Duration> get recordingDuration => _audioService.recordingDuration;
+  // Voice input state (delegated to VoiceInputService)
+  RxBool get isRecording => _voiceInputService.isListening;
+  RxDouble get recordingAmplitude => _voiceInputService.amplitude;
+  Rx<Duration> get recordingDuration => _voiceInputService.listeningDuration;
+
+  // TTS state (delegated to TtsService)
+  TtsService get ttsService => _ttsService;
+  VoiceInputService get voiceInputService => _voiceInputService;
 
   final ScrollController scrollController = ScrollController();
   final TextEditingController textEditingController = TextEditingController();
 
   String? _conversationId;
+
+  String get _targetLanguage =>
+      _onboardingCtrl.selectedLearningLanguage.value;
 
   @override
   void onInit() {
@@ -215,10 +225,17 @@ class AiChatController extends BaseController {
     );
   }
 
-  /// Placeholder for TTS playback
+  /// Speak an AI message via TTS
   void playAudio(String messageId) {
-    // TODO: Integrate TTS service
+    final index = messages.indexWhere((m) => m.id == messageId);
+    if (index == -1) return;
+    final text = messages[index].text;
+    if (text == null || text.trim().isEmpty) return;
+    _ttsService.speak(text, language: _targetLanguage);
   }
+
+  /// Stop TTS playback
+  void stopSpeaking() => _ttsService.stop();
 
   /// Save word to vocabulary list
   void saveWord(String word) {
@@ -230,20 +247,58 @@ class AiChatController extends BaseController {
     Get.toNamed(AppRoutes.onboardingScenarioGift);
   }
 
-  // Voice recording methods
+  // ─────────────────────────────────────────────────────────────────
+  // Voice Input
+  // ─────────────────────────────────────────────────────────────────
+
   Future<void> startRecording() async {
-    await _audioService.startRecording();
+    if (isChatComplete.value) return;
+    await _voiceInputService.startVoiceInput(language: _targetLanguage);
   }
 
   Future<void> stopRecording() async {
-    final path = await _audioService.stopRecording();
-    if (path != null) {
-      // TODO: Process recorded audio file and send as message
+    final result = await _voiceInputService.stopVoiceInput();
+    if (result.transcribedText.isNotEmpty) {
+      sendMessage(result.transcribedText);
+      // iOS: fire-and-forget backend transcription for better accuracy
+      if (result.audioFilePath != null) {
+        _sendAudioForTranscription(result.audioFilePath!);
+      }
     }
   }
 
   Future<void> cancelRecording() async {
-    await _audioService.cancelRecording();
+    await _voiceInputService.cancelVoiceInput();
+  }
+
+  /// Fire-and-forget: upload audio to /ai/transcribe, update last user message if successful
+  Future<void> _sendAudioForTranscription(String filePath) async {
+    try {
+      final formData = FormData.fromMap({
+        'audio': await MultipartFile.fromFile(filePath, filename: 'voice.m4a'),
+        if (_conversationId != null) 'conversation_id': _conversationId,
+      });
+      final response = await _apiClient.post<Map<String, dynamic>>(
+        ApiEndpoints.transcribeAudio,
+        data: formData,
+        fromJson: (data) => data as Map<String, dynamic>,
+      );
+      if (response.isSuccess && response.data != null) {
+        final accurate = response.data!['text'] as String?;
+        if (accurate != null && accurate.isNotEmpty) {
+          // Update the last user message with accurate transcription
+          for (int i = messages.length - 1; i >= 0; i--) {
+            if (messages[i].type == ChatMessageType.userText) {
+              messages[i].text = accurate;
+              messages.refresh();
+              break;
+            }
+          }
+        }
+      }
+    } catch (_) {
+      // Silent fail — STT text already sent, backend transcription is best-effort
+    }
   }
 
   /// Toggle grammar correction visibility for a user message
@@ -327,6 +382,11 @@ class AiChatController extends BaseController {
       timestamp: DateTime.now(),
     ));
     _scrollToBottom();
+
+    // Auto-play AI messages if enabled
+    if (_ttsService.autoPlayEnabled) {
+      _ttsService.speak(text, language: _targetLanguage);
+    }
   }
 
   void _addUserMessage(String text, {String? messageId}) {

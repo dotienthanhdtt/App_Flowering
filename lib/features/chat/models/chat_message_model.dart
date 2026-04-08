@@ -10,7 +10,7 @@ enum ChatMessageType {
 class ChatMessage {
   final String id;
   final ChatMessageType type;
-  final String? text;
+  String? text;
   String? translatedText;
   bool showTranslation;
   final List<String>? quickReplies;

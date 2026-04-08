@@ -9,6 +9,7 @@ import 'chat_text_input_field.dart';
 
 /// Bottom input bar — text field + send/mic button + recording state.
 /// Three states: empty (mic), has text (send), recording (cancel+waveform+send).
+/// Mic button hidden when STT is unavailable on device.
 class ChatInputBar extends StatelessWidget {
   const ChatInputBar({super.key});
 
@@ -26,6 +27,7 @@ class ChatInputBar extends StatelessWidget {
       child: Obx(() {
         final isComplete = controller.isChatComplete.value;
         final isRecording = controller.isRecording.value;
+        final sttAvailable = controller.voiceInputService.sttAvailable.value;
 
         if (isRecording) {
           return ChatRecordingBar(controller: controller);
@@ -53,7 +55,8 @@ class ChatInputBar extends StatelessWidget {
                             controller.textEditingController.text,
                           )
                       : null,
-                  onMic: (!isComplete && !hasText)
+                  // Hide mic when STT unavailable or chat complete or has text
+                  onMic: (!isComplete && !hasText && sttAvailable)
                       ? controller.startRecording
                       : null,
                 ),
