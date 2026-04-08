@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_text.dart';
+import '../../auth/widgets/login_gate_bottom_sheet.dart';
 class OnboardingValueLayout extends StatelessWidget {
   final String imagePath;
   final String headlineKey;
@@ -36,7 +36,7 @@ class OnboardingValueLayout extends StatelessWidget {
         body: Column(
           children: [
             SizedBox(height: MediaQuery.of(context).padding.top),
-            _buildSkipRow(),
+            _buildSkipRow(context),
             Image.asset(imagePath, width: double.infinity, fit: BoxFit.contain),
             const SizedBox(height: AppSizes.space8),
             Expanded(
@@ -79,7 +79,7 @@ class OnboardingValueLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildSkipRow() {
+  Widget _buildSkipRow(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: AppSizes.space4),
       child: SizedBox(
@@ -87,7 +87,12 @@ class OnboardingValueLayout extends StatelessWidget {
         child: Align(
           alignment: Alignment.centerRight,
           child: GestureDetector(
-            onTap: () => Get.offNamed(AppRoutes.onboardingNativeLanguage),
+            onTap: () => showModalBottomSheet<void>(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => const LoginGateBottomSheet(),
+            ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.space4,

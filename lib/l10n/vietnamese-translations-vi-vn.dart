@@ -162,8 +162,9 @@ const Map<String, String> viVN = {
   'auth_continue_apple': 'Tiếp tục với Apple',
   'auth_continue_google': 'Tiếp tục với Google',
   'auth_continue_email': 'Đăng ký bằng Email',
-  'auth_social_coming_soon': 'Sắp ra mắt',
-  'auth_social_coming_soon_message': 'Đăng nhập mạng xã hội sẽ sớm được hỗ trợ.',
+  'google_sign_in_failed': 'Đăng nhập Google thất bại. Vui lòng thử lại.',
+  'apple_sign_in_failed': 'Đăng nhập Apple thất bại. Vui lòng thử lại.',
+  'firebase_token_error': 'Lỗi xác thực. Vui lòng thử lại.',
 
   // Auth — Signup (Screen 10)
   'signup_title': 'Tạo Tài Khoản',

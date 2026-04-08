@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/base/base_screen.dart';
 import '../../../core/constants/app_colors.dart';
@@ -8,7 +10,6 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_text_field.dart';
-import '../widgets/social_auth_button.dart';
 
 /// Screen 11 — Email login with social auth options and forgot password link.
 class LoginEmailScreen extends BaseScreen<AuthController> {
@@ -54,15 +55,37 @@ class LoginEmailScreen extends BaseScreen<AuthController> {
                     color: AppColors.textSecondaryColor,
                   ),
                   const SizedBox(height: AppSizes.space6),
-                  // Social auth
-                  SocialAuthButton(
-                    provider: SocialProvider.apple,
-                    onTap: controller.signInWithApple,
-                  ),
-                  const SizedBox(height: AppSizes.space3),
-                  SocialAuthButton(
-                    provider: SocialProvider.google,
-                    onTap: controller.signInWithGoogle,
+                  // Apple Sign-In (iOS only)
+                  if (Platform.isIOS)
+                    SignInWithAppleButton(
+                      onPressed: controller.signInWithApple,
+                      style: SignInWithAppleButtonStyle.black,
+                      height: AppSizes.buttonHeightLarge,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusPill),
+                    ),
+                  if (Platform.isIOS)
+                    const SizedBox(height: AppSizes.space3),
+                  // Google Sign-In
+                  SizedBox(
+                    height: AppSizes.buttonHeightLarge,
+                    child: OutlinedButton.icon(
+                      onPressed: controller.signInWithGoogle,
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColors.surfaceColor,
+                        side: const BorderSide(color: AppColors.borderLightColor, width: AppSizes.borderMedium),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppSizes.radiusPill),
+                        ),
+                      ),
+                      icon: Image.asset('assets/logos/google_logo.png', height: 20, width: 20),
+                      label: AppText(
+                        'continue_with_google'.tr,
+                        variant: AppTextVariant.bodyLarge,
+                        fontSize: AppSizes.fontSizeMedium,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimaryColor,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSizes.space5),
                   // "or" divider

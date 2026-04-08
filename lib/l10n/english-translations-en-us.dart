@@ -162,8 +162,9 @@ const Map<String, String> enUS = {
   'auth_continue_apple': 'Continue with Apple',
   'auth_continue_google': 'Continue with Google',
   'auth_continue_email': 'Sign up with Email',
-  'auth_social_coming_soon': 'Coming soon',
-  'auth_social_coming_soon_message': 'Social login will be available soon.',
+  'google_sign_in_failed': 'Google sign-in failed. Please try again.',
+  'apple_sign_in_failed': 'Apple sign-in failed. Please try again.',
+  'firebase_token_error': 'Authentication error. Please try again.',
 
   // Auth — Signup (Screen 10)
   'signup_title': 'Create Account',
