@@ -26,7 +26,7 @@ class SplashController extends BaseController {
     final isValid = results[1] as bool;
 
     if (isValid) {
-      Get.offAllNamed(AppRoutes.onboardingWelcomeBack);
+      Get.offAllNamed(AppRoutes.home);
     } else if (hasToken) {
       // Had a session before but token expired — show welcome back
       Get.offAllNamed(AppRoutes.onboardingWelcomeBack);

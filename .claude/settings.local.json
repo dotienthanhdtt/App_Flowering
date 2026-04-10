@@ -81,7 +81,8 @@
       "Bash(pkill -f \"flutter_tools.snapshot daemon\")",
       "Bash(pkill:*)",
       "Bash(mkdir -p ~/Dev)",
-      "Read(//Users/tienthanh/Dev/**)"
+      "Read(//Users/tienthanh/Dev/**)",
+      "Bash(git log:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

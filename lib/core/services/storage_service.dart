@@ -203,6 +203,17 @@ class StorageService extends GetxService {
     await clearChatCache();
   }
 
+  /// Clear all preferences
+  Future<void> clearPreferences() async {
+    await _preferences.clear();
+  }
+
+  /// Clear everything — used on logout
+  Future<void> clearAll() async {
+    await clearAllCaches();
+    await clearPreferences();
+  }
+
   /// Close all boxes
   Future<void> close() async {
     await _lessons.close();
