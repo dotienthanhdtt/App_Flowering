@@ -82,7 +82,9 @@
       "Bash(pkill:*)",
       "Bash(mkdir -p ~/Dev)",
       "Read(//Users/tienthanh/Dev/**)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(ck plan:*)",
+      "Bash(git stash:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
