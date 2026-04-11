@@ -261,7 +261,7 @@ Future<void> clearAllCaches();
 - Validation on read operations
 
 #### AuthStorage
-Token management using Hive.
+Token management using `flutter_secure_storage` (iOS Keychain / Android Keystore).
 
 **Storage Keys:**
 - `access_token` - JWT access token
@@ -277,12 +277,12 @@ Future<void> saveTokens({
 Future<String?> getAccessToken();
 Future<String?> getRefreshToken();
 Future<void> saveUserId(String userId);
-String? getUserId();
-bool get isLoggedIn;
+Future<String?> getUserId();
+bool get isLoggedIn;  // sync, backed by cached token
 Future<void> clearTokens();
 ```
 
-**Security Note:** Uses Hive for token storage (acceptable for mobile per plan). Can be upgraded to flutter_secure_storage if higher security needed.
+**Security:** Uses `flutter_secure_storage` — hardware-backed encryption via iOS Keychain (`KeychainAccessibility.first_unlock`) and Android EncryptedSharedPreferences (Keystore-backed).
 
 #### ConnectivityService
 Real-time network status monitoring with reactive state.
@@ -644,14 +644,13 @@ await apiClient.uploadFile(
 ### Secure Storage
 
 **Token Storage:**
-- Access token: AuthStorage (Hive 'auth' box)
-- Refresh token: AuthStorage (Hive 'auth' box)
-- User ID: AuthStorage (Hive 'auth' box)
+- Access token: AuthStorage (flutter_secure_storage)
+- Refresh token: AuthStorage (flutter_secure_storage)
+- User ID: AuthStorage (flutter_secure_storage)
 
 **Storage Pattern:**
-- Tokens: Separate Hive box from cache (prevents accidental cache eviction)
-- Cache: Separate boxes for lessons (LRU 100MB) and chat (FIFO 10MB)
-- Acceptable for mobile; can upgrade to flutter_secure_storage if needed for higher security
+- Tokens: flutter_secure_storage (hardware-backed, separate from cache)
+- Cache: Hive boxes for lessons (LRU 100MB) and chat (FIFO 10MB)
 
 ## Audio Architecture
 
@@ -715,7 +714,7 @@ StopVoiceInput() → Return transcribed text + audio path (iOS) → Submit to ba
 ```
 1. User Login → POST /auth/login
 2. Receive access + refresh tokens
-3. Store tokens in AuthStorage (Hive 'auth' box)
+3. Store tokens in AuthStorage (flutter_secure_storage)
 4. Inject access token in API requests (AuthInterceptor)
 5. On 401 → Refresh token → Retry request
 6. On refresh failure → Logout user
@@ -975,7 +974,7 @@ Get.updateLocale(const Locale('vi', 'VN'))  // Switch language
 | State Management | GetX 4.6.6 |
 | Networking | Dio 5.4.0 |
 | Cache Storage | Hive 2.2.3 |
-| Token Storage | Hive (AuthStorage) |
+| Token Storage | flutter_secure_storage (AuthStorage) |
 | Text-to-Speech | flutter_tts 4.2.5 |
 | Speech-to-Text | speech_to_text 7.3.0 |
 | Audio Recording | record 5.0.4 (iOS), flutter_tts recording (Android) |

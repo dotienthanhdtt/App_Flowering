@@ -129,7 +129,7 @@ void main() {
     group('onUserLoggedIn()', () {
       test('calls RC logIn with user ID when RC is configured', () async {
         // Arrange
-        when(mockAuthStorage.getUserId()).thenReturn('user-123');
+        when(mockAuthStorage.getUserId()).thenAnswer((_) async => 'user-123');
         when(mockRevenueCatService.isConfigured).thenReturn(true);
         when(mockRevenueCatService.logIn('user-123')).thenAnswer((_) async {
           final mockCustomerInfo = _createMockCustomerInfo();
@@ -158,7 +158,7 @@ void main() {
 
       test('fetches subscription from backend after RC logIn', () async {
         // Arrange
-        when(mockAuthStorage.getUserId()).thenReturn('user-123');
+        when(mockAuthStorage.getUserId()).thenAnswer((_) async => 'user-123');
         when(mockRevenueCatService.isConfigured).thenReturn(true);
         when(mockRevenueCatService.logIn('user-123')).thenAnswer((_) async {
           final mockCustomerInfo = _createMockCustomerInfo();
@@ -196,7 +196,7 @@ void main() {
 
       test('skips RC logIn when userId is null', () async {
         // Arrange
-        when(mockAuthStorage.getUserId()).thenReturn(null);
+        when(mockAuthStorage.getUserId()).thenAnswer((_) async => null);
         when(mockStorageService.getPreference<String>('subscription_cache'))
             .thenReturn(null);
         when(mockRevenueCatService.isConfigured).thenReturn(false);
@@ -221,7 +221,7 @@ void main() {
 
       test('skips RC logIn when RC not configured', () async {
         // Arrange
-        when(mockAuthStorage.getUserId()).thenReturn('user-123');
+        when(mockAuthStorage.getUserId()).thenAnswer((_) async => 'user-123');
         when(mockRevenueCatService.isConfigured).thenReturn(false);
         when(mockApiClient.get<SubscriptionModel>(any,
                 fromJson: anyNamed('fromJson')))

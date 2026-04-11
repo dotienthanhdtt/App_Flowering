@@ -7,6 +7,23 @@ class HttpLoggerInterceptor extends Interceptor {
   static const _divider = '══════════════════════════════════════';
   static const _maxBodyLength = 1000;
 
+  // Fields redacted in auth endpoint responses
+  static const _sensitiveKeys = [
+    'access_token',
+    'refresh_token',
+    'token',
+    'id_token',
+  ];
+
+  // Auth endpoint path prefixes whose response bodies are redacted
+  static const _authPaths = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/refresh',
+    '/auth/google',
+    '/auth/apple',
+  ];
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (EnvConfig.isDev) {
@@ -27,16 +44,20 @@ class HttpLoggerInterceptor extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (EnvConfig.isDev) {
       final elapsed = _elapsed(response.requestOptions);
+      final path = response.requestOptions.path;
+      final body = _isAuthEndpoint(path)
+          ? _redactSensitiveFields(response.data)
+          : response.data;
       // ignore: avoid_print
       print(_divider);
       // ignore: avoid_print
       print(
         '<- ${response.statusCode} '
-        '${response.requestOptions.path} '
+        '$path '
         '[${elapsed}ms]',
       );
       // ignore: avoid_print
-      print(_formatBody(response.data));
+      print(_formatBody(body));
       // ignore: avoid_print
       print(_divider);
     }
@@ -66,6 +87,26 @@ class HttpLoggerInterceptor extends Interceptor {
       print(_divider);
     }
     handler.next(err);
+  }
+
+  bool _isAuthEndpoint(String path) {
+    return _authPaths.any((p) => path.startsWith(p)) || path.startsWith('/auth/');
+  }
+
+  /// Recursively redact sensitive keys in a map/list structure
+  dynamic _redactSensitiveFields(dynamic data) {
+    if (data is Map) {
+      return data.map((key, value) {
+        if (_sensitiveKeys.contains(key.toString())) {
+          return MapEntry(key, '***REDACTED***');
+        }
+        return MapEntry(key, _redactSensitiveFields(value));
+      });
+    }
+    if (data is List) {
+      return data.map(_redactSensitiveFields).toList();
+    }
+    return data;
   }
 
   int _elapsed(RequestOptions options) {
