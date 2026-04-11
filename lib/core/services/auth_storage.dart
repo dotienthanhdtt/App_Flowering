@@ -1,19 +1,23 @@
 // lib/core/services/auth_storage.dart
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
-/// Secure token storage using Hive
+/// Secure token storage using platform keychain (iOS Keychain / Android Keystore)
 class AuthStorage extends GetxService {
-  static const String _boxName = 'auth';
   static const String _accessTokenKey = 'access_token';
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userIdKey = 'user_id';
 
-  late Box<String> _box;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+  );
+
+  String? _cachedToken;
 
   /// Initialize auth storage
   Future<AuthStorage> init() async {
-    _box = await Hive.openBox<String>(_boxName);
+    await refreshLoginState();
     return this;
   }
 
@@ -22,43 +26,45 @@ class AuthStorage extends GetxService {
     required String accessToken,
     required String refreshToken,
   }) async {
-    await _box.put(_accessTokenKey, accessToken);
-    await _box.put(_refreshTokenKey, refreshToken);
+    await _storage.write(key: _accessTokenKey, value: accessToken);
+    await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    _cachedToken = accessToken;
   }
 
   /// Get access token
   Future<String?> getAccessToken() async {
-    return _box.get(_accessTokenKey);
+    return _storage.read(key: _accessTokenKey);
   }
 
   /// Get refresh token
   Future<String?> getRefreshToken() async {
-    return _box.get(_refreshTokenKey);
+    return _storage.read(key: _refreshTokenKey);
   }
 
   /// Save user ID
   Future<void> saveUserId(String userId) async {
-    await _box.put(_userIdKey, userId);
+    await _storage.write(key: _userIdKey, value: userId);
   }
 
   /// Get user ID
-  String? getUserId() {
-    return _box.get(_userIdKey);
+  Future<String?> getUserId() async {
+    return _storage.read(key: _userIdKey);
   }
 
-  /// Check if user is logged in
-  bool get isLoggedIn {
-    final token = _box.get(_accessTokenKey);
-    return token != null && token.isNotEmpty;
+  /// Check if user is logged in (sync — uses cached token)
+  bool get isLoggedIn => _cachedToken != null && _cachedToken!.isNotEmpty;
+
+  /// Refresh the cached login state from secure storage
+  Future<void> refreshLoginState() async {
+    _cachedToken = await _storage.read(key: _accessTokenKey);
   }
 
   /// Clear all auth data
   Future<void> clearTokens() async {
-    await _box.clear();
+    await _storage.deleteAll();
+    _cachedToken = null;
   }
 
-  /// Close the box
-  Future<void> close() async {
-    await _box.close();
-  }
+  /// No-op — flutter_secure_storage has no explicit close
+  Future<void> close() async {}
 }

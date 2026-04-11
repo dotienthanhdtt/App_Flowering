@@ -31,7 +31,7 @@ class ApiClient extends GetxService {
 
     // Order matters: retry first, then auth, then logging
     _dio.interceptors.addAll([
-      RetryInterceptor(maxRetries: 3),
+      RetryInterceptor(dio: _dio, maxRetries: 3),
       AuthInterceptor(authStorage),
       HttpLoggerInterceptor(),
     ]);

@@ -4,11 +4,13 @@ import 'package:dio/dio.dart';
 class RetryInterceptor extends Interceptor {
   final int maxRetries;
   final Duration initialDelay;
+  final Dio _dio;
 
   RetryInterceptor({
-    this.maxRetries = 3,
+    required Dio dio,
+    this.maxRetries = 1,
     this.initialDelay = const Duration(seconds: 1),
-  });
+  }) : _dio = dio;
 
   @override
   void onError(
@@ -36,9 +38,7 @@ class RetryInterceptor extends Interceptor {
     err.requestOptions.extra['_retry_count'] = retryCount + 1;
 
     try {
-      // Create new Dio for retry
-      final retryDio = Dio();
-      final response = await retryDio.fetch(err.requestOptions);
+      final response = await _dio.fetch(err.requestOptions);
       handler.resolve(response);
     } catch (e) {
       if (e is DioException) {

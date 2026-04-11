@@ -39,7 +39,7 @@ class SubscriptionService extends GetxService {
 
   /// Call after user login — links RC identity and fetches backend subscription.
   Future<void> onUserLoggedIn() async {
-    final userId = _authStorage.getUserId();
+    final userId = await _authStorage.getUserId();
     if (userId == null) return;
 
     if (_revenueCatService.isConfigured) {
