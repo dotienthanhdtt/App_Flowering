@@ -28,12 +28,13 @@ class DefaultFirebaseOptions {
         '898715197112-igsgcfq3chp3a1k9akkoph87aab0fdkt.apps.googleusercontent.com',
   );
 
-  // TODO: Add Android config from google-services.json when available
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCdRjCVZlhrq72RuEklEyyxYlBRCYhI2Sw',
-    appId: '1:406099696497:android:0d4ed619c031c0ac3574d0',
+    apiKey: 'AIzaSyC2TWz5n4OFhbHzXj5edubsrwxUAIQoiM4',
+    appId: '1:898715197112:android:098aed5e19b877e2011e4d',
     messagingSenderId: '898715197112',
     projectId: 'flowering-74b9e',
     storageBucket: 'flowering-74b9e.firebasestorage.app',
+    androidClientId:
+        '898715197112-ngpcn026j0f4qrpsakfn3j4cf98tk8oq.apps.googleusercontent.com',
   );
 }

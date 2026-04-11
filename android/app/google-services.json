@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "898715197112",
+    "project_id": "flowering-74b9e",
+    "storage_bucket": "flowering-74b9e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898715197112:android:098aed5e19b877e2011e4d",
+        "android_client_info": {
+          "package_name": "com.flowering.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898715197112-ngpcn026j0f4qrpsakfn3j4cf98tk8oq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flowering.app",
+            "certificate_hash": "ae11ba0b3060906f0d9d0d368a52d77dd709a45e"
+          }
+        },
+        {
+          "client_id": "898715197112-g89g04i54mpeqcjau6ptpu6vn33iful0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2TWz5n4OFhbHzXj5edubsrwxUAIQoiM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "898715197112-g89g04i54mpeqcjau6ptpu6vn33iful0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "898715197112-1g605bh1rvt8fggq72pquv1fo98bdnj4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "edtech.language.main"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

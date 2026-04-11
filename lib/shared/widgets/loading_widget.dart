@@ -107,10 +107,10 @@ class _LoadingWidgetState extends State<LoadingWidget>
                 color: glowColor.withValues(alpha: 0.1),
               ),
               child: ExcludeSemantics(
-                child: Icon(
-                  Icons.local_florist,
-                  size: loadingSize * 0.6,
-                  color: glowColor,
+                child: Image.asset(
+                  'assets/logos/logo.png',
+                  width: loadingSize * 0.6,
+                  height: loadingSize * 0.6,
                 ),
               ),
             ),

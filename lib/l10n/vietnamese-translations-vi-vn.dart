@@ -100,6 +100,8 @@ const Map<String, String> viVN = {
   // Read
   'read_title': 'Bài đọc',
   'read_empty': 'Chưa có bài học',
+  'lesson_count': '@count tình huống',
+  'lesson_locked': 'Đã khóa',
 
   // Vocabulary
   'vocabulary_title': 'Từ vựng',
