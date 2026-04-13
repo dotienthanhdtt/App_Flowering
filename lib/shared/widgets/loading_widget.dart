@@ -80,15 +80,10 @@ class _LoadingWidgetState extends State<LoadingWidget>
                 boxShadow: [
                   BoxShadow(
                     color: glowColor.withValues(
-                      alpha: 0.3 + 0.2 * math.sin(_controller.value * 2 * math.pi),
+                      alpha: 0.4 + 0.2 * math.sin(_controller.value * 2 * math.pi),
                     ),
                     blurRadius: 30 + 10 * math.sin(_controller.value * 2 * math.pi),
-                    spreadRadius: 5 + 5 * math.sin(_controller.value * 2 * math.pi),
-                  ),
-                  BoxShadow(
-                    color: glowColor.withValues(alpha: 0.15),
-                    blurRadius: 50,
-                    spreadRadius: 10,
+                    spreadRadius: 10 + 5 * math.sin(_controller.value * 2 * math.pi),
                   ),
                 ],
               ),
@@ -104,7 +99,6 @@ class _LoadingWidgetState extends State<LoadingWidget>
               height: loadingSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: glowColor.withValues(alpha: 0.1),
               ),
               child: ExcludeSemantics(
                 child: Image.asset(
