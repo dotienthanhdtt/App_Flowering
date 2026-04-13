@@ -4,6 +4,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../models/word-translation-model.dart';
 import 'app_text.dart';
+import 'loading_widget.dart';
 
 /// Bottom sheet displaying word translation details (design 08a).
 /// States: loading (data==null, error==null), error, populated.
@@ -108,7 +109,7 @@ class WordTranslationSheet extends StatelessWidget {
   }
 
   Widget _buildLoading() {
-    return const Center(child: CircularProgressIndicator());
+    return const LoadingWidget(size: 48);
   }
 
   Widget _buildError() {
