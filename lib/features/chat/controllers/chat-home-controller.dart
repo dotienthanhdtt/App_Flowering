@@ -11,6 +11,7 @@ class ChatHomeController extends BaseController {
   final _apiClient = Get.find<ApiClient>();
 
   final categories = <LessonCategory>[].obs;
+  final isRefreshing = false.obs;
 
   int _currentPage = 1;
   bool _hasMore = true;
@@ -82,5 +83,13 @@ class ChatHomeController extends BaseController {
     categories.assignAll(merged);
   }
 
-  Future<void> refreshLessons() => fetchLessons(refresh: true);
+  Future<void> refreshLessons() async {
+    if (isRefreshing.value) return;
+    isRefreshing.value = true;
+    try {
+      await fetchLessons(refresh: true);
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
 }

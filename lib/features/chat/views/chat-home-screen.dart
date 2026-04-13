@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../../../shared/widgets/loading_widget.dart';
+import '../../../shared/widgets/pull-to-refresh-list.dart';
 import '../../lessons/models/lesson-models.dart';
 import '../../lessons/widgets/scenario-card.dart';
 import '../controllers/chat-home-controller.dart';
@@ -32,7 +33,7 @@ class ChatHomeScreen extends StatelessWidget {
   /// Header: scenario count badge (orange pill) + search button.
   Widget _buildHeader(ChatHomeController controller) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -90,10 +91,13 @@ class ChatHomeScreen extends StatelessWidget {
         return _buildEmptyState(controller);
       }
 
-      return RefreshIndicator(
+      return PullToRefreshList(
+        isRefreshing: controller.isRefreshing,
         onRefresh: controller.refreshLessons,
-        color: AppColors.primaryColor,
         child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           itemCount: controller.categories.length,
           itemBuilder: (_, i) =>
