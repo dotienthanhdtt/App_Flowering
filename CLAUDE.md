@@ -64,8 +64,12 @@ Always use these instead of raw Flutter widgets:
 | `AppText` | `Text` | Consistent Inter font typography |
 | `AppButton` | `ElevatedButton`/`TextButton` | Consistent styling |
 | `AppTextField` | `TextField` | Consistent styling |
+| `LoadingWidget` | `CircularProgressIndicator` | Consistent branded loading (full-screen/section) |
+| `PullToRefreshList` | `RefreshIndicator` | Gradual LoadingWidget reveal on pull-to-refresh |
 
 If a shared widget doesn't exist, create it in `lib/shared/widgets/`.
+
+**BaseScreen vs Shared Widgets:** `BaseScreen` = universal behaviors (Scaffold, SafeArea, LoadingOverlay). Feature-specific behaviors (pull-to-refresh, pagination) = opt-in shared widgets. Don't add to BaseScreen unless it applies to ALL screens.
 
 ### Translation
 

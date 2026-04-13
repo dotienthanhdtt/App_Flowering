@@ -210,6 +210,11 @@ class LoginScreen extends BaseScreen<AuthController> {
 - Tab child screens (in IndexedStack) — use plain `StatelessWidget`, no Scaffold
 - StatefulWidget screens needing `State` lifecycle — add comment explaining why
 
+**BaseScreen vs Shared Widgets:**
+- `BaseScreen` provides universal behaviors (Scaffold, SafeArea, LoadingOverlay) — every screen gets these.
+- Feature-specific behaviors (pull-to-refresh, pagination, etc.) belong as **opt-in shared widgets** (`PullToRefreshList`, etc.), not in BaseScreen. Only screens that need them compose them in.
+- Rule: don't add to BaseScreen unless it applies to ALL screens.
+
 ### Widget Standards
 
 ```dart
