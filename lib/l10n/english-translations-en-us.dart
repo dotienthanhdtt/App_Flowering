@@ -100,6 +100,8 @@ const Map<String, String> enUS = {
   // Read
   'read_title': 'Reading',
   'read_empty': 'No lessons available',
+  'lesson_count': '@count scenarios',
+  'lesson_locked': 'Locked',
 
   // Vocabulary
   'vocabulary_title': 'Vocabulary',

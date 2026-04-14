@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../shared/widgets/loading_widget.dart';
 import '../controllers/paywall-controller.dart';
 import 'plan-card-widget.dart';
 
@@ -77,7 +78,7 @@ class _PaywallSheetContent extends StatelessWidget {
             if (controller.isLoading.value && controller.offerings.isEmpty) {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
-                child: CircularProgressIndicator(color: AppColors.primaryColor),
+                child: LoadingWidget(size: 48),
               );
             }
             return Column(

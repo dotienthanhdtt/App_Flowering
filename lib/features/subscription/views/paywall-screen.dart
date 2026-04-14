@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../shared/widgets/loading_widget.dart';
 import '../controllers/paywall-controller.dart';
 import '../widgets/paywall-bottom-actions-widget.dart';
 import '../widgets/plan-card-widget.dart';
@@ -35,9 +36,7 @@ class PaywallScreen extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.offerings.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primaryColor),
-          );
+          return const LoadingWidget();
         }
         if (controller.offerings.isEmpty) {
           return _EmptyOfferings(onRetry: controller.fetchOfferings);
