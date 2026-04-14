@@ -23,6 +23,10 @@ class VoiceInputService extends GetxService {
   StreamSubscription<SttResult>? _sttSub;
   StreamSubscription<double>? _amplitudeSub;
 
+  /// STT is only initialized on first mic tap — deferring permission prompts
+  /// from app startup to the moment the user actually requests voice input.
+  bool _sttInitialized = false;
+
   static const _iosSttTimeout = Duration(seconds: 55);
 
   bool get _canRecordDuringSTT => Platform.isIOS;
@@ -32,14 +36,31 @@ class VoiceInputService extends GetxService {
     _recorderProvider = Get.find<AudioRecorderProviderContract>();
     _ttsService = Get.find<TtsService>();
 
-    final available = await _sttProvider.initialize();
-    sttAvailable.value = available;
+    // Optimistically show mic button — real availability is confirmed on first
+    // tap via [_ensureSttInitialized]. This avoids prompting for microphone
+    // permission at app launch.
+    sttAvailable.value = true;
 
     return this;
   }
 
+  /// Initialize STT lazily. This triggers the OS microphone / speech
+  /// recognition permission prompt on iOS, so it must only be called in
+  /// response to an explicit user action (e.g. tapping the mic icon).
+  Future<bool> _ensureSttInitialized() async {
+    if (_sttInitialized) return sttAvailable.value;
+    _sttInitialized = true;
+    final available = await _sttProvider.initialize();
+    sttAvailable.value = available;
+    return available;
+  }
+
   Future<void> startVoiceInput({String? language}) async {
     if (isListening.value) return;
+
+    // Lazy STT init — triggers permission prompt on first tap only.
+    final ready = await _ensureSttInitialized();
+    if (!ready) return;
 
     // Stop TTS first to avoid audio session conflict
     await _ttsService.stopForVoiceInput();

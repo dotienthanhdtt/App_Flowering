@@ -226,12 +226,12 @@ const Map<String, String> enUS = {
 
   // Onboarding — Value Screens (Screens 03/04/05)
   'onboarding_skip': 'Skip',
-  'onboarding_value_headline_1': 'A path shaped around you',
-  'onboarding_value_body_1': 'You lead. Flowering follows.\nEvery lesson adapts to where you are and where you\'re headed',
-  'onboarding_value_headline_2': 'Learn once. Remember forever.',
-  'onboarding_value_body_2': 'The secret? Timing. Flowering reviews words right when your brain needs it most — so nothing slips through.',
-  'onboarding_value_headline_3': 'Fluency isn\'t a test. It\'s a feeling.',
-  'onboarding_value_body_3': 'No more translating in your head. No more freezing up. Just you, saying exactly what you mean.',
+  'onboarding_value_headline_1': 'Some are early bloomers\nSome are late bloomers\nBoth are beautiful',
+  'onboarding_value_body_1': 'Flowering grows with you,\nat your own pace',
+  'onboarding_value_headline_2': 'Plant it once\nWatch it bloom forever',
+  'onboarding_value_body_2': 'Learn today, remember tomorrow\nand next month and forever',
+  'onboarding_value_headline_3': 'Same sun\nDifferent flowers',
+  'onboarding_value_body_3': 'Everyone learns differently\nFlowering creates your own path',
   'onboarding_next': 'Next',
   'onboarding_ready': 'I\'m Ready',
 

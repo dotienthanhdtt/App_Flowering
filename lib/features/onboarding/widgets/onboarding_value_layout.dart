@@ -38,7 +38,6 @@ class OnboardingValueLayout extends StatelessWidget {
             SizedBox(height: MediaQuery.of(context).padding.top),
             _buildSkipRow(context),
             Image.asset(imagePath, width: double.infinity, fit: BoxFit.contain),
-            const SizedBox(height: AppSizes.space8),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSizes.space6),
@@ -47,7 +46,7 @@ class OnboardingValueLayout extends StatelessWidget {
                     AppText(
                       headlineKey.tr,
                       variant: AppTextVariant.h1,
-                      fontSize: AppSizes.fontSize4XLarge,
+                      fontSize: AppSizes.fontSize3XLarge,
                       fontWeight: FontWeight.w700,
                       textAlign: TextAlign.center,
                       color: AppColors.textPrimaryColor,

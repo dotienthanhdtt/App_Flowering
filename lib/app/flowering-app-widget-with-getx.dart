@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../core/constants/app_colors.dart';
@@ -41,6 +42,18 @@ class FloweringApp extends StatelessWidget {
       // Default page transitions
       defaultTransition: AppPages.defaultTransition,
       transitionDuration: AppPages.defaultDuration,
+
+      // Debug-only route logger — prints route changes to the console to make
+      // navigation easier to trace during development.
+      routingCallback: kReleaseMode
+          ? null
+          : (routing) {
+              if (routing == null) return;
+              debugPrint(
+                '[ROUTE] ${routing.current}'
+                '${routing.args != null ? '  args=${routing.args}' : ''}',
+              );
+            },
     );
   }
 

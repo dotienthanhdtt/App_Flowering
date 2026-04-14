@@ -226,12 +226,12 @@ const Map<String, String> viVN = {
 
   // Onboarding — Value Screens (Screens 03/04/05)
   'onboarding_skip': 'Bỏ qua',
-  'onboarding_value_headline_1': 'Con đường được tạo riêng cho bạn',
-  'onboarding_value_body_1': 'Bạn dẫn đường. Flowering theo sau.\nMỗi bài học thích ứng với nơi bạn đang đứng và nơi bạn muốn đến',
-  'onboarding_value_headline_2': 'Học một lần. Nhớ mãi mãi.',
-  'onboarding_value_body_2': 'Bí quyết? Thời điểm. Flowering ôn lại từ vựng đúng lúc não bạn cần nhất — không gì bị bỏ sót.',
-  'onboarding_value_headline_3': 'Lưu loát không phải bài kiểm tra. Đó là cảm giác.',
-  'onboarding_value_body_3': 'Không còn dịch trong đầu. Không còn đứng hình. Chỉ là bạn, nói chính xác điều bạn muốn.',
+  'onboarding_value_headline_1': 'Có người nở sớm\nCó người nở muộn\nĐều đẹp cả',
+  'onboarding_value_body_1': 'Flowering phát triển cùng bạn,\ntheo nhịp riêng của bạn',
+  'onboarding_value_headline_2': 'Gieo một lần\nNở mãi không tàn',
+  'onboarding_value_body_2': 'Học hôm nay, nhớ ngày mai —\nvà tháng sau, và mãi mãi',
+  'onboarding_value_headline_3': 'Cùng một mặt trời\nNhững đóa hoa khác nhau',
+  'onboarding_value_body_3': 'Mỗi người học theo cách riêng\nFlowering tạo con đường của riêng bạn',
   'onboarding_next': 'Tiếp',
   'onboarding_ready': 'Tôi đã sẵn sàng',
 

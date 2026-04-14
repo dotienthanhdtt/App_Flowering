@@ -16,7 +16,7 @@ class OnboardingValueScreen1 extends StatelessWidget {
       headlineKey: 'onboarding_value_headline_1',
       bodyKey: 'onboarding_value_body_1',
       ctaKey: 'onboarding_next',
-      ctaVariant: AppButtonVariant.outline,
+      ctaVariant: AppButtonVariant.primary,
       onCtaPressed: () => Get.offNamed(AppRoutes.onboardingWelcome2),
     );
   }

@@ -84,7 +84,14 @@
       "Read(//Users/tienthanh/Dev/**)",
       "Bash(git log:*)",
       "Bash(ck plan:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(cat)",
+      "Bash(cp \"/Users/tienthanh/Dev/new_flowering/app_flowering/flowering/.env.dev\" /tmp/env.dev.preview)",
+      "Bash(cp \"/Users/tienthanh/Dev/new_flowering/ChatGPT Image Apr 14, 2026, 12_16_12 PM.png\" onboarding_value_1.png.new)",
+      "Bash(cp \"/Users/tienthanh/Dev/new_flowering/ChatGPT Image Apr 14, 2026, 12_32_15 PM.png\" onboarding_value_2.png.new)",
+      "Bash(cp \"/Users/tienthanh/Dev/new_flowering/ChatGPT Image Apr 14, 2026, 12_41_52 PM.png\" onboarding_value_3.png.new)",
+      "Bash(mv onboarding_value_1.png.new onboarding_value_1.png)",
+      "Bash(mv onboarding_value_2.png.new onboarding_value_2.png)"
     ]
   },
   "enableAllProjectMcpServers": true,
