@@ -140,10 +140,12 @@ class AuthController extends BaseController {
     isLoading.value = true;
     errorMessage.value = '';
     try {
-      // Use iosClientId from Firebase options for iOS Google Sign-In
+      // serverClientId = Web Client ID (type 3) from google-services.json
+      // Required on Android to receive an idToken from Google Sign-In
       final googleSignIn = GoogleSignIn(
         scopes: ['email'],
-        serverClientId: null, // Firebase handles this via GoogleService-Info.plist
+        serverClientId:
+            '898715197112-g89g04i54mpeqcjau6ptpu6vn33iful0.apps.googleusercontent.com',
       );
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
