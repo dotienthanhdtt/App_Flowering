@@ -2,6 +2,45 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-04-14] Onboarding API Unification: Single `/onboarding/chat` Endpoint ⚠️ BREAKING
+
+#### Overview
+Backend consolidated session creation + chat turns into a single `POST /onboarding/chat` endpoint. `POST /onboarding/start` is removed. The new endpoint branches on presence of `conversationId`:
+- **Mode A** — body `{nativeLanguage, targetLanguage}` → creates session, returns greeting + `conversationId`
+- **Mode B** — body `{conversationId, message}` → chat turn
+
+Flutter client now completes the onboarding bootstrap in **one** network call instead of two.
+
+#### Changed
+- `lib/features/chat/controllers/ai_chat_controller.dart`
+  - Replaced `_startSession` + `_sendInitialChat` (two calls) with single `_createSession()` (one call)
+  - Request body keys migrated to camelCase: `nativeLanguage`, `targetLanguage`, `conversationId`
+  - Added `_mapOnboardingError` helper differentiating Mode A (5/hr) vs Mode B (30/hr) rate-limit copy (HTTP 429)
+  - Added `_clearSession` helper — resets local + persisted state on 404 (invalid conversationId) or 400 (expired/max turns)
+- `lib/features/onboarding/models/onboarding_session_model.dart`
+  - Doc comment updated — `conversationId` now returned in both modes (previously only on `/start`)
+- `lib/core/constants/api_endpoints.dart`
+  - Removed `onboardingStart` constant
+
+#### Added — Translations
+- `chat_session_invalid` / `chat_rate_limit_create` / `chat_rate_limit_chat` in both EN and VI l10n files
+
+#### API Spec
+- `docs/api_docs/onboarding-api.md` — rewritten for unified endpoint
+- `docs/api_docs/mobile-api-reference.md` — onboarding section updated
+
+#### Error Handling
+| Status | Cause | Client action |
+|---|---|---|
+| 400 | Session expired or max turns reached | Clear session, show `chat_session_expired` |
+| 404 | `conversationId` invalid / not found | Clear session, show `chat_session_invalid` |
+| 429 | Rate limited | Show mode-specific copy (create vs chat) |
+
+#### Migration Impact
+Breaking for any client still calling `/onboarding/start` — backend returns 404. Flutter client fully migrated in this release.
+
+---
+
 ### [2026-04-06] Audio Architecture Refactor: Monolithic → Provider Pattern ✅ COMPLETED
 
 #### Overview

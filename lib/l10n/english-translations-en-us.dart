@@ -138,6 +138,9 @@ const Map<String, String> enUS = {
   // Onboarding — AI Chat (Screen 07)
   'chat_session_error': 'Could not start session. Please try again.',
   'chat_session_expired': 'Session expired. Please restart onboarding.',
+  'chat_session_invalid': 'Session not found. Let\'s start a new conversation.',
+  'chat_rate_limit_create': 'Too many session attempts. Please wait an hour before starting again.',
+  'chat_rate_limit_chat': 'Slow down — you\'re sending messages too quickly.',
   'chat_retry': 'Retry',
   'chat_leave_confirm': 'Leave conversation?',
   'chat_leave_message': 'Your progress will be lost if you leave now.',

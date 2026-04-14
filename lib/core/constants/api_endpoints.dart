@@ -23,7 +23,9 @@ class ApiEndpoints {
   static String userLanguage(String id) => '/languages/user/$id'; // PATCH, DELETE
 
   // Onboarding
-  static const String onboardingStart = '/onboarding/start'; // POST
+  // POST /onboarding/chat unified endpoint:
+  //   Mode A (no conversationId) → create session + returns greeting
+  //   Mode B (with conversationId) → chat turn
   static const String onboardingChat = '/onboarding/chat'; // POST
   static const String onboardingComplete = '/onboarding/complete'; // POST
 

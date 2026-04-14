@@ -138,6 +138,9 @@ const Map<String, String> viVN = {
   // Onboarding — AI Chat (Screen 07)
   'chat_session_error': 'Không thể bắt đầu phiên. Vui lòng thử lại.',
   'chat_session_expired': 'Phiên hết hạn. Vui lòng bắt đầu lại.',
+  'chat_session_invalid': 'Không tìm thấy phiên. Hãy bắt đầu cuộc trò chuyện mới.',
+  'chat_rate_limit_create': 'Quá nhiều lần khởi tạo phiên. Vui lòng đợi một giờ trước khi thử lại.',
+  'chat_rate_limit_chat': 'Chậm lại nào — bạn đang gửi tin nhắn quá nhanh.',
   'chat_retry': 'Thử lại',
   'chat_leave_confirm': 'Rời cuộc trò chuyện?',
   'chat_leave_message': 'Tiến trình của bạn sẽ bị mất nếu rời đi.',

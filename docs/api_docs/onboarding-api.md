@@ -1,33 +1,42 @@
 # Onboarding API
 
 Base path: `/onboarding`
-Auth: All endpoints are **public** (no JWT required). Sessions are identified by `sessionToken`.
+Auth: All endpoints are **public** (no JWT required). Sessions are identified by `conversationId`.
 
 ---
 
 ## Flow Overview
 
 ```
-POST /onboarding/start
-  → returns sessionToken
+POST /onboarding/chat       (Mode A — create)
+  → body: {nativeLanguage, targetLanguage}
+  → returns conversationId + greeting reply
 
-POST /onboarding/chat  (repeat up to 10 turns)
-  → send user message, receive AI reply
+POST /onboarding/chat       (Mode B — turn, repeat up to 10 times)
+  → body: {conversationId, message}
+  → returns AI reply
 
 POST /onboarding/complete
+  → body: {conversationId}
   → extract structured profile from conversation
 
-POST /auth/register|login|google|apple  (with sessionToken)
+POST /auth/register|login|firebase  (with conversationId)
   → link onboarding session to user account
 ```
 
+> **Breaking change (2026-04-14):** `POST /onboarding/start` has been removed.
+> Session creation is now handled by the same `/onboarding/chat` endpoint (Mode A) —
+> one request produces the conversation + the first greeting.
+
 ---
 
-## POST /onboarding/start
+## POST /onboarding/chat
 
-Create a new anonymous onboarding chat session.
+Unified endpoint. Branches by presence of `conversationId` in the request body.
 
-**Request Body**
+### Mode A — Create session + first turn (greeting)
+
+**Request body**
 ```json
 {
   "nativeLanguage": "vi",
@@ -37,59 +46,41 @@ Create a new anonymous onboarding chat session.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `nativeLanguage` | string | yes | ISO 639-1 native language code (2-5 chars) |
-| `targetLanguage` | string | yes | ISO 639-1 target language code (2-5 chars) |
+| `nativeLanguage` | string | yes | ISO 639-1 native language code |
+| `targetLanguage` | string | yes | ISO 639-1 target language code |
 
-**Response 201**
+Notes:
+- `conversationId` MUST be omitted or `null`.
+- `message` (if sent) is silently ignored.
+
+### Mode B — Subsequent chat turn
+
+**Request body**
 ```json
 {
-  "code": 1,
-  "message": "Success",
-  "data": {
-    "sessionToken": "550e8400-e29b-41d4-a716-446655440000",
-    "conversationId": "uuid"
-  }
-}
-```
-
-| Field | Description |
-|---|---|
-| `sessionToken` | UUID to use in subsequent chat/complete calls. Valid for 7 days. |
-| `conversationId` | Internal conversation ID |
-
-**curl**
-```bash
-curl -X POST https://api.example.com/onboarding/start \
-  -H "Content-Type: application/json" \
-  -d '{"nativeLanguage":"vi","targetLanguage":"en"}'
-```
-
----
-
-## POST /onboarding/chat
-
-Send a user message and receive an AI response. Up to 10 turns per session.
-
-**Request Body**
-```json
-{
-  "sessionToken": "550e8400-e29b-41d4-a716-446655440000",
-  "message": "Hi! My name is Thanh"
+  "conversationId": "550e8400-e29b-41d4-a716-446655440000",
+  "message": "Hi, I want to learn English for work"
 }
 ```
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `sessionToken` | UUID | yes | Session token from `/onboarding/start` |
-| `message` | string | yes | User message (max 2000 chars) |
+| `conversationId` | UUID | yes | From prior Mode A response |
+| `message` | string | optional | User message (empty allowed on first follow-up) |
 
-**Response 200**
+Notes:
+- Language fields are ignored in this mode.
+
+### Response (uniform for both modes)
+
 ```json
 {
   "code": 1,
   "message": "Success",
   "data": {
-    "reply": "Nice to meet you, Thanh! What's your current English level?",
+    "conversationId": "550e8400-e29b-41d4-a716-446655440000",
+    "reply": "Hi! What language would you like to learn?",
+    "messageId": "msg_a1b2c3",
     "turnNumber": 1,
     "isLastTurn": false
   }
@@ -98,41 +89,59 @@ Send a user message and receive an AI response. Up to 10 turns per session.
 
 | Field | Description |
 |---|---|
-| `reply` | AI tutor response |
+| `conversationId` | Stable across the session; echoed in both modes |
+| `reply` | AI message text (greeting on Mode A, response on Mode B) |
+| `messageId` | Message ID for tracking (used by translate/grammar endpoints) |
 | `turnNumber` | Current turn (1–10) |
-| `isLastTurn` | `true` when `turnNumber` equals max turns (10). AI will wrap up conversation. |
+| `isLastTurn` | `true` when max turns reached — client should trigger `/onboarding/complete` |
 
-**Errors**
-- `400` — Max turns reached (call `/onboarding/complete`) or session expired (7-day TTL)
-- `404` — Session not found
+### Errors
 
-**curl**
+| Status | Cause |
+|---|---|
+| 400 | Missing `nativeLanguage`/`targetLanguage` on create (no `conversationId`) |
+| 400 | Session expired or max turns reached |
+| 404 | `conversationId` invalid / not found |
+| 404 | Any request to removed `/onboarding/start` |
+| 429 | Rate limited |
+
+### Rate limits (per IP)
+
+| Mode | Limit |
+|---|---|
+| Create (no `conversationId`) | **5 requests/hour** |
+| Chat (with `conversationId`) | **30 requests/hour** |
+
+### curl
+
+Mode A:
 ```bash
 curl -X POST https://api.example.com/onboarding/chat \
   -H "Content-Type: application/json" \
-  -d '{"sessionToken":"550e8400-e29b-41d4-a716-446655440000","message":"Hi! My name is Thanh"}'
+  -d '{"nativeLanguage":"vi","targetLanguage":"en"}'
+```
+
+Mode B:
+```bash
+curl -X POST https://api.example.com/onboarding/chat \
+  -H "Content-Type: application/json" \
+  -d '{"conversationId":"550e8400-...","message":"Hello"}'
 ```
 
 ---
 
 ## POST /onboarding/complete
 
-Extract a structured user profile from the onboarding conversation. Call after chat turns are done.
+Extract a structured user profile from the onboarding conversation. Call after `isLastTurn: true`.
 
-**Request Body**
+**Request body**
 ```json
 {
-  "sessionToken": "550e8400-e29b-41d4-a716-446655440000"
+  "conversationId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `sessionToken` | UUID | yes | Session token from `/onboarding/start` |
-
 **Response 200**
-
-Returns an extracted profile object. Shape depends on conversation content. Typical example:
 ```json
 {
   "code": 1,
@@ -152,14 +161,7 @@ Returns an extracted profile object. Shape depends on conversation content. Typi
 If extraction fails, returns `{ "raw": "<ai response text>" }`.
 
 **Errors**
-- `404` — Session not found
-
-**curl**
-```bash
-curl -X POST https://api.example.com/onboarding/complete \
-  -H "Content-Type: application/json" \
-  -d '{"sessionToken":"550e8400-e29b-41d4-a716-446655440000"}'
-```
+- `404` — `conversationId` not found
 
 ---
 
@@ -168,9 +170,18 @@ curl -X POST https://api.example.com/onboarding/complete \
 | State | Description |
 |---|---|
 | `ANONYMOUS` | Active session not yet linked to a user account |
-| `AUTHENTICATED` | Linked after user registers/logs in with `sessionToken` |
+| `AUTHENTICATED` | Linked after user registers/logs in with `conversationId` |
 
 - Session TTL: **7 days**
 - Max turns: **10** (5 exchanges)
-- AI model: Gemini 2.0 Flash
 - Linking is best-effort; authentication succeeds even if linking fails
+
+---
+
+## Client Integration Notes
+
+Flutter client (`lib/features/chat/controllers/ai_chat_controller.dart`):
+- Single `_createSession()` call on `onInit` — no separate bootstrap/start call.
+- `_mapOnboardingError` differentiates Mode A (5/hr) vs Mode B (30/hr) rate-limit copy.
+- On 404/400: local session state is cleared so user can restart cleanly.
+- Request bodies use **camelCase** keys.

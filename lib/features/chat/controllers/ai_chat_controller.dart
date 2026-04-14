@@ -55,18 +55,21 @@ class AiChatController extends BaseController {
     super.onInit();
     chatTitle.value = Get.arguments?['chatTitle'] ?? 'Chat';
     contextDescription.value = Get.arguments?['contextDescription'] ?? '';
-    _startSession();
+    _createSession();
   }
 
-  Future<void> _startSession() async {
+  /// Creates the onboarding session via unified /onboarding/chat endpoint
+  /// (Mode A — no conversationId). Response includes greeting + conversationId
+  /// in a single round-trip.
+  Future<void> _createSession() async {
     isTyping.value = true;
     errorMessage.value = '';
     try {
       final response = await _apiClient.post<OnboardingSession>(
-        ApiEndpoints.onboardingStart,
+        ApiEndpoints.onboardingChat,
         data: {
-          'native_language': _onboardingCtrl.selectedNativeLanguage.value,
-          'target_language': _onboardingCtrl.selectedLearningLanguage.value,
+          'nativeLanguage': _onboardingCtrl.selectedNativeLanguage.value,
+          'targetLanguage': _onboardingCtrl.selectedLearningLanguage.value,
         },
         fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
       );
@@ -75,48 +78,20 @@ class AiChatController extends BaseController {
         _conversationId = session.conversationId;
         await _storageService.setPreference('onboarding_conversation_id', _conversationId);
         _onboardingCtrl.conversationId = _conversationId;
-
-        _addAiMessage(session.reply ?? '');
-        if (session.quickReplies.isNotEmpty) {
-          _addQuickReplies(session.quickReplies);
-        }
-
-        // _sendInitialChat manages its own isTyping lifecycle
-        _sendInitialChat();
+        await _handleChatResponse(session);
       } else {
-        isTyping.value = false;
         errorMessage.value = response.message;
       }
     } on ApiException catch (e) {
-      isTyping.value = false;
-      errorMessage.value = e.userMessage;
+      errorMessage.value = _mapOnboardingError(e, isCreate: true);
     } catch (_) {
-      isTyping.value = false;
       errorMessage.value = 'unknown_error'.tr;
-    }
-  }
-
-  /// Calls onboarding/chat with empty message right after session start
-  Future<void> _sendInitialChat() async {
-    if (_conversationId == null) return;
-    isTyping.value = true;
-    try {
-      final response = await _apiClient.post<OnboardingSession>(
-        ApiEndpoints.onboardingChat,
-        data: {'conversation_id': _conversationId, 'message': ''},
-        fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
-      );
-      if (response.isSuccess && response.data != null) {
-        await _handleChatResponse(response.data!);
-      }
-    } catch (_) {
-      // Non-blocking — user can still interact normally
     } finally {
       isTyping.value = false;
     }
   }
 
-  Future<void> retrySession() => _startSession();
+  Future<void> retrySession() => _createSession();
 
   Future<void> sendMessage(String text) async {
     final trimmed = text.trim();
@@ -137,7 +112,7 @@ class AiChatController extends BaseController {
     try {
       final response = await _apiClient.post<OnboardingSession>(
         ApiEndpoints.onboardingChat,
-        data: {'conversation_id': _conversationId, 'message': trimmed},
+        data: {'conversationId': _conversationId, 'message': trimmed},
         fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
       );
       if (response.isSuccess && response.data != null) {
@@ -146,12 +121,40 @@ class AiChatController extends BaseController {
         errorMessage.value = response.message;
       }
     } on ApiException catch (e) {
-      errorMessage.value = e.userMessage;
+      errorMessage.value = _mapOnboardingError(e, isCreate: false);
     } catch (_) {
       errorMessage.value = 'unknown_error'.tr;
     } finally {
       isTyping.value = false;
     }
+  }
+
+  /// Maps onboarding API errors to user-facing copy.
+  /// 429 differentiates create (5/hr) vs chat (30/hr) rate limits.
+  /// 404 → invalid conversationId; 400 → expired or max turns reached.
+  String _mapOnboardingError(ApiException e, {required bool isCreate}) {
+    switch (e.statusCode) {
+      case 429:
+        return isCreate
+            ? 'chat_rate_limit_create'.tr
+            : 'chat_rate_limit_chat'.tr;
+      case 404:
+        _clearSession();
+        return 'chat_session_invalid'.tr;
+      case 400:
+        _clearSession();
+        return 'chat_session_expired'.tr;
+      default:
+        return e.userMessage;
+    }
+  }
+
+  /// Clears local session state so the user can restart onboarding cleanly.
+  void _clearSession() {
+    _conversationId = null;
+    _storageService.setPreference('onboarding_conversation_id', null);
+    _onboardingCtrl.conversationId = null;
+    isChatComplete.value = false;
   }
 
   /// Shared handler for chat API responses — updates progress, adds AI message, handles completion.
