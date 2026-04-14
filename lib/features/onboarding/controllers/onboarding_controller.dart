@@ -85,7 +85,7 @@ class OnboardingController extends BaseController {
     selectedNativeLanguage.value = code;
     selectedNativeLanguageId = id;
     _navigationTimer?.cancel();
-    _navigationTimer = Timer(const Duration(milliseconds: 400), () {
+    _navigationTimer = Timer(const Duration(milliseconds: 50), () {
       Get.toNamed(AppRoutes.onboardingLearningLanguage);
     });
   }
