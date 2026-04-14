@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../../core/base/base_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../../../shared/widgets/app_button.dart';
 import '../controllers/onboarding_controller.dart';
 import '../widgets/language_selection_layout.dart';
 
@@ -28,7 +27,6 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
           onRetry: controller.loadLanguages,
           skeletonCount: 6,
           topBar: _buildBackButton(),
-          bottomWidget: _buildContinueButton(context),
         ));
   }
 
@@ -49,27 +47,6 @@ class LearningLanguageScreen extends BaseScreen<OnboardingController> {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContinueButton(BuildContext context) {
-    final hasSelection =
-        controller.selectedLearningLanguage.value.isNotEmpty;
-    return Padding(
-      padding: EdgeInsets.only(
-        left: AppSizes.space4,
-        right: AppSizes.space4,
-        bottom: MediaQuery.of(context).padding.bottom + AppSizes.space8,
-      ),
-      child: Opacity(
-        opacity: hasSelection ? 1.0 : 0.5,
-        child: AppButton(
-          text: 'continue_button'.tr,
-          variant: AppButtonVariant.primary,
-          height: AppSizes.buttonHeightLarge,
-          onPressed: hasSelection ? controller.confirmLearningLanguage : null,
         ),
       ),
     );

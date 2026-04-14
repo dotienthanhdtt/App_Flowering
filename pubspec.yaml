@@ -74,6 +74,7 @@ flutter:
   assets:
     - assets/logos/
     - assets/icons/
+    - assets/icons/nav/
     - assets/images/
     - assets/images/onboarding/
     - .env.dev

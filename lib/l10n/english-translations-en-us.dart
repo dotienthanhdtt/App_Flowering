@@ -88,8 +88,8 @@ const Map<String, String> enUS = {
 
   // Bottom Navigation
   'nav_chat': 'Chat',
-  'nav_read': 'Read',
-  'nav_vocabulary': 'Vocabulary',
+  'nav_read': 'Reading',
+  'nav_vocabulary': 'Vocab',
   'nav_profile': 'Profile',
 
   // Chat Home

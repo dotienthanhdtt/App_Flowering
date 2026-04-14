@@ -93,13 +93,10 @@ class OnboardingController extends BaseController {
   void selectLearningLanguage(String code, {String? id}) {
     selectedLearningLanguage.value = code;
     selectedLearningLanguageId = id;
-  }
-
-  /// Called by Continue button on learning language screen.
-  void confirmLearningLanguage() {
-    if (selectedLearningLanguage.value.isNotEmpty) {
+    _navigationTimer?.cancel();
+    _navigationTimer = Timer(const Duration(milliseconds: 50), () {
       Get.toNamed(AppRoutes.chat);
-    }
+    });
   }
 
   void toggleShowAllLanguages() {

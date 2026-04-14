@@ -1,80 +1,86 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
 import '../controllers/main-shell-controller.dart';
 
-/// Custom bottom navigation bar matching Pencil design
+/// Bottom navigation bar matching Pencil design (flowering_design.pen → BottomNavBar).
+/// Flat container with 0.5px top border, 4 evenly distributed tabs, custom SVG icons.
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
+
+  // Design border color is #E0E0E0 (not in AppColors token palette).
+  static const Color _borderColor = Color(0xFFE0E0E0);
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<MainShellController>();
 
     return Container(
-      height: AppSizes.navBarHeight,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surfaceColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(AppSizes.radiusXL),
-          topRight: Radius.circular(AppSizes.radiusXL),
+        border: Border(
+          top: BorderSide(color: _borderColor, width: AppSizes.navBorderThickness),
         ),
-        border: const Border(
-          top: BorderSide(color: AppColors.borderLightColor, width: AppSizes.borderThin),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowSubtleColor,
-            blurRadius: 12,
-            offset: Offset(0, -2),
-          ),
-        ],
       ),
-      child: Obx(() => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _NavItem(
-            icon: LucideIcons.messageCircle,
-            label: 'nav_chat'.tr,
-            isActive: controller.selectedIndex.value == 0,
-            onTap: () => controller.changePage(0),
-          ),
-          _NavItem(
-            icon: LucideIcons.bookOpen,
-            label: 'nav_read'.tr,
-            isActive: controller.selectedIndex.value == 1,
-            onTap: () => controller.changePage(1),
-          ),
-          _NavItem(
-            icon: LucideIcons.languages,
-            label: 'nav_vocabulary'.tr,
-            isActive: controller.selectedIndex.value == 2,
-            onTap: () => controller.changePage(2),
-          ),
-          _NavItem(
-            icon: LucideIcons.user,
-            label: 'nav_profile'.tr,
-            isActive: controller.selectedIndex.value == 3,
-            onTap: () => controller.changePage(3),
-          ),
-        ],
-      )),
+      padding: const EdgeInsets.only(
+        top: AppSizes.navTopPadding,
+        bottom: AppSizes.navBottomPadding,
+      ),
+      child: Obx(() {
+        final index = controller.selectedIndex.value;
+        return Row(
+          children: [
+            Expanded(
+              child: _NavItem(
+                iconAsset: 'assets/icons/nav/chat.svg',
+                label: 'nav_chat'.tr,
+                isActive: index == 0,
+                onTap: () => controller.changePage(0),
+              ),
+            ),
+            Expanded(
+              child: _NavItem(
+                iconAsset: 'assets/icons/nav/reading.svg',
+                label: 'nav_read'.tr,
+                isActive: index == 1,
+                onTap: () => controller.changePage(1),
+              ),
+            ),
+            Expanded(
+              child: _NavItem(
+                iconAsset: 'assets/icons/nav/vocab.svg',
+                label: 'nav_vocabulary'.tr,
+                isActive: index == 2,
+                onTap: () => controller.changePage(2),
+              ),
+            ),
+            Expanded(
+              child: _NavItem(
+                iconAsset: 'assets/icons/nav/profile.svg',
+                label: 'nav_profile'.tr,
+                isActive: index == 3,
+                onTap: () => controller.changePage(3),
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 }
 
 class _NavItem extends StatelessWidget {
-  final IconData icon;
+  final String iconAsset;
   final String label;
   final bool isActive;
   final VoidCallback onTap;
 
   const _NavItem({
-    required this.icon,
+    required this.iconAsset,
     required this.label,
     required this.isActive,
     required this.onTap,
@@ -82,24 +88,33 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isActive ? AppColors.primaryColor : AppColors.textTertiaryColor;
-    final fontWeight = isActive ? FontWeight.w600 : FontWeight.w500;
+    // Active = primary orange, inactive = neutral slate (matches design #FD9029 / #545F71).
+    final color = isActive ? AppColors.primaryColor : AppColors.neutralColor;
 
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: AppSizes.navItemWidth,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: AppSizes.navItemTopPadding,
+          bottom: AppSizes.navItemBottomPadding,
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon, size: AppSizes.navIconSize, color: color),
+            SvgPicture.asset(
+              iconAsset,
+              width: AppSizes.navIconSize,
+              height: AppSizes.navIconSize,
+              colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+            ),
             const SizedBox(height: AppSizes.navItemGap),
             AppText(
               label,
               variant: AppTextVariant.caption,
               fontSize: AppSizes.navFontSize,
-              fontWeight: fontWeight,
+              fontWeight: FontWeight.w500,
               color: color,
             ),
           ],
