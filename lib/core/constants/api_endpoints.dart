@@ -29,6 +29,13 @@ class ApiEndpoints {
   static const String onboardingChat = '/onboarding/chat'; // POST
   static const String onboardingComplete = '/onboarding/complete'; // POST
 
+  /// Fetches full message history for an anonymous onboarding conversation so
+  /// the chat screen can rehydrate on cold-resume.
+  /// Response data shape: `{ conversation_id, turn_number, max_turns,
+  /// is_last_turn, messages: [{ id, role, content, created_at }] }`.
+  static String onboardingConversationMessages(String id) =>
+      '/onboarding/conversations/$id/messages';
+
   // Lessons
   static const String lessons = '/lessons';
   static String lessonDetail(String id) => '/lessons/$id';

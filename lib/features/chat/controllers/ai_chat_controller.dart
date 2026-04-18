@@ -8,10 +8,10 @@ import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
 import '../../../core/services/audio/tts-service.dart';
 import '../../../core/services/audio/voice-input-service.dart';
-import '../../../core/services/storage_service.dart';
 import '../../onboarding/controllers/onboarding_controller.dart';
 import '../../onboarding/models/onboarding_profile_model.dart';
 import '../../onboarding/models/onboarding_session_model.dart';
+import '../../onboarding/services/onboarding_progress_service.dart';
 import '../models/chat_message_model.dart';
 import '../widgets/word-translation-sheet-loader.dart';
 
@@ -22,7 +22,8 @@ class AiChatController extends BaseController {
   final TtsService _ttsService = Get.find();
   final VoiceInputService _voiceInputService = Get.find();
   final OnboardingController _onboardingCtrl = Get.find();
-  final StorageService _storageService = Get.find();
+  final OnboardingProgressService _progressSvc =
+      Get.find<OnboardingProgressService>();
 
   final messages = <ChatMessage>[].obs;
   final isTyping = false.obs;
@@ -55,7 +56,93 @@ class AiChatController extends BaseController {
     super.onInit();
     chatTitle.value = Get.arguments?['chatTitle'] ?? 'Chat';
     contextDescription.value = Get.arguments?['contextDescription'] ?? '';
-    _createSession();
+    _bootstrapSession();
+  }
+
+  /// Cold-resume aware session bootstrap. If a prior conversation exists in the
+  /// progress map, rehydrate transcript from backend; otherwise start fresh.
+  void _bootstrapSession() {
+    final chatCheckpoint = _progressSvc.read().chat;
+    if (chatCheckpoint != null) {
+      _conversationId = chatCheckpoint.conversationId;
+      _onboardingCtrl.conversationId = _conversationId;
+      _rehydrateFromBackend();
+    } else {
+      _createSession();
+    }
+  }
+
+  /// Fetches message history from the backend and populates the chat UI.
+  /// On 404 (conversation dead / not yet migrated), falls back to a fresh
+  /// session. On other errors, surfaces a retry affordance via [errorMessage].
+  Future<void> _rehydrateFromBackend() async {
+    final id = _conversationId;
+    if (id == null) {
+      await _createSession();
+      return;
+    }
+
+    isTyping.value = true;
+    errorMessage.value = '';
+    try {
+      final response = await _apiClient.get<Map<String, dynamic>>(
+        ApiEndpoints.onboardingConversationMessages(id),
+        fromJson: (data) => data as Map<String, dynamic>,
+      );
+      if (response.isSuccess && response.data != null) {
+        _applyRehydratedTranscript(response.data!);
+      } else {
+        errorMessage.value = 'resume_chat_failed'.tr;
+      }
+    } on NotFoundException {
+      // Conversation dead — clear local checkpoint and start fresh.
+      await _progressSvc.clearChat();
+      _conversationId = null;
+      _onboardingCtrl.conversationId = null;
+      await _createSession();
+      return;
+    } on ApiException catch (e) {
+      // 404 is covered above; treat all other API errors as retryable network
+      // issues so the user can recover without blowing away their progress.
+      if (e.statusCode == 404) {
+        await _progressSvc.clearChat();
+        _conversationId = null;
+        _onboardingCtrl.conversationId = null;
+        await _createSession();
+        return;
+      }
+      errorMessage.value = e.userMessage;
+    } catch (_) {
+      errorMessage.value = 'resume_chat_failed'.tr;
+    } finally {
+      isTyping.value = false;
+    }
+  }
+
+  /// Populates observables from the `GET messages` response payload.
+  ///
+  /// Accepts both snake_case (`turn_number`, `is_last_turn`) and camelCase
+  /// (`turnNumber`, `isLastTurn`) keys so we stay resilient to any last-mile
+  /// API shape tweaks before backend lands.
+  void _applyRehydratedTranscript(Map<String, dynamic> data) {
+    final rawMessages = (data['messages'] as List<dynamic>? ?? const []);
+    final parsed = rawMessages
+        .whereType<Map<String, dynamic>>()
+        .map(ChatMessage.fromServerJson)
+        .toList();
+    messages.assignAll(parsed);
+
+    final turnNumber =
+        (data['turn_number'] ?? data['turnNumber'] ?? 0) as int? ?? 0;
+    final maxTurns =
+        (data['max_turns'] ?? data['maxTurns'] ?? 10) as int? ?? 10;
+    final isLastTurn =
+        (data['is_last_turn'] ?? data['isLastTurn'] ?? false) as bool? ?? false;
+
+    progress.value =
+        maxTurns == 0 ? 0.0 : (turnNumber / maxTurns).clamp(0.0, 1.0);
+    isChatComplete.value = isLastTurn;
+    _scrollToBottom();
   }
 
   /// Creates the onboarding session via unified /onboarding/chat endpoint
@@ -76,7 +163,7 @@ class AiChatController extends BaseController {
       if (response.isSuccess && response.data != null) {
         final session = response.data!;
         _conversationId = session.conversationId;
-        await _storageService.setPreference('onboarding_conversation_id', _conversationId);
+        await _progressSvc.setChatConversationId(_conversationId!);
         _onboardingCtrl.conversationId = _conversationId;
         await _handleChatResponse(session);
       } else {
@@ -91,7 +178,17 @@ class AiChatController extends BaseController {
     }
   }
 
-  Future<void> retrySession() => _createSession();
+  /// Retry entry point used by the error banner. Picks rehydrate vs fresh
+  /// session based on whether a prior conversationId is still persisted, so
+  /// users mid-rehydrate on a flaky network don't lose their transcript.
+  Future<void> retrySession() async {
+    final hasCheckpoint = _progressSvc.read().chat != null;
+    if (hasCheckpoint) {
+      await _rehydrateFromBackend();
+    } else {
+      await _createSession();
+    }
+  }
 
   Future<void> sendMessage(String text) async {
     final trimmed = text.trim();
@@ -152,7 +249,7 @@ class AiChatController extends BaseController {
   /// Clears local session state so the user can restart onboarding cleanly.
   void _clearSession() {
     _conversationId = null;
-    _storageService.setPreference('onboarding_conversation_id', null);
+    _progressSvc.clearChat();
     _onboardingCtrl.conversationId = null;
     isChatComplete.value = false;
   }
@@ -247,7 +344,7 @@ class AiChatController extends BaseController {
 
   /// Skip onboarding and navigate directly to scenario gift
   void skipOnboarding() {
-    Get.toNamed(AppRoutes.onboardingScenarioGift);
+    Get.offNamed(AppRoutes.onboardingScenarioGift);
   }
 
   // ─────────────────────────────────────────────────────────────────
@@ -367,12 +464,15 @@ class AiChatController extends BaseController {
       );
       if (response.isSuccess && response.data != null) {
         _onboardingCtrl.onboardingProfile = response.data;
+        // Persist completion checkpoint so a cold-resume after this point lands
+        // on the scenario-gift screen and refetches the profile.
+        await _progressSvc.setProfileComplete(true);
       }
     } on ApiException {
       // Non-fatal: navigate regardless so user is not stuck
     } finally {
       await Future.delayed(const Duration(seconds: 2));
-      Get.toNamed(AppRoutes.onboardingScenarioGift);
+      Get.offNamed(AppRoutes.onboardingScenarioGift);
     }
   }
 

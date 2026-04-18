@@ -119,11 +119,11 @@ flowering/
 │   ├── features/                          # Feature modules
 │   │   ├── onboarding/                    # Onboarding flow ✅ (screens 01-08)
 │   │   │   ├── bindings/                  # DI setup ✅
-│   │   │   ├── controllers/               # State management ✅
+│   │   │   ├── controllers/               # State management, resume logic ✅
 │   │   │   ├── views/                     # Screens 01-08 ✅
 │   │   │   ├── widgets/                   # Custom widgets ✅
-│   │   │   ├── models/                    # OnboardingLanguage, Session, etc. ✅
-│   │   │   └── services/                  # Language API service ✅
+│   │   │   ├── models/                    # OnboardingLanguage, Session, Progress ✅
+│   │   │   └── services/                  # Language API, Progress persistence ✅
 │   │   ├── auth/                          # Authentication ✅ (Screens 09-14)
 │   │   │   ├── bindings/                  # DI setup ✅
 │   │   │   ├── controllers/               # Login, signup, forgot password ✅

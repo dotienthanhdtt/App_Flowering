@@ -2,9 +2,9 @@
 
 Welcome to the Flowering Flutter documentation. This directory contains comprehensive documentation for the AI-powered language learning app.
 
-**Last Updated:** March 11, 2026
-**Current Phase:** 6 (Complete) - Ready for Phase 7
-**Status:** All infrastructure and user acquisition features complete
+**Last Updated:** April 15, 2026
+**Current Phase:** 6.10 (Onboarding Progress Resume) - Ready for Phase 7
+**Status:** All infrastructure, user acquisition, and session persistence features complete
 
 ## Quick Navigation
 
@@ -46,7 +46,7 @@ Deep dive into system design:
 - **State Management:** GetX 4.6.6 (dependency injection, routing, reactive state)
 - **Networking:** Dio 5.4.0 (HTTP client with interceptors)
 - **Storage:** Hive 2.2.3 (local cache with eviction), AuthStorage (token management)
-- **Audio:** record 6.2.0 (recording), audioplayers 5.2.1 (playback)
+- **Audio:** flutter_tts 4.2.5 (TTS), speech_to_text 7.3.0 (STT), record 6.2.0 (iOS recording)
 - **UI:** Flutter Material3, google_fonts (Inter typography), lucide_icons
 
 ### Architecture Pattern
@@ -248,7 +248,7 @@ This documentation is actively maintained alongside development:
 
 ---
 
-**Last Reviewed:** 2026-03-11
+**Last Reviewed:** 2026-04-15
 **Next Review:** When Phase 7 begins
 **Maintainer:** Development Team
 **Status:** All documentation current and consistent

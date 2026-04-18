@@ -29,4 +29,21 @@ class ChatMessage {
     this.correctedText,
     this.showCorrection = true,
   });
+
+  /// Parses a server message from `GET /onboarding/conversations/:id/messages`.
+  /// Server shape: `{ id, role: 'user'|'assistant', content, created_at }`.
+  /// Unknown roles fall back to `aiText` so forward-compat additions don't crash.
+  factory ChatMessage.fromServerJson(Map<String, dynamic> json) {
+    final role = json['role'] as String?;
+    final rawTimestamp = json['created_at'] as String?;
+    return ChatMessage(
+      id: json['id'] as String? ??
+          'srv_${DateTime.now().microsecondsSinceEpoch}',
+      type: role == 'user' ? ChatMessageType.userText : ChatMessageType.aiText,
+      text: json['content'] as String? ?? '',
+      timestamp: rawTimestamp != null
+          ? (DateTime.tryParse(rawTimestamp) ?? DateTime.now())
+          : DateTime.now(),
+    );
+  }
 }

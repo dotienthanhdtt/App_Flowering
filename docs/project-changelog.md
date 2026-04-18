@@ -2,6 +2,106 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-04-15] Onboarding Progress Resume: Persist Pre-Auth Checkpoints ✅ COMPLETED
+
+#### Overview
+New session persistence layer that saves onboarding checkpoints locally (language selections, active chat conversation) so users resume from their last step after app kill/restart. Previously, closing the app during onboarding reset progress and forced users to restart from the welcome screen.
+
+#### Added
+- **OnboardingProgress Model** (`lib/features/onboarding/models/onboarding_progress_model.dart`)
+  - Unified checkpoint data structure with schema version `_v: 1` for backward compatibility
+  - Fields: `native_lang{code,id}`, `learning_lang{code,id}`, `chat{conversation_id}`, `profileComplete`, `updated_at`
+  - JSON round-trip with `fromJson()` / `toJson()`, `copyWith()` for immutable updates
+  - Unknown schema versions treated as empty (safe degradation on future breaking changes)
+
+- **OnboardingProgressService** (`lib/features/onboarding/services/onboarding_progress_service.dart`)
+  - Persists unified JSON blob in Hive `preferences` box under key `onboarding_progress`
+  - Synchronous reads (in-memory), async writes (Hive)
+  - Legacy migration: auto-converts old `onboarding_conversation_id` → `chat.conversation_id` on init
+  - Granular mutators: `setNativeLang()`, `setLearningLang()`, `setChatConversationId()`, `setProfileComplete()`, `clearChat()`, `clearAll()`
+  - Never throws; returns empty progress on corruption/missing key
+
+- **DI Registration** (`lib/app/global-dependency-injection-bindings.dart`)
+  - `OnboardingProgressService` registered as lazy+fenix
+  - Init order: `StorageService` → `OnboardingProgressService` → (other services) in `initializeServices()`
+  - `init()` runs legacy migration on first use
+
+- **Resume Logic** (`lib/features/onboarding/controllers/splash_controller.dart`)
+  - New exported function `computeOnboardingResumeTarget()` with reverse-priority routing:
+    - If profile complete → route to scenario gift
+    - Else if chat checkpoint exists → route to chat
+    - Else if learning lang selected → route to chat (empty session)
+    - Else if native lang selected → route to learning language picker
+    - Else → route to welcome screen
+  - Respects login state: returning logged-out users skip onboarding and see auth intro
+
+#### Changed
+- **AiChatController** (`lib/features/chat/controllers/ai_chat_controller.dart`)
+  - New `_bootstrapSession()` on init checks progress for prior conversation
+  - If checkpoint exists, calls `_rehydrateFromBackend()` to fetch `/onboarding/conversations/{id}/messages`
+  - On 404 (conversation expired), clears checkpoint and starts fresh
+  - On other errors, shows retryable error and allows user to create new session
+  - `_createSession()` called only if no prior checkpoint
+
+- **ChatMessage Model** (`lib/features/chat/models/chat_message_model.dart`)
+  - New factory `ChatMessage.fromServerJson()` for parsing rehydrated messages
+  - Maps server role `user`→`userText`, others→`aiText`; handles missing id/content gracefully
+  - Accepts both snake_case (`created_at`) and camelCase (`createdAt`) for robustness
+
+- **AiChatBinding** (`lib/features/chat/bindings/ai_chat_binding.dart`)
+  - Now delegates to `OnboardingBinding` first (idempotent via `Get.isRegistered`) to ensure dependencies available during cold-resume
+
+- **API Endpoints** (`lib/core/constants/api_endpoints.dart`)
+  - New endpoint: `GET /onboarding/conversations/{id}/messages` (fetch message history for rehydration)
+
+- **AuthController** (`lib/features/auth/controllers/auth_controller.dart`)
+  - Post-login calls `StorageService.setHasCompletedLogin()` so returning users skip onboarding intro and see auth screen directly
+  - Loading overlay now shows AFTER native picker closes (OS owns picker UI)
+
+- **StorageService** (`lib/core/services/storage_service.dart`)
+  - New method `setHasCompletedLogin()` and getter `hasCompletedLogin` for permanent flag
+  - Flag survives `clearAll()` so returning users are never re-onboarded after logout
+
+#### Storage Schema
+- **Hive Box:** `preferences`
+- **Key:** `onboarding_progress`
+- **Value:** JSON string (not typed object, for graceful schema evolution)
+- **Schema:**
+  ```json
+  {
+    "_v": 1,
+    "native_lang": {"code": "en", "id": "uuid?"},
+    "learning_lang": {"code": "vi", "id": "uuid?"},
+    "chat": {"conversation_id": "uuid"},
+    "profile_complete": false,
+    "updated_at": "2026-04-15T12:34:56.789Z"
+  }
+  ```
+
+#### Migration
+- Detects legacy `onboarding_conversation_id` preference (used by prior chat resumption logic)
+- Auto-migrates to `chat.conversation_id` in unified progress map on first service init
+- Old key deleted after migration; never checked again
+
+#### Tests
+- `test/features/onboarding/onboarding_progress_model_test.dart` — model JSON round-trip, schema version safety, `copyWith()`
+- `test/features/onboarding/splash_controller_resume_test.dart` — priority routing, login state decision tree
+- `test/features/onboarding/onboarding_progress_service_test.dart` — read/write, legacy migration, error resilience
+- `test/features/chat/chat_message_server_parse_test.dart` — rehydration message parsing
+- `test/features/chat/ai_chat_binding_cold_resume_test.dart` — cold-resume dependencies
+
+#### Breaking Changes
+None — fully backward compatible. Old data migrated automatically; users with no prior progress start fresh.
+
+#### Technical Decisions
+1. **JSON Storage (not Typed Hive Object):** Enables future schema changes without code-gen rebuild
+2. **Schema Version Guard:** Unknown versions treat as empty, preventing crashes on downgrade
+3. **Synchronous Reads:** Hive is in-memory after init; reads are instant (no delay on hot-resume paths)
+4. **Granular Mutators:** Each progress field can be updated independently; encourages correct usage patterns
+5. **Permanent Flag:** `hasCompletedLogin` survives logout so re-login doesn't force re-onboarding
+
+---
+
 ### [2026-04-14] Onboarding API Unification: Single `/onboarding/chat` Endpoint ⚠️ BREAKING
 
 #### Overview

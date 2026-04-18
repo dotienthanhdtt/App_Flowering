@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,6 +7,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
+import '../../../shared/widgets/loading_widget.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
 import '../../../core/services/auth_storage.dart';
@@ -131,13 +131,16 @@ class AuthController extends BaseController {
     );
     await _authStorage.saveUserId(auth.user.id);
     await _storageService.removePreference('onboarding_conversation_id');
+    // Mark that this device has completed login at least once.
+    // This flag persists through logout so returning users see auth on
+    // onboarding intro screens instead of re-entering onboarding flows.
+    await _storageService.setHasCompletedLogin();
     Get.offAllNamed(AppRoutes.home);
   }
 
   // ── Social auth via Firebase ──────────────────────────────────
 
   Future<void> signInWithGoogle() async {
-    isLoading.value = true;
     errorMessage.value = '';
     try {
       // serverClientId = Web Client ID (type 3) from google-services.json
@@ -147,11 +150,13 @@ class AuthController extends BaseController {
         serverClientId:
             '898715197112-g89g04i54mpeqcjau6ptpu6vn33iful0.apps.googleusercontent.com',
       );
+      // No overlay during native picker — OS owns that UI
       final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        isLoading.value = false;
-        return; // user cancelled
-      }
+      if (googleUser == null) return; // user cancelled
+
+      // Native picker closed with an account — show overlay during Firebase/API calls
+      isLoading.value = true;
+      _showLoadingOverlay();
       final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -165,20 +170,25 @@ class AuthController extends BaseController {
       errorMessage.value = 'google_sign_in_failed'.tr;
     } finally {
       isLoading.value = false;
+      _hideLoadingOverlay();
     }
   }
 
   Future<void> signInWithApple() async {
     if (!Platform.isIOS) return;
-    isLoading.value = true;
     errorMessage.value = '';
     try {
+      // No overlay during native picker — OS owns that UI
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
       );
+
+      // Native picker closed with credentials — show overlay during Firebase/API calls
+      isLoading.value = true;
+      _showLoadingOverlay();
       final oauthCredential = OAuthProvider('apple.com').credential(
         idToken: appleCredential.identityToken,
         accessToken: appleCredential.authorizationCode,
@@ -193,7 +203,21 @@ class AuthController extends BaseController {
       errorMessage.value = 'apple_sign_in_failed'.tr;
     } finally {
       isLoading.value = false;
+      _hideLoadingOverlay();
     }
+  }
+
+  void _showLoadingOverlay() {
+    if (Get.isDialogOpen ?? false) return;
+    Get.dialog(
+      const Center(child: LoadingWidget()),
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+    );
+  }
+
+  void _hideLoadingOverlay() {
+    if (Get.isDialogOpen ?? false) Get.back();
   }
 
   /// Signs in to Firebase, gets ID token, then calls backend /auth/firebase.

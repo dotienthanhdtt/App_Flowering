@@ -260,6 +260,14 @@ Future<void> clearAllCaches();
 - Hive box corruption: try-catch with box recreation
 - Validation on read operations
 
+**Onboarding Progress Persistence (Phase 6.10 ✅):**
+- **Key:** `onboarding_progress` in `preferences` box
+- **Format:** JSON string (schema versioned for future compatibility)
+- **Tracked Fields:** `native_lang{code,id}`, `learning_lang{code,id}`, `chat{conversation_id}`, `profileComplete`, `updated_at`
+- **Safety:** Unknown schema versions return empty (no crash on downgrade)
+- **Legacy Migration:** Auto-converts old `onboarding_conversation_id` preference to unified progress on first init
+- **Resume Logic:** Splash screen checks progress and routes user to last completed checkpoint (scenario gift → chat → language selection → welcome)
+
 #### AuthStorage
 Token management using `flutter_secure_storage` (iOS Keychain / Android Keystore).
 

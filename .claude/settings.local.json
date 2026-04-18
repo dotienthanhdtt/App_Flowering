@@ -93,7 +93,8 @@
       "Bash(mv onboarding_value_1.png.new onboarding_value_1.png)",
       "Bash(mv onboarding_value_2.png.new onboarding_value_2.png)",
       "Bash(python3:*)",
-      "Bash(sort -u -t: -k2)"
+      "Bash(sort -u -t: -k2)",
+      "Bash(echo \"---EXIT:$?---\")"
     ]
   },
   "enableAllProjectMcpServers": true,

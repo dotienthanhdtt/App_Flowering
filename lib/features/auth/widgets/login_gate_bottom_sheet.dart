@@ -7,7 +7,6 @@ import '../../../app/routes/app-route-constants.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
-import '../../../shared/widgets/loading_widget.dart';
 import '../controllers/auth_controller.dart';
 
 /// Screen 09 — Login Gate shown as a bottom sheet over the Scenario Gift screen.
@@ -74,14 +73,6 @@ class LoginGateBottomSheet extends StatelessWidget {
                 color: AppColors.errorColor,
                 textAlign: TextAlign.center,
               ),
-            );
-          }),
-          // Loading indicator
-          Obx(() {
-            if (!_getAuthController().isLoading.value) return const SizedBox.shrink();
-            return const Padding(
-              padding: EdgeInsets.only(bottom: AppSizes.space3),
-              child: LoadingWidget(size: 40),
             );
           }),
           // Apple Sign-In (iOS only)

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../core/services/storage_service.dart';
 import '../core/services/auth_storage.dart';
 import '../core/services/connectivity_service.dart';
+import '../features/onboarding/services/onboarding_progress_service.dart';
 import '../core/services/audio/contracts/tts-provider-contract.dart';
 import '../core/services/audio/contracts/stt-provider-contract.dart';
 import '../core/services/audio/contracts/audio-recorder-provider-contract.dart';
@@ -31,6 +32,12 @@ class AppBindings extends Bindings {
 
     Get.lazyPut<AuthStorage>(
       () => AuthStorage(),
+      fenix: true,
+    );
+
+    // Onboarding progress — unified resume state across restarts
+    Get.lazyPut<OnboardingProgressService>(
+      () => OnboardingProgressService(),
       fenix: true,
     );
 
@@ -105,6 +112,10 @@ Future<void> initializeServices() async {
   // General storage service
   final storageService = Get.put(StorageService());
   await storageService.init();
+
+  // Onboarding progress — depends on StorageService; runs legacy-key migration
+  final onboardingProgress = Get.put(OnboardingProgressService());
+  await onboardingProgress.init();
 
   // Network connectivity monitoring
   final connectivityService = Get.put(ConnectivityService());

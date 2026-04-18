@@ -141,6 +141,8 @@ const Map<String, String> viVN = {
   'chat_session_invalid': 'Không tìm thấy phiên. Hãy bắt đầu cuộc trò chuyện mới.',
   'chat_rate_limit_create': 'Quá nhiều lần khởi tạo phiên. Vui lòng đợi một giờ trước khi thử lại.',
   'chat_rate_limit_chat': 'Chậm lại nào — bạn đang gửi tin nhắn quá nhanh.',
+  'resume_chat_failed': 'Không thể khôi phục cuộc trò chuyện trước đó.',
+  'resume_chat_retry': 'Thử lại',
   'chat_retry': 'Thử lại',
   'chat_leave_confirm': 'Rời cuộc trò chuyện?',
   'chat_leave_message': 'Tiến trình của bạn sẽ bị mất nếu rời đi.',

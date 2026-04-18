@@ -1,6 +1,6 @@
 # Flowering — Feature Summary
 
-**Last Updated:** March 28, 2026
+**Last Updated:** April 15, 2026
 
 ---
 
@@ -8,6 +8,7 @@
 
 | Feature | Description |
 |---------|-------------|
+| **Onboarding Progress Resume** | Users who close the app during onboarding now resume from their last checkpoint (language selections, active conversation) instead of restarting. Unified `OnboardingProgress` model persists to local storage with schema version safety and legacy migration support. |
 | **Onboarding Flow** | New users land on the app with no account needed. They see 3 welcome screens, pick their native and target languages, and receive a personalized learning scenario — removing the friction of forced signup before trying the product. |
 | **Anonymous AI Chat** | During onboarding, users can chat with "Flora" (AI tutor) without creating an account. Conversations are limited to 10 turns with a 7-day lifespan, letting users experience the product value before committing. |
 | **Email Authentication** | Users can sign up and log in with email/password. Includes input validation and secure token management so returning users can pick up where they left off. |
@@ -19,6 +20,7 @@
 | **Mobile App Architecture** | Feature-organized Flutter app with state management, HTTP networking (auto-retry, token refresh), offline storage, and connectivity monitoring. The shell that all mobile features plug into. |
 | **Design System** | Consistent colors, typography (Outfit font), spacing, and reusable components (buttons, text fields, loading states) across the entire app. Users get a polished, cohesive experience. |
 | **Localization** | Full English and Vietnamese language support (~130+ translated strings). Users interact with the app in their preferred language. |
+| **Chat Cold-Resume & Rehydration** | When returning to an active conversation, the app fetches message history from the server and populates the chat UI. Handles conversation expiry gracefully (404 clears checkpoint and starts fresh). |
 | **Chat UI** | Conversational interface with message bubbles, quick reply buttons, typing indicators, and a progress bar. Makes AI interaction feel natural and guided. |
 | **Home Shell** | Bottom navigation with 4 tabs (Chat, Lessons, Vocabulary, Profile) using IndexedStack for instant tab switching. Users can navigate the app's main sections smoothly. |
 | **AI Observability** | All AI interactions are traced via Langfuse — tracking costs, latency, and quality. Allows the team to monitor and optimize AI performance and spending. |

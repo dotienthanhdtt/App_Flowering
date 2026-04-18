@@ -141,6 +141,8 @@ const Map<String, String> enUS = {
   'chat_session_invalid': 'Session not found. Let\'s start a new conversation.',
   'chat_rate_limit_create': 'Too many session attempts. Please wait an hour before starting again.',
   'chat_rate_limit_chat': 'Slow down — you\'re sending messages too quickly.',
+  'resume_chat_failed': 'Couldn\'t restore your previous conversation.',
+  'resume_chat_retry': 'Try again',
   'chat_retry': 'Retry',
   'chat_leave_confirm': 'Leave conversation?',
   'chat_leave_message': 'Your progress will be lost if you leave now.',

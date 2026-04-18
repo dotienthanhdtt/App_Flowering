@@ -6,8 +6,8 @@
 **Framework:** Flutter 3.10.3+
 **Architecture:** Feature-first with GetX
 **Start Date:** 2026-02-05
-**Current Status Date:** 2026-03-28
-**Completion Estimate:** Phases 1-6.8 complete, Phases 7-10 pending
+**Current Status Date:** 2026-04-15
+**Completion Estimate:** Phases 1-6.10 complete, Phases 7-10 pending
 
 ## Roadmap Overview
 
@@ -22,14 +22,15 @@ Phase 6.5: Bottom Navigation ████████████ 100% (1h) ✅ 
 Phase 6.7: Text→AppText Refactor ████████████ 100% (3h) ✅ COMPLETED 2026-03-18
 Phase 6.8: API JSON Migration ████████████ 100% (2h) ✅ COMPLETED 2026-03-28
 Phase 6.9: Audio Architecture (TTS/STT) ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-06
-Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-15
+Phase 6.10: Onboarding Progress Resume ████████████ 100% (2h) ✅ COMPLETED 2026-04-15
+Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-20
 Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-04-25
 Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-05
 Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-15
 ```
 
-**Overall Progress:** 100% of foundation + onboarding + auth + audio architecture (Phases 1-6.9 complete)
-**Completed:** 25 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture)
+**Overall Progress:** 100% of foundation + onboarding + auth + audio + persistence (Phases 1-6.10 complete)
+**Completed:** 27 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture, onboarding progress resume)
 **Remaining:** Home dashboard, expanded chat, lessons, profile/settings (~8.5 hours estimated)
 
 ## Phase Details
@@ -732,6 +733,153 @@ Get.lazyPut(() => VoiceInputService());
 - ✅ Preferences persist across app sessions
 - ✅ All files compile without errors
 - ✅ Services register correctly in GetX
+
+---
+
+### Phase 6.10: Onboarding Progress Resume ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 2 hours
+**Completion Date:** 2026-04-15
+**Dependencies:** Phase 3 (StorageService), Phase 6.6 (Chat), Phase 6.9 (Audio) ✅
+**Priority:** P1 - Critical (UX polish, session persistence)
+
+**Overview:**
+Users who close the app during onboarding now resume from their last checkpoint (language selections, active conversation) instead of restarting from the welcome screen. Unified `OnboardingProgress` model persists to local storage with schema version safety, graceful degradation, and legacy migration support.
+
+**Deliverables:**
+- ✅ `OnboardingProgress` model with schema versioning and JSON round-trip
+- ✅ `OnboardingProgressService` with unified read/write API
+- ✅ Legacy migration: `onboarding_conversation_id` → `chat.conversation_id`
+- ✅ `SplashController.computeOnboardingResumeTarget()` with priority routing
+- ✅ Chat cold-resume via `AiChatController._bootstrapSession()`
+- ✅ `ChatMessage.fromServerJson()` factory for rehydration
+- ✅ `GET /onboarding/conversations/{id}/messages` endpoint integration
+- ✅ `StorageService.setHasCompletedLogin()` flag for returning users
+- ✅ Global DI registration with proper init order
+
+**Architecture:**
+```
+lib/features/onboarding/
+├── models/
+│   └── onboarding_progress_model.dart        (OnboardingProgress, LangCheckpoint, ChatCheckpoint)
+└── services/
+    └── onboarding_progress_service.dart      (read/write, legacy migration)
+
+lib/features/chat/
+└── models/
+    └── chat_message_model.dart               (fromServerJson factory)
+
+lib/core/constants/
+└── api_endpoints.dart                        (onboardingConversationMessages endpoint)
+
+lib/app/
+└── global-dependency-injection-bindings.dart (OnboardingProgressService DI + init)
+```
+
+**Storage Schema:**
+- **Hive Box:** `preferences`
+- **Key:** `onboarding_progress`
+- **Value:** JSON string (schema-versioned for future evolution)
+- **Fields Tracked:** `native_lang{code,id}`, `learning_lang{code,id}`, `chat{conversation_id}`, `profileComplete`, `updated_at`
+
+**Resume Priority (SplashController):**
+```
+1. If profileComplete → route to scenario-gift
+2. Else if chat checkpoint → route to chat (rehydrate from backend)
+3. Else if learningLang → route to chat (empty session)
+4. Else if nativeLang → route to learning-language picker
+5. Else → route to welcome screen
+```
+
+**Chat Cold-Resume Flow:**
+1. AiChatController init calls `_bootstrapSession()`
+2. Check `OnboardingProgressService.read().chat` for prior conversation
+3. If exists: call `GET /onboarding/conversations/{id}/messages`
+4. If 404: conversation expired → clear checkpoint, start fresh
+5. If 2xx: populate chat UI with rehydrated messages
+6. If error: show retryable error, user can create new session
+
+**Key Methods:**
+```dart
+// OnboardingProgressService
+OnboardingProgress read()
+Future<void> setNativeLang(String code, {String? id})
+Future<void> setLearningLang(String code, {String? id})
+Future<void> setChatConversationId(String conversationId)
+Future<void> setProfileComplete(bool complete)
+Future<void> clearChat()  // Clear only chat, keep languages
+Future<void> clearAll()   // Full reset
+
+// StorageService
+bool get hasCompletedLogin  // Never cleared, survives logout
+Future<void> setHasCompletedLogin()
+
+// SplashController (exported for testing)
+String computeOnboardingResumeTarget(OnboardingProgress p)
+```
+
+**Dependency Injection Order (initializeServices):**
+1. AuthStorage → init()
+2. StorageService → init()
+3. OnboardingProgressService → init() [runs legacy migration]
+4. ConnectivityService → init()
+5. Audio providers, TtsService, VoiceInputService → init()
+6. ApiClient → init()
+7. RevenueCat, Subscription services → init()
+
+**Migration Logic:**
+- Detects old `onboarding_conversation_id` preference (from prior implementation)
+- Auto-converts to `chat.conversation_id` in unified progress on first service init
+- Old key deleted after migration; never checked again
+- Graceful: if conversion fails, user restarts from beginning (no crash)
+
+**Error Handling:**
+- JSON corruption: return empty progress (safe degradation)
+- Missing key: return empty progress (first-time user)
+- Unknown schema version: return empty progress (forward-compatible)
+- Backend 404: clear chat checkpoint, offer fresh session
+- Backend network error: show retryable error
+
+**Tests:**
+- `test/features/onboarding/onboarding_progress_model_test.dart` — model serialization, schema versioning
+- `test/features/onboarding/splash_controller_resume_test.dart` — routing priority, login state logic
+- `test/features/onboarding/onboarding_progress_service_test.dart` — read/write ops, migration, error resilience
+- `test/features/chat/chat_message_server_parse_test.dart` — rehydration message parsing (snake_case + camelCase)
+- `test/features/chat/ai_chat_binding_cold_resume_test.dart` — cold-resume dependency chain
+
+**Files Created:**
+- `lib/features/onboarding/models/onboarding_progress_model.dart`
+- `lib/features/onboarding/services/onboarding_progress_service.dart`
+- 5 test files (model, service, splash routing, chat parsing, bindings)
+
+**Files Modified:**
+- `lib/app/global-dependency-injection-bindings.dart` — DI registration, init order
+- `lib/core/services/storage_service.dart` — `hasCompletedLogin` flag
+- `lib/core/constants/api_endpoints.dart` — new endpoint
+- `lib/features/chat/controllers/ai_chat_controller.dart` — cold-resume bootstrap
+- `lib/features/chat/models/chat_message_model.dart` — server JSON factory
+- `lib/features/chat/bindings/ai_chat_binding.dart` — delegate to OnboardingBinding
+- `lib/features/onboarding/controllers/splash_controller.dart` — resume routing
+- `lib/features/auth/controllers/auth_controller.dart` — post-login flag
+
+**Technical Decisions:**
+1. **JSON Storage (not Typed Hive Object):** Enables schema evolution without code-gen recompilation
+2. **Schema Version Guard:** Unknown versions degrade gracefully (return empty, no crash)
+3. **Synchronous Reads:** Hive is in-memory; no delay on hot-resume paths
+4. **Permanent `hasCompletedLogin` Flag:** Survives logout so re-login doesn't re-onboard
+5. **Unified Progress Map:** Single source of truth vs scattered preferences
+
+**Success Criteria Met:**
+- ✅ Users resume from last checkpoint after app restart
+- ✅ Language selections persisted and recovered
+- ✅ Active chat conversation rehydrated from backend
+- ✅ Conversation expiry (404) handled gracefully
+- ✅ Legacy migration runs automatically
+- ✅ No breaking changes; fully backward compatible
+- ✅ Schema versioning prevents crashes on future changes
+- ✅ All files compile without errors
+- ✅ Services init in correct dependency order
 
 ---
 

@@ -10,6 +10,10 @@ class StorageService extends GetxService {
   static const String _chatBox = 'chat_cache';
   static const String _preferencesBox = 'preferences';
 
+  /// Key for the permanent "user has completed login" flag.
+  /// This key survives clearAll() so returning users are never re-onboarded.
+  static const String _hasCompletedLoginKey = 'has_completed_login';
+
   // Size limits in bytes
   static const int _lessonsMaxSize = 100 * 1024 * 1024; // 100 MB
   static const int _chatMaxSize = 10 * 1024 * 1024; // 10 MB
@@ -208,10 +212,26 @@ class StorageService extends GetxService {
     await _preferences.clear();
   }
 
-  /// Clear everything — used on logout
+  // ─────────────────────────────────────────────────────────────────
+  // Permanent flags (survive clearAll)
+  // ─────────────────────────────────────────────────────────────────
+
+  /// True once the user has successfully logged in at least once.
+  /// Never cleared — even after logout — so the app knows to show auth
+  /// on the onboarding intro screens instead of routing into onboarding flows.
+  bool get hasCompletedLogin =>
+      getPreference<bool>(_hasCompletedLoginKey) ?? false;
+
+  Future<void> setHasCompletedLogin() async =>
+      setPreference<bool>(_hasCompletedLoginKey, true);
+
+  /// Clear everything — used on logout.
+  /// Preserves [_hasCompletedLoginKey] so returning users are never re-onboarded.
   Future<void> clearAll() async {
+    final hadLogin = hasCompletedLogin;
     await clearAllCaches();
     await clearPreferences();
+    if (hadLogin) await setHasCompletedLogin();
   }
 
   /// Close all boxes
