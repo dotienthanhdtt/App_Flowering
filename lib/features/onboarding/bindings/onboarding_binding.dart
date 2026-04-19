@@ -7,21 +7,22 @@ import '../services/onboarding_language_service.dart';
 class OnboardingBinding extends Bindings {
   @override
   void dependencies() {
-    // Register service before controller so onInit() can find it.
+    // Permanent across the onboarding/chat route stack. Route-scoped registration
+    // gets disposed when the owning route is removed via Get.offNamed, even if
+    // downstream routes still depend on it — producing "controller not found"
+    // errors. Persistent data still lives in OnboardingProgressService.
     if (!Get.isRegistered<OnboardingLanguageService>()) {
-      Get.lazyPut<OnboardingLanguageService>(
-        () => OnboardingLanguageService(
+      Get.put<OnboardingLanguageService>(
+        OnboardingLanguageService(
           Get.find<ApiClient>(),
           Get.find<StorageService>(),
         ),
+        permanent: true,
       );
     }
 
-    // Route-scoped: controller lives for the duration of the onboarding/chat
-    // route stack. Persistent state (language selections, conversation id)
-    // lives in OnboardingProgressService (registered permanently in AppBindings).
     if (!Get.isRegistered<OnboardingController>()) {
-      Get.put<OnboardingController>(OnboardingController());
+      Get.put<OnboardingController>(OnboardingController(), permanent: true);
     }
   }
 }
