@@ -11,6 +11,7 @@ import '../../../shared/widgets/loading_widget.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
 import '../../../core/services/auth_storage.dart';
+import '../../../core/services/language-context-service.dart';
 import '../../../core/services/storage_service.dart';
 import '../../onboarding/services/onboarding_progress_service.dart';
 import '../models/auth_response_model.dart';
@@ -24,6 +25,7 @@ class AuthController extends BaseController {
   final StorageService _storageService = Get.find();
   final OnboardingProgressService _progressSvc =
       Get.find<OnboardingProgressService>();
+  final LanguageContextService _langCtx = Get.find<LanguageContextService>();
 
   final obscurePassword = true.obs;
   final obscureConfirmPassword = true.obs;
@@ -134,6 +136,17 @@ class AuthController extends BaseController {
     );
     await _authStorage.saveUserId(auth.user.id);
     await _progressSvc.clearChat();
+    // Returning users who sign in without going through onboarding have no
+    // locally stored active language, which leaves the x-language header
+    // empty. Seed from the server's languages list (createdAt DESC — newest
+    // first) so subsequent requests carry a valid header. Preserve any
+    // existing active code so we never clobber an in-flight onboarding
+    // selection.
+    final activeCode = _langCtx.activeCode.value;
+    if ((activeCode == null || activeCode.isEmpty) && auth.languages.isNotEmpty) {
+      final first = auth.languages.first;
+      await _langCtx.setActive(first.language.code, first.languageId);
+    }
     // Mark that this device has completed login at least once.
     // This flag persists through logout so returning users see auth on
     // onboarding intro screens instead of re-entering onboarding flows.
