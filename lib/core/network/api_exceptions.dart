@@ -160,6 +160,42 @@ ApiException mapDioException(DioException error) {
   }
 }
 
+enum LanguageContextError {
+  headerMissing,
+  unknownCode,
+  notEnrolled,
+  activeRequired;
+
+  String get translationKey {
+    switch (this) {
+      case LanguageContextError.headerMissing:
+        return 'err_language_header_missing';
+      case LanguageContextError.unknownCode:
+        return 'err_language_unknown';
+      case LanguageContextError.notEnrolled:
+        return 'err_language_not_enrolled';
+      case LanguageContextError.activeRequired:
+        return 'err_language_required';
+    }
+  }
+}
+
+/// Maps backend error status + message to a LanguageContextError variant.
+/// Returns null if the error is unrelated to language context.
+LanguageContextError? detectLanguageContextError(int? statusCode, String? message) {
+  if (message == null) return null;
+  final m = message.toLowerCase();
+  if (statusCode == 403 && m.contains('not enrolled')) {
+    return LanguageContextError.notEnrolled;
+  }
+  if (statusCode == 400) {
+    if (m.contains('unknown or inactive language code')) return LanguageContextError.unknownCode;
+    if (m.contains('anonymous')) return LanguageContextError.activeRequired;
+    if (m.contains('active learning language required')) return LanguageContextError.headerMissing;
+  }
+  return null;
+}
+
 Map<String, List<String>>? _parseValidationErrors(dynamic data) {
   if (data is! Map) return null;
   final errors = data['errors'];

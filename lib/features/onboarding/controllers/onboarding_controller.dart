@@ -4,6 +4,7 @@ import '../../../app/routes/app-route-constants.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
+import '../../../core/services/language-context-service.dart';
 import '../models/onboarding_language_model.dart';
 import '../models/onboarding_profile_model.dart';
 import '../services/onboarding_language_service.dart';
@@ -11,7 +12,11 @@ import '../services/onboarding_progress_service.dart';
 
 class OnboardingController extends BaseController {
   final selectedNativeLanguage = 'vi'.obs;
+
+  /// Mirror of LanguageContextService.activeCode for existing Obx() callers.
+  /// Kept in sync via ever() subscription in onInit(). Do NOT write directly.
   final selectedLearningLanguage = ''.obs;
+
   final nativeLanguages = <OnboardingLanguage>[].obs;
   final learningLanguages = <OnboardingLanguage>[].obs;
   final isLoadingLanguages = true.obs;
@@ -25,6 +30,9 @@ class OnboardingController extends BaseController {
   /// UUID from API; null for fallback (hardcoded) languages.
   String? selectedNativeLanguageId;
   String? selectedLearningLanguageId;
+
+  LanguageContextService get _langCtx => Get.find<LanguageContextService>();
+  Worker? _langCtxWorker;
 
   /// Persisted across onboarding screens; set by AiChatController on session start.
   String? conversationId;
@@ -46,8 +54,14 @@ class OnboardingController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    _hydrateFromProgress();
-    loadLanguages();
+    // Seed mirror from service and keep in sync for the lifetime of this controller
+    selectedLearningLanguage.value = _langCtx.activeCode.value ?? '';
+    selectedLearningLanguageId = _langCtx.activeId.value;
+    _langCtxWorker = ever<String?>(_langCtx.activeCode, (code) {
+      selectedLearningLanguage.value = code ?? '';
+      selectedLearningLanguageId = _langCtx.activeId.value;
+    });
+    _hydrateFromProgress().then((_) => loadLanguages());
     // On cold-resume into scenario-gift, the in-memory profile is null but the
     // progress map says completion happened. Microtask defers the network call
     // so the controller is fully constructed first.
@@ -56,15 +70,16 @@ class OnboardingController extends BaseController {
 
   /// Restores prior selections from persisted progress so resume screens
   /// reflect the user's previous choices without re-selection.
-  void _hydrateFromProgress() {
+  Future<void> _hydrateFromProgress() async {
     final p = _progress.read();
     if (p.nativeLang != null) {
       selectedNativeLanguage.value = p.nativeLang!.code;
       selectedNativeLanguageId = p.nativeLang!.id;
     }
     if (p.learningLang != null) {
-      selectedLearningLanguage.value = p.learningLang!.code;
-      selectedLearningLanguageId = p.learningLang!.id;
+      // Await so interceptor has the code before any subsequent API calls
+      await _langCtx.setActive(p.learningLang!.code, p.learningLang!.id);
+      // Mirror updated reactively via ever() worker
     }
     if (p.chat != null) {
       conversationId = p.chat!.conversationId;
@@ -125,9 +140,10 @@ class OnboardingController extends BaseController {
   }
 
   Future<void> selectLearningLanguage(String code, {String? id}) async {
-    selectedLearningLanguage.value = code;
-    selectedLearningLanguageId = id;
+    // Service write must complete before navigation so interceptor has the code
+    await _langCtx.setActive(code, id);
     await _progress.setLearningLang(code, id: id);
+    // Mirror updates reactively via ever() worker — no manual assignment needed
     _navigationTimer?.cancel();
     _navigationTimer = Timer(const Duration(milliseconds: 50), () {
       Get.toNamed(AppRoutes.chat);
@@ -171,6 +187,7 @@ class OnboardingController extends BaseController {
 
   @override
   void onClose() {
+    _langCtxWorker?.dispose();
     _navigationTimer?.cancel();
     super.onClose();
   }

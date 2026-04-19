@@ -234,6 +234,18 @@ class StorageService extends GetxService {
     if (hadLogin) await setHasCompletedLogin();
   }
 
+  /// Returns all preference keys matching [test].
+  Iterable<String> preferenceKeysMatching(bool Function(String) test) =>
+      _preferences.keys.whereType<String>().where(test);
+
+  /// Deletes all preference keys matching [test].
+  Future<void> removePreferencesMatching(bool Function(String) test) async {
+    final keys = preferenceKeysMatching(test).toList();
+    for (final k in keys) {
+      await _preferences.delete(k);
+    }
+  }
+
   /// Close all boxes
   Future<void> close() async {
     await _lessons.close();

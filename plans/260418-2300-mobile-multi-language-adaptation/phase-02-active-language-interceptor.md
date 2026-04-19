@@ -10,7 +10,7 @@
 ## Overview
 
 - **Priority:** P0 (blocks phases 3, 4, 7)
-- **Status:** pending
+- **Status:** done
 - **Description:** New Dio interceptor that reads active code from `LanguageContextService` and sets `X-Learning-Language` header on content-scoped requests. Path allowlist via `startsWith`. Registration order: Retry → Auth → **Language** → Logger.
 
 ## Key Insights

@@ -8,6 +8,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
 import '../../../core/services/audio/tts-service.dart';
 import '../../../core/services/audio/voice-input-service.dart';
+import '../../../core/services/language-context-service.dart';
 import '../../onboarding/controllers/onboarding_controller.dart';
 import '../../onboarding/models/onboarding_profile_model.dart';
 import '../../onboarding/models/onboarding_session_model.dart';
@@ -22,8 +23,8 @@ class AiChatController extends BaseController {
   final TtsService _ttsService = Get.find();
   final VoiceInputService _voiceInputService = Get.find();
   final OnboardingController _onboardingCtrl = Get.find();
-  final OnboardingProgressService _progressSvc =
-      Get.find<OnboardingProgressService>();
+  final OnboardingProgressService _progressSvc = Get.find<OnboardingProgressService>();
+  final LanguageContextService _langCtx = Get.find();
 
   final messages = <ChatMessage>[].obs;
   final isTyping = false.obs;
@@ -48,8 +49,7 @@ class AiChatController extends BaseController {
 
   String? _conversationId;
 
-  String get _targetLanguage =>
-      _onboardingCtrl.selectedLearningLanguage.value;
+  String get _targetLanguage => _langCtx.activeCode.value ?? '';
 
   @override
   void onInit() {
@@ -149,6 +149,11 @@ class AiChatController extends BaseController {
   /// (Mode A — no conversationId). Response includes greeting + conversationId
   /// in a single round-trip.
   Future<void> _createSession() async {
+    if (_langCtx.activeCode.value == null || _langCtx.activeCode.value!.isEmpty) {
+      errorMessage.value = 'err_language_required'.tr;
+      Get.offNamed(AppRoutes.onboardingLearningLanguage);
+      return;
+    }
     isTyping.value = true;
     errorMessage.value = '';
     try {
@@ -156,7 +161,7 @@ class AiChatController extends BaseController {
         ApiEndpoints.onboardingChat,
         data: {
           'nativeLanguage': _onboardingCtrl.selectedNativeLanguage.value,
-          'targetLanguage': _onboardingCtrl.selectedLearningLanguage.value,
+          'targetLanguage': _langCtx.activeCode.value,
         },
         fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
       );
@@ -431,10 +436,10 @@ class AiChatController extends BaseController {
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiEndpoints.chatCorrect,
         data: {
-          'previous_ai_message': previousAiMessage,
-          'user_message': userText,
-          'target_language': _onboardingCtrl.selectedLearningLanguage.value,
-          if (_conversationId != null) 'conversation_id': _conversationId,
+          'previousAiMessage': previousAiMessage,
+          'userMessage': userText,
+          'targetLanguage': _langCtx.activeCode.value,
+          if (_conversationId != null) 'conversationId': _conversationId,
         },
         fromJson: (data) => data as Map<String, dynamic>,
       );

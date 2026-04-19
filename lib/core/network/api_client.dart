@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 import '../../config/env_config.dart';
 import '../services/auth_storage.dart';
+import 'active-language-interceptor.dart';
 import 'api_exceptions.dart';
 import 'api_response.dart';
 import 'auth_interceptor.dart';
 import 'http_logger_interceptor.dart';
+import 'language-recovery-interceptor.dart';
 import 'retry_interceptor.dart';
 
 /// Singleton API client with Dio
@@ -29,10 +31,12 @@ class ApiClient extends GetxService {
       ),
     );
 
-    // Order matters: retry first, then auth, then logging
+    // Order: retry → auth → language header → language 403 recovery → logger
     _dio.interceptors.addAll([
       RetryInterceptor(dio: _dio, maxRetries: 3),
       AuthInterceptor(authStorage),
+      ActiveLanguageInterceptor(),
+      LanguageRecoveryInterceptor(_dio),
       HttpLoggerInterceptor(),
     ]);
 

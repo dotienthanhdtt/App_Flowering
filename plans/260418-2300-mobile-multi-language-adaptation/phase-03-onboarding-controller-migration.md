@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P0 (unblocks phase 4 chat cleanup + phase 8 switch UX)
-- **Status:** pending
+- **Status:** done
 - **Description:** Move `selectedLearningLanguage` state ownership from `OnboardingController` to `LanguageContextService`. Controller retains its existing public API (callers untouched) but delegates reads/writes to the service. Persist-before-navigate enforced at `selectLearningLanguage`.
 
 ## Key Insights

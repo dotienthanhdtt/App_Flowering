@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import '../core/services/cache-invalidator-service.dart';
+import '../core/services/language-context-service.dart';
 import '../core/services/storage_service.dart';
 import '../core/services/auth_storage.dart';
 import '../core/services/connectivity_service.dart';
@@ -32,6 +34,18 @@ class AppBindings extends Bindings {
 
     Get.lazyPut<AuthStorage>(
       () => AuthStorage(),
+      fenix: true,
+    );
+
+    // Language context — single source of truth for active learning language
+    Get.lazyPut<LanguageContextService>(
+      () => LanguageContextService(),
+      fenix: true,
+    );
+
+    // Cache invalidator — flushes language-scoped caches on language switch
+    Get.lazyPut<CacheInvalidatorService>(
+      () => CacheInvalidatorService(),
       fenix: true,
     );
 
@@ -112,6 +126,14 @@ Future<void> initializeServices() async {
   // General storage service
   final storageService = Get.put(StorageService());
   await storageService.init();
+
+  // Language context — must init BEFORE ApiClient so interceptor has a code on boot
+  final languageContext = Get.put(LanguageContextService());
+  await languageContext.init();
+
+  // Cache invalidator — subscribes to language changes; must init after language context
+  final cacheInvalidator = Get.put(CacheInvalidatorService());
+  await cacheInvalidator.init();
 
   // Onboarding progress — depends on StorageService; runs legacy-key migration
   final onboardingProgress = Get.put(OnboardingProgressService());

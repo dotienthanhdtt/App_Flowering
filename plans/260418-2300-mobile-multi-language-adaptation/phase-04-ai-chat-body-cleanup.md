@@ -10,7 +10,7 @@
 ## Overview
 
 - **Priority:** P0
-- **Status:** pending
+- **Status:** done
 - **Description:** Drop `targetLanguage` from AI chat request body in `_createSession()` (line 159) and `_checkGrammar()` (line 436). Update `_targetLanguage` getter (line 51) plus TTS/STT callers (lines 334, 356, 491) to read from `LanguageContextService` instead of `OnboardingController`.
 
 ## Key Insights

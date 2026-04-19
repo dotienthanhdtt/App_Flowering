@@ -108,6 +108,12 @@ const Map<String, String> viVN = {
   'vocabulary_search': 'Tìm từ...',
   'vocabulary_empty': 'Chưa học từ nào',
 
+  // Language context errors
+  'err_language_header_missing': 'Thiếu ngôn ngữ học. Vui lòng mở lại ứng dụng.',
+  'err_language_unknown': 'Ngôn ngữ này không còn được hỗ trợ.',
+  'err_language_not_enrolled': 'Bạn chưa đăng ký ngôn ngữ này.',
+  'err_language_required': 'Vui lòng chọn một ngôn ngữ để tiếp tục.',
+
   // Errors
   'network_error': 'Vui lòng kiểm tra kết nối mạng',
   'server_error': 'Đã xảy ra lỗi. Vui lòng thử lại sau',

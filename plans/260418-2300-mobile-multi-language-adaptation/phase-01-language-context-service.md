@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P0 (blocks phases 2-5, 7, 8)
-- **Status:** pending
+- **Status:** done
 - **Description:** New `LanguageContextService extends GetxService` — single source of truth for active learning language code + id, persisted to Hive `preferences` box. Exposes reactive `RxnString` observables for `ever()` subscribers.
 
 ## Key Insights

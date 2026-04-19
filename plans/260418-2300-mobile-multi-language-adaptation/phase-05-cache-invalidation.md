@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P0
-- **Status:** pending
+- **Status:** done
 - **Description:** `CacheInvalidator` service subscribes to `ever(activeCode)` and flushes language-scoped caches on every change. Also performs a one-time flush on first launch of the updated app version for existing installs with pre-partition cache.
 
 ## Key Insights

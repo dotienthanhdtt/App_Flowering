@@ -1,14 +1,17 @@
-import 'package:get/get.dart';
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide Response;
 
 import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_response.dart';
+import '../../../core/services/language-context-service.dart';
 import '../../lessons/models/lesson-models.dart';
 
 /// Controls the Chat home tab — fetches /lessons scenarios for selection.
 class ChatHomeController extends BaseController {
   final _apiClient = Get.find<ApiClient>();
+  final _langCtx = Get.find<LanguageContextService>();
 
   final categories = <LessonCategory>[].obs;
   final isRefreshing = false.obs;
@@ -38,10 +41,14 @@ class ChatHomeController extends BaseController {
       // assignAll in onSuccess replaces atomically once the response arrives.
     }
 
+    final activeCode = _langCtx.activeCode.value;
     await apiCall<ApiResponse<GetLessonsResponse>>(
       () => _apiClient.get<GetLessonsResponse>(
         ApiEndpoints.lessons,
         queryParameters: {'page': _currentPage, 'limit': 20},
+        options: activeCode != null && activeCode.isNotEmpty
+            ? Options(headers: {'X-Learning-Language': activeCode})
+            : null,
         fromJson: (data) =>
             GetLessonsResponse.fromJson(data as Map<String, dynamic>),
       ),

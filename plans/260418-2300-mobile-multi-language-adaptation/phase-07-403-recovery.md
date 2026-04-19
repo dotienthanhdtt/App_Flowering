@@ -10,7 +10,7 @@
 ## Overview
 
 - **Priority:** P1 (degrades gracefully if missing; not a launch blocker but ships in v1)
-- **Status:** pending
+- **Status:** done
 - **Description:** Interceptor-level 403 recovery. On `ForbiddenException` with `Language not enrolled` pattern, call `LanguageContextService.resyncFromServer()`, retry the original request once with the updated header. Retry-count guarded via `Options.extra['_langRetry']`. If no enrollments exist, route to onboarding.
 
 ## Key Insights

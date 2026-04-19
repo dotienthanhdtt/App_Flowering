@@ -12,6 +12,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
 import '../../../core/services/auth_storage.dart';
 import '../../../core/services/storage_service.dart';
+import '../../onboarding/services/onboarding_progress_service.dart';
 import '../models/auth_response_model.dart';
 
 /// Manages email/password auth + social auth stubs.
@@ -20,6 +21,8 @@ class AuthController extends BaseController {
   final ApiClient _apiClient = Get.find();
   final AuthStorage _authStorage = Get.find();
   final StorageService _storageService = Get.find();
+  final OnboardingProgressService _progressSvc =
+      Get.find<OnboardingProgressService>();
 
   final obscurePassword = true.obs;
   final obscureConfirmPassword = true.obs;
@@ -36,8 +39,7 @@ class AuthController extends BaseController {
   final loginEmailController = TextEditingController();
   final loginPasswordController = TextEditingController();
 
-  String? get _conversationId =>
-      _storageService.getPreference<String>('onboarding_conversation_id');
+  String? get _conversationId => _progressSvc.read().chat?.conversationId;
 
   // ── Validators ──────────────────────────────────────────────────
 
@@ -76,7 +78,7 @@ class AuthController extends BaseController {
           'name': fullNameController.text.trim(),
           'email': emailController.text.trim(),
           'password': passwordController.text,
-          if (_conversationId != null) 'conversation_id': _conversationId,
+          if (_conversationId != null) 'conversationId': _conversationId,
         },
         fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
       );
@@ -106,7 +108,7 @@ class AuthController extends BaseController {
         data: {
           'email': loginEmailController.text.trim(),
           'password': loginPasswordController.text,
-          if (_conversationId != null) 'conversation_id': _conversationId,
+          if (_conversationId != null) 'conversationId': _conversationId,
         },
         fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
       );
@@ -130,7 +132,7 @@ class AuthController extends BaseController {
       refreshToken: auth.refreshToken,
     );
     await _authStorage.saveUserId(auth.user.id);
-    await _storageService.removePreference('onboarding_conversation_id');
+    await _progressSvc.clearChat();
     // Mark that this device has completed login at least once.
     // This flag persists through logout so returning users see auth on
     // onboarding intro screens instead of re-entering onboarding flows.

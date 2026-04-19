@@ -1,7 +1,7 @@
 ---
 title: "Mobile Multi-Language Adaptation"
 description: "Adapt Flutter app to backend multi-language content partition: X-Learning-Language header, active language service, cache flush, 403 recovery."
-status: pending
+status: in_progress
 priority: P0
 effort: 18h
 branch: feat/mobile-multi-language
@@ -24,13 +24,13 @@ Based on: [brainstorm-summary.md](brainstorm-summary.md). Backend contract: [mob
 
 | # | Phase | Status | Effort | File |
 |---|-------|--------|--------|------|
-| 1 | LanguageContextService (GetxService + Hive persistence) | pending | 2h | [phase-01](phase-01-language-context-service.md) |
-| 2 | ActiveLanguageInterceptor (Dio, path allowlist) | pending | 2h | [phase-02](phase-02-active-language-interceptor.md) |
-| 3 | OnboardingController migration (delegate to service) | pending | 2h | [phase-03](phase-03-onboarding-controller-migration.md) |
-| 4 | AI chat body cleanup + TTS/STT getter update | pending | 1h | [phase-04](phase-04-ai-chat-body-cleanup.md) |
-| 5 | CacheInvalidator (ever() subscriber + first-launch flush) | pending | 2h | [phase-05](phase-05-cache-invalidation.md) |
-| 6 | Error handling + translation keys (en + vi) | pending | 1h | [phase-06](phase-06-error-handling-and-translations.md) |
-| 7 | 403 recovery (resync + retry once) | pending | 2h | [phase-07](phase-07-403-recovery.md) |
+| 1 | LanguageContextService (GetxService + Hive persistence) | done | 2h | [phase-01](phase-01-language-context-service.md) |
+| 2 | ActiveLanguageInterceptor (Dio, path allowlist) | done | 2h | [phase-02](phase-02-active-language-interceptor.md) |
+| 3 | OnboardingController migration (delegate to service) | done | 2h | [phase-03](phase-03-onboarding-controller-migration.md) |
+| 4 | AI chat body cleanup + TTS/STT getter update | done | 1h | [phase-04](phase-04-ai-chat-body-cleanup.md) |
+| 5 | CacheInvalidator (ever() subscriber + first-launch flush) | done | 2h | [phase-05](phase-05-cache-invalidation.md) |
+| 6 | Error handling + translation keys (en + vi) | done | 1h | [phase-06](phase-06-error-handling-and-translations.md) |
+| 7 | 403 recovery (resync + retry once) | done | 2h | [phase-07](phase-07-403-recovery.md) |
 | 8 | Language switch UX (settings toggle + first-switch modal) | pending | 3h | [phase-08](phase-08-language-switch-ux.md) |
 | 9 | QA matrix + unit/integration tests | pending | 2h | [phase-09](phase-09-qa-testing.md) |
 | 10 | Version gating (min-version + anonymous upgrade wall) | pending | 1h | [phase-10](phase-10-version-gating.md) |

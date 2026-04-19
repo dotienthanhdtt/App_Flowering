@@ -108,6 +108,12 @@ const Map<String, String> enUS = {
   'vocabulary_search': 'Search words...',
   'vocabulary_empty': 'No words learned yet',
 
+  // Language context errors
+  'err_language_header_missing': 'Missing learning language. Please reopen the app.',
+  'err_language_unknown': 'That language is no longer supported.',
+  'err_language_not_enrolled': "You haven't enrolled in this language yet.",
+  'err_language_required': 'Please pick a learning language to continue.',
+
   // Errors
   'network_error': 'Please check your internet connection',
   'server_error': 'Something went wrong. Please try again later',

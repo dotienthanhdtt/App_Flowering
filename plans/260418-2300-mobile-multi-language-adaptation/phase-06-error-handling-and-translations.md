@@ -10,7 +10,7 @@
 ## Overview
 
 - **Priority:** P0 (needed before phase 7 recovery can surface user-facing error copy)
-- **Status:** pending
+- **Status:** done
 - **Description:** Add `LanguageContextError` enum to `api_exceptions.dart`, map backend message patterns → enum → translation keys. Add 4 keys to both l10n files. Never surface backend English to users.
 
 ## Key Insights

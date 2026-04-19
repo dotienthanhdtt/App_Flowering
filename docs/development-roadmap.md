@@ -23,15 +23,16 @@ Phase 6.7: Text→AppText Refactor ████████████ 100% (3h
 Phase 6.8: API JSON Migration ████████████ 100% (2h) ✅ COMPLETED 2026-03-28
 Phase 6.9: Audio Architecture (TTS/STT) ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-06
 Phase 6.10: Onboarding Progress Resume ████████████ 100% (2h) ✅ COMPLETED 2026-04-15
-Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-20
-Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-04-25
-Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-05
-Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-15
+Phase 6.11: Multi-Language Adaptation ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-19
+Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-25
+Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-05-01
+Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-10
+Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-20
 ```
 
-**Overall Progress:** 100% of foundation + onboarding + auth + audio + persistence (Phases 1-6.10 complete)
-**Completed:** 27 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture, onboarding progress resume)
-**Remaining:** Home dashboard, expanded chat, lessons, profile/settings (~8.5 hours estimated)
+**Overall Progress:** 100% of foundation + onboarding + auth + audio + persistence + multi-language (Phases 1-6.11 complete)
+**Completed:** 28.5 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture, onboarding progress resume, multi-language context + interceptors + cache invalidation)
+**Remaining:** Home dashboard, expanded chat, lessons, profile/settings (~8 hours estimated)
 
 ## Phase Details
 
@@ -883,11 +884,72 @@ String computeOnboardingResumeTarget(OnboardingProgress p)
 
 ---
 
+### Phase 6.11: Multi-Language Adaptation ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 1.5 hours
+**Completion Date:** 2026-04-19
+**Dependencies:** Phase 6.10 ✅
+**Priority:** P1 - Critical
+
+**Overview:**
+Multi-language adaptation infrastructure enabling users to learn multiple languages simultaneously. Introduces language context as single source of truth, automatic cache invalidation per language, and intelligent header injection for API partitioning.
+
+**Deliverables:**
+- ✅ `LanguageContextService` — Persisted active language (code + UUID) with reactive observables
+- ✅ `CacheInvalidatorService` — Automatic cache flush on language switch + one-time migration
+- ✅ `ActiveLanguageInterceptor` — Attaches `X-Learning-Language` header to content requests
+- ✅ `LanguageRecoveryInterceptor` — Handles 403 "not enrolled" with one-shot resync+retry
+- ✅ `StorageService.preferenceKeysMatching()` — Bulk-clear language-scoped preferences
+- ✅ `LanguageContextError` enum in api_exceptions.dart for 403 language-specific errors
+- ✅ Updated DI order: LanguageContextService init before ApiClient
+- ✅ Controller integration: chat, onboarding, profile delegate to service
+
+**Key Achievements:**
+- Language context persists across sessions (Hive storage)
+- Caches automatically clear on language switch (lessons, chat, progress, attempts)
+- Interceptors transparently attach language header to backend requests
+- 403 "not enrolled" automatically triggers resync + single retry
+- Migration safe: one-time flush flag prevents repeated migrations
+- Zero breaking changes to existing controllers
+- All files compile without errors
+
+**Files Created:**
+- `/lib/core/services/language-context-service.dart` (50 LOC)
+- `/lib/core/services/cache-invalidator-service.dart` (50 LOC)
+- `/lib/core/network/active-language-interceptor.dart` (45 LOC)
+- `/lib/core/network/language-recovery-interceptor.dart` (50 LOC)
+
+**Files Modified:**
+- `lib/core/services/storage_service.dart` (2 methods added)
+- `lib/core/network/api_client.dart` (interceptor chain reordered)
+- `lib/core/network/api_exceptions.dart` (new error enum + helper)
+- `lib/app/global-dependency-injection-bindings.dart` (DI + init order)
+- Feature controllers: onboarding, chat, profile
+
+**Success Criteria Met:**
+- ✅ LanguageContextService load/save via Hive
+- ✅ CacheInvalidatorService react to language changes via worker
+- ✅ ActiveLanguageInterceptor injects header on content requests
+- ✅ LanguageRecoveryInterceptor resync + retry on 403
+- ✅ StorageService bulk-clear preferences by pattern
+- ✅ DI order prevents interceptor access to uninitialized service
+- ✅ All controllers compile and function normally
+
+**Integration Points:**
+- Onboarding: language selection flows to active context
+- Chat: reads active language for message context
+- Profile: clears context on logout
+- API: all content requests include language header
+- Backend: partitions data by language code
+
+---
+
 ### Phase 7: Home Dashboard 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 1.5 hours
-**Dependencies:** Phase 6 ✅
+**Dependencies:** Phase 6.11 ✅
 **Priority:** P2 - High
 
 **Objectives:**
