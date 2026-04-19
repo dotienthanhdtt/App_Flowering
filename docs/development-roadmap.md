@@ -6,8 +6,8 @@
 **Framework:** Flutter 3.10.3+
 **Architecture:** Feature-first with GetX
 **Start Date:** 2026-02-05
-**Current Status Date:** 2026-04-15
-**Completion Estimate:** Phases 1-6.10 complete, Phases 7-10 pending
+**Current Status Date:** 2026-04-19
+**Completion Estimate:** Phases 1-6.12 complete, Phases 7-10 pending
 
 ## Roadmap Overview
 
@@ -24,14 +24,15 @@ Phase 6.8: API JSON Migration ████████████ 100% (2h) ✅
 Phase 6.9: Audio Architecture (TTS/STT) ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-06
 Phase 6.10: Onboarding Progress Resume ████████████ 100% (2h) ✅ COMPLETED 2026-04-15
 Phase 6.11: Multi-Language Adaptation ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-19
+Phase 6.12: Critical Fixes (auth, casing, cache, controller, Firebase) ████████████ 100% (18h) ✅ COMPLETED 2026-04-19
 Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-25
 Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-05-01
 Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-10
 Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-20
 ```
 
-**Overall Progress:** 100% of foundation + onboarding + auth + audio + persistence + multi-language (Phases 1-6.11 complete)
-**Completed:** 28.5 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture, onboarding progress resume, multi-language context + interceptors + cache invalidation)
+**Overall Progress:** 100% of foundation + onboarding + auth + audio + persistence + multi-language + critical fixes (Phases 1-6.12 complete)
+**Completed:** 46.5 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture, onboarding progress resume, multi-language context + interceptors + cache invalidation, 7 critical bug fixes)
 **Remaining:** Home dashboard, expanded chat, lessons, profile/settings (~8 hours estimated)
 
 ## Phase Details
@@ -942,6 +943,80 @@ Multi-language adaptation infrastructure enabling users to learn multiple langua
 - Profile: clears context on logout
 - API: all content requests include language header
 - Backend: partitions data by language code
+
+---
+
+### Phase 6.12: Critical Fixes (Auth Race, Casing, Cache, Controller, Firebase) ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 18 hours
+**Completion Date:** 2026-04-19
+**Dependencies:** Phase 6.11 ✅
+**Priority:** P0 - Critical
+
+**Overview:**
+7 critical bug fixes addressing security, race conditions, API contract mismatches, cache safety, controller lifecycle, and security leaks. All fixes required for production readiness of feat/update-onboarding branch.
+
+**Deliverables:**
+
+1. **C6: AuthInterceptor Double-Refresh Race** ✅
+   - Issue: Concurrent 401 responses → simultaneous refresh attempts → token corruption
+   - Fix: Added `Completer` gate preventing concurrent refresh, ensures single refresh call
+   - Impact: Eliminates race condition in token refresh flow
+
+2. **C1: Payload Casing (snake_case)** ✅
+   - Issue: Callers sending camelCase payload to snake_case backend endpoint (`/onboarding/complete`)
+   - Fix: Updated `ai_chat_controller.dart` + `auth_controller.dart` to send snake_case request bodies
+   - Impact: Fixes API contract mismatch, ensures backend receives correct field names
+
+3. **C2+C3: LanguageRecoveryInterceptor Retry Mechanism** ✅
+   - Issue: Naive retry loop in interceptor → HTTP exception re-thrown instead of being handled
+   - Fix: Created shared `retryDio` instance, converted to `QueuedInterceptor`, added `Completer` gate
+   - Impact: Prevents concurrent retry attempts, ensures language resync on 403 "not enrolled"
+
+4. **C4+C5a: Per-Language Cache Scoping + Seeded Race Fix** ✅
+   - Issue: Language switch → cache flush lost user's baseline code, race condition on seed
+   - Fix: Scoped cache invalidation (clear only affected language keys), added Hive transaction + lock
+   - Impact: Preserves baseline across language switches, prevents seeded code corruption
+
+5. **C5: OnboardingController Lifecycle** ✅
+   - Issue: Permanent controller lifetime → logic runs on every route transition, state leaks
+   - Fix: Converted to route-scoped binding (removed `permanent: true`)
+   - Impact: Controller init/destroy tied to screen lifecycle, prevents accidental re-execution
+
+6. **C9: Firebase Error Message Leak** ✅
+   - Issue: Firebase auth errors (PlatformException messages) leaked to user, exposing internals
+   - Fix: Added `mapFirebaseAuthErrorCode()` utility mapping platform exceptions → user-safe messages
+   - Impact: Prevents information disclosure, improves user experience with friendly error text
+
+**Files Modified:**
+- `lib/core/network/auth_interceptor.dart` — Completer gate for double-refresh prevention
+- `lib/features/chat/controllers/ai_chat_controller.dart` — snake_case payloads, C9 error mapping
+- `lib/features/auth/controllers/auth_controller.dart` — snake_case payloads, C9 error mapping
+- `lib/core/network/language_recovery_interceptor.dart` — QueuedInterceptor + shared retryDio + Completer gate
+- `lib/core/services/storage_service.dart` — Per-language cache scoping via `preferenceKeysMatching()`
+- `lib/core/services/cache_invalidator_service.dart` — Scoped flush + migration flag
+- `lib/features/onboarding/bindings/onboarding_binding.dart` — Removed `permanent: true`
+- `lib/core/utils/firebase_error_mapper.dart` — New utility for safe error messages
+
+**Success Criteria Met:**
+- ✅ Concurrent 401 responses don't trigger multiple refresh calls
+- ✅ Requests sent with correct snake_case payloads
+- ✅ 403 language errors automatically retry with resync
+- ✅ Language switches preserve user baseline code
+- ✅ Baseline seeding race condition eliminated
+- ✅ OnboardingController destroys when screen pops
+- ✅ Firebase errors mapped to user-safe messages
+- ✅ All files compile without errors
+- ✅ flutter analyze clean
+- ✅ flutter test green (all existing + new tests)
+
+**Quality Assurance:**
+- ✅ Code review complete (all 7 critical issues addressed)
+- ✅ Test coverage for all fixes implemented
+- ✅ No regression in onboarding happy-path
+- ✅ Concurrent/edge case scenarios covered
+- ✅ Security implications reviewed
 
 ---
 

@@ -13,6 +13,7 @@ import 'retry_interceptor.dart';
 /// Singleton API client with Dio
 class ApiClient extends GetxService {
   late final Dio _dio;
+  late final Dio _retryDio;
 
   Dio get dio => _dio;
 
@@ -31,12 +32,19 @@ class ApiClient extends GetxService {
       ),
     );
 
+    // Shared retry Dio — no interceptors so retried requests bypass the full chain.
+    _retryDio = Dio(BaseOptions(
+      baseUrl: EnvConfig.apiBaseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
+    ));
+
     // Order: retry → auth → language header → language 403 recovery → logger
     _dio.interceptors.addAll([
       RetryInterceptor(dio: _dio, maxRetries: 3),
-      AuthInterceptor(authStorage),
+      AuthInterceptor(authStorage, _retryDio),
       ActiveLanguageInterceptor(),
-      LanguageRecoveryInterceptor(_dio),
+      LanguageRecoveryInterceptor(_retryDio),
       HttpLoggerInterceptor(),
     ]);
 

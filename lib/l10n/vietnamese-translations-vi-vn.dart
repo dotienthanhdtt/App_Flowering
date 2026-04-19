@@ -282,6 +282,17 @@ const Map<String, String> viVN = {
   'continue_with_apple': 'Tiếp tục với Apple',
   'continue_with_google': 'Tiếp tục với Google',
 
+  // Auth — Firebase error codes (never expose e.message — use these mapped keys)
+  'auth_error_invalid_credential': 'Thông tin đăng nhập không hợp lệ. Vui lòng thử lại.',
+  'auth_error_user_disabled': 'Tài khoản này đã bị vô hiệu hóa.',
+  'auth_error_user_not_found': 'Không tìm thấy tài khoản với thông tin này.',
+  'auth_error_wrong_password': 'Mật khẩu không đúng. Vui lòng thử lại.',
+  'auth_error_network': 'Lỗi mạng. Vui lòng kiểm tra kết nối.',
+  'auth_error_too_many_requests': 'Quá nhiều lần thử. Vui lòng đợi và thử lại.',
+  'auth_error_account_exists_different_credential': 'Tài khoản đã tồn tại với phương thức đăng nhập khác.',
+  'auth_error_operation_not_allowed': 'Phương thức đăng nhập này không được hỗ trợ.',
+  'auth_error_generic': 'Xác thực thất bại. Vui lòng thử lại.',
+
   // Grammar Correction
   'corrected': 'Đã sửa',
   'hide': 'Ẩn',

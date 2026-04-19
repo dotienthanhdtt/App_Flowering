@@ -17,11 +17,11 @@ class OnboardingBinding extends Bindings {
       );
     }
 
-    // permanent: true keeps the controller alive across screens so language
-    // selections persist throughout the entire onboarding flow.
-    // IMPORTANT: Call Get.delete<OnboardingController>() after successful auth.
+    // Route-scoped: controller lives for the duration of the onboarding/chat
+    // route stack. Persistent state (language selections, conversation id)
+    // lives in OnboardingProgressService (registered permanently in AppBindings).
     if (!Get.isRegistered<OnboardingController>()) {
-      Get.put<OnboardingController>(OnboardingController(), permanent: true);
+      Get.put<OnboardingController>(OnboardingController());
     }
   }
 }

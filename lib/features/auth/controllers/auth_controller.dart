@@ -14,6 +14,7 @@ import '../../../core/services/auth_storage.dart';
 import '../../../core/services/storage_service.dart';
 import '../../onboarding/services/onboarding_progress_service.dart';
 import '../models/auth_response_model.dart';
+import '../utils/firebase_auth_error_mapper.dart';
 
 /// Manages email/password auth + social auth stubs.
 /// Reads conversationId from StorageService to link onboarding with account.
@@ -78,7 +79,7 @@ class AuthController extends BaseController {
           'name': fullNameController.text.trim(),
           'email': emailController.text.trim(),
           'password': passwordController.text,
-          if (_conversationId != null) 'conversationId': _conversationId,
+          if (_conversationId != null) 'conversation_id': _conversationId,
         },
         fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
       );
@@ -108,7 +109,7 @@ class AuthController extends BaseController {
         data: {
           'email': loginEmailController.text.trim(),
           'password': loginPasswordController.text,
-          if (_conversationId != null) 'conversationId': _conversationId,
+          if (_conversationId != null) 'conversation_id': _conversationId,
         },
         fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
       );
@@ -166,7 +167,7 @@ class AuthController extends BaseController {
       );
       await _authenticateWithFirebase(credential);
     } on FirebaseAuthException catch (e) {
-      errorMessage.value = e.message ?? 'google_sign_in_failed'.tr;
+      errorMessage.value = mapFirebaseAuthErrorCode(e.code).tr;
     } catch (e) {
       debugPrint('Google sign-in error: $e');
       errorMessage.value = 'google_sign_in_failed'.tr;
@@ -199,7 +200,7 @@ class AuthController extends BaseController {
     } on SignInWithAppleAuthorizationException {
       // user cancelled — do nothing
     } on FirebaseAuthException catch (e) {
-      errorMessage.value = e.message ?? 'apple_sign_in_failed'.tr;
+      errorMessage.value = mapFirebaseAuthErrorCode(e.code).tr;
     } catch (e) {
       debugPrint('Apple sign-in error: $e');
       errorMessage.value = 'apple_sign_in_failed'.tr;
@@ -234,9 +235,9 @@ class AuthController extends BaseController {
     final response = await _apiClient.post<AuthResponse>(
       ApiEndpoints.loginFirebase,
       data: {
-        'idToken': idToken,
-        'displayName': userCredential.user?.displayName,
-        if (_conversationId != null) 'conversationId': _conversationId,
+        'id_token': idToken,
+        'display_name': userCredential.user?.displayName,
+        if (_conversationId != null) 'conversation_id': _conversationId,
       },
       fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
     );

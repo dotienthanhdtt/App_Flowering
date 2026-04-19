@@ -22,6 +22,7 @@ class StorageService extends GetxService {
   late Box<int> _lessonsAccess;
   late Box<String> _chat;
   late Box<dynamic> _preferences;
+  final Map<String, Box<String>> _langLessonBoxes = {};
 
   int _lessonsCurrentSize = 0;
   int _chatCurrentSize = 0;
@@ -188,11 +189,30 @@ class StorageService extends GetxService {
   /// Get chat cache size in bytes
   int get chatCacheSize => _chatCurrentSize;
 
-  /// Clear lessons cache
+  /// Returns the per-language lessons sub-box, opening it lazily.
+  Future<Box<String>> getLessonsBoxFor(String langCode) async {
+    if (_langLessonBoxes.containsKey(langCode)) {
+      return _langLessonBoxes[langCode]!;
+    }
+    final box = await Hive.openBox<String>('lessons_cache_$langCode');
+    _langLessonBoxes[langCode] = box;
+    return box;
+  }
+
+  /// Clears only the cached lessons for [langCode] (scoped invalidation).
+  Future<void> clearLessonsCacheForLang(String langCode) async {
+    final box = await getLessonsBoxFor(langCode);
+    await box.clear();
+  }
+
+  /// Clear ALL lessons caches (flat box + all per-lang sub-boxes).
   Future<void> clearLessonsCache() async {
     await _lessons.clear();
     await _lessonsAccess.clear();
     _lessonsCurrentSize = 0;
+    for (final box in _langLessonBoxes.values) {
+      await box.clear();
+    }
   }
 
   /// Clear chat cache
@@ -252,6 +272,9 @@ class StorageService extends GetxService {
     await _lessonsAccess.close();
     await _chat.close();
     await _preferences.close();
+    for (final box in _langLessonBoxes.values) {
+      await box.close();
+    }
   }
 
   // ─────────────────────────────────────────────────────────────────

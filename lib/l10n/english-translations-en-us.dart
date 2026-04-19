@@ -282,6 +282,17 @@ const Map<String, String> enUS = {
   'continue_with_apple': 'Continue with Apple',
   'continue_with_google': 'Continue with Google',
 
+  // Auth — Firebase error codes (never expose e.message — use these mapped keys)
+  'auth_error_invalid_credential': 'Invalid credentials. Please try again.',
+  'auth_error_user_disabled': 'This account has been disabled.',
+  'auth_error_user_not_found': 'No account found with these credentials.',
+  'auth_error_wrong_password': 'Incorrect password. Please try again.',
+  'auth_error_network': 'Network error. Please check your connection.',
+  'auth_error_too_many_requests': 'Too many attempts. Please wait and try again.',
+  'auth_error_account_exists_different_credential': 'An account already exists with a different sign-in method.',
+  'auth_error_operation_not_allowed': 'This sign-in method is not enabled.',
+  'auth_error_generic': 'Authentication failed. Please try again.',
+
   // Grammar Correction
   'corrected': 'Corrected',
   'hide': 'Hide',

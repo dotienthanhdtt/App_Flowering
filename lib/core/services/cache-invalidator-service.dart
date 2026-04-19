@@ -2,45 +2,44 @@ import 'package:get/get.dart';
 import 'language-context-service.dart';
 import 'storage_service.dart';
 
-/// Subscribes to LanguageContextService.activeCode and flushes language-scoped
-/// caches on every switch. Also runs a one-time flush on first launch after the
-/// multi-language partition update to clear pre-partition cached content.
+/// Subscribes to LanguageContextService.activeCode and flushes only the
+/// switched-from language's lesson sub-box on every switch.
+/// Baseline is captured synchronously before ever() registration to avoid
+/// the seeded-emission false-trigger (C5a fix).
 class CacheInvalidatorService extends GetxService {
   static const String _migrationFlag = 'lang_migration_v1_done';
 
   Worker? _worker;
-  bool _seeded = false;
+  String? _baselineCode;
 
   Future<CacheInvalidatorService> init() async {
     final storage = Get.find<StorageService>();
     final langCtx = Get.find<LanguageContextService>();
 
-    // One-time flush for existing installs before content partitioning
+    // One-time flush for existing installs before per-language partitioning.
     final migrationDone = storage.getPreference<bool>(_migrationFlag) ?? false;
     if (!migrationDone) {
-      await _flush(storage);
+      await storage.clearLessonsCache();
+      await storage.clearChatCache();
+      await storage.removePreferencesMatching(
+        (k) => k.startsWith('progress_') || k.startsWith('attempt_'),
+      );
       await storage.setPreference(_migrationFlag, true);
     }
 
-    _worker = ever<String?>(langCtx.activeCode, (code) async {
-      // Skip the first emission which mirrors the already-persisted boot value
-      if (!_seeded) {
-        _seeded = true;
-        return;
-      }
-      await _flush(storage);
-    });
-    // Mark seeded so boot emission does not trigger flush on fresh installs
-    _seeded = true;
-    return this;
-  }
+    // Capture baseline before registering ever() to skip the initial emission.
+    _baselineCode = langCtx.activeCode.value;
 
-  Future<void> _flush(StorageService storage) async {
-    await storage.clearLessonsCache();
-    await storage.clearChatCache();
-    await storage.removePreferencesMatching(
-      (k) => k.startsWith('progress_') || k.startsWith('attempt_'),
-    );
+    _worker = ever<String?>(langCtx.activeCode, (newCode) async {
+      if (newCode == _baselineCode) return;
+      final prevCode = _baselineCode;
+      _baselineCode = newCode;
+      if (prevCode != null && prevCode.isNotEmpty) {
+        await storage.clearLessonsCacheForLang(prevCode);
+      }
+    });
+
+    return this;
   }
 
   @override
