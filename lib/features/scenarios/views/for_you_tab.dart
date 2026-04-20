@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../../../shared/widgets/app_text.dart';
+import '../../../shared/widgets/empty_or_error_view.dart';
 import '../../../shared/widgets/loading_widget.dart';
 import '../controllers/for_you_feed_controller.dart';
 import '../widgets/personal_feed_card.dart';
@@ -35,79 +34,56 @@ class _ForYouTabState extends State<ForYouTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Obx(() {
-      if (_controller.isLoading.value && _controller.items.isEmpty) {
-        return const LoadingWidget();
-      }
-
-      if (_controller.items.isEmpty) {
-        return _EmptyOrError(
-          message: _controller.errorMessage.value.isNotEmpty
-              ? _controller.errorMessage.value
-              : 'scenarios_empty_personal'.tr,
-          onRetry: () => _controller.fetchFeed(refresh: true),
-        );
-      }
-
-      return RefreshIndicator(
-        onRefresh: _controller.refreshFeed,
-        child: NotificationListener<ScrollNotification>(
-          onNotification: _onScroll,
-          child: ListView.separated(
+    return RefreshIndicator(
+      onRefresh: _controller.refreshFeed,
+      child: NotificationListener<ScrollNotification>(
+        onNotification: _onScroll,
+        child: Obx(() {
+          if (_controller.isLoading.value && _controller.items.isEmpty) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              children: const [
+                SizedBox(height: 120),
+                Center(child: LoadingWidget()),
+              ],
+            );
+          }
+          if (_controller.items.isEmpty) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: EmptyOrErrorView(
+                    icon: LucideIcons.heart,
+                    message: _controller.errorMessage.value.isNotEmpty
+                        ? _controller.errorMessage.value
+                        : 'scenarios_empty_personal'.tr,
+                    onRetry: () => _controller.fetchFeed(refresh: true),
+                    retryLabel: 'scenarios_error_generic'.tr,
+                  ),
+                ),
+              ],
+            );
+          }
+          final items = _controller.items;
+          return ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
             ),
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            itemCount: _controller.items.length,
-            separatorBuilder: (_, _) =>
+            itemCount: items.length,
+            separatorBuilder: (ctx, i) =>
                 const SizedBox(height: AppSizes.space3),
-            itemBuilder: (_, i) =>
-                PersonalFeedCard(item: _controller.items[i]),
-          ),
-        ),
-      );
-    });
-  }
-}
-
-class _EmptyOrError extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
-
-  const _EmptyOrError({required this.message, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSizes.space6),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              LucideIcons.heart,
-              size: AppSizes.icon3XL,
-              color: AppColors.textTertiaryColor,
-            ),
-            const SizedBox(height: AppSizes.space4),
-            AppText(
-              message,
-              variant: AppTextVariant.bodyMedium,
-              color: AppColors.textTertiaryColor,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSizes.space4),
-            TextButton(
-              onPressed: onRetry,
-              child: AppText(
-                'scenarios_error_generic'.tr,
-                variant: AppTextVariant.button,
-                color: AppColors.primaryColor,
-              ),
-            ),
-          ],
-        ),
+            itemBuilder: (_, i) => PersonalFeedCard(item: items[i]),
+          );
+        }),
       ),
     );
   }
 }
+

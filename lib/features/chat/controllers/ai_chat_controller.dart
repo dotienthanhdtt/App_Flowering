@@ -16,6 +16,11 @@ import '../../onboarding/services/onboarding_progress_service.dart';
 import '../models/chat_message_model.dart';
 import '../widgets/word-translation-sheet-loader.dart';
 
+part 'ai_chat_controller_session.dart';
+part 'ai_chat_controller_messaging.dart';
+part 'ai_chat_controller_voice.dart';
+part 'ai_chat_controller_grammar_translation.dart';
+
 /// Manages the AI onboarding chat flow using real /onboarding/* endpoints.
 /// Session lifecycle: start → chat turns → complete → navigate to scenario gift.
 class AiChatController extends BaseController {
@@ -59,427 +64,16 @@ class AiChatController extends BaseController {
     _bootstrapSession();
   }
 
-  /// Cold-resume aware session bootstrap. If a prior conversation exists in the
-  /// progress map, rehydrate transcript from backend; otherwise start fresh.
-  void _bootstrapSession() {
-    final chatCheckpoint = _progressSvc.read().chat;
-    if (chatCheckpoint != null) {
-      _conversationId = chatCheckpoint.conversationId;
-      _onboardingCtrl.conversationId = _conversationId;
-      _rehydrateFromBackend();
-    } else {
-      _createSession();
-    }
-  }
-
-  /// Fetches message history from the backend and populates the chat UI.
-  /// On 404 (conversation dead / not yet migrated), falls back to a fresh
-  /// session. On other errors, surfaces a retry affordance via [errorMessage].
-  Future<void> _rehydrateFromBackend() async {
-    final id = _conversationId;
-    if (id == null) {
-      await _createSession();
-      return;
-    }
-
-    isTyping.value = true;
-    errorMessage.value = '';
-    try {
-      final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.onboardingConversationMessages(id),
-        fromJson: (data) => data as Map<String, dynamic>,
-      );
-      if (response.isSuccess && response.data != null) {
-        _applyRehydratedTranscript(response.data!);
-      } else {
-        errorMessage.value = 'resume_chat_failed'.tr;
-      }
-    } on NotFoundException {
-      // Conversation dead — clear local checkpoint and start fresh.
-      await _progressSvc.clearChat();
-      _conversationId = null;
-      _onboardingCtrl.conversationId = null;
-      await _createSession();
-      return;
-    } on ApiException catch (e) {
-      // 404 is covered above; treat all other API errors as retryable network
-      // issues so the user can recover without blowing away their progress.
-      if (e.statusCode == 404) {
-        await _progressSvc.clearChat();
-        _conversationId = null;
-        _onboardingCtrl.conversationId = null;
-        await _createSession();
-        return;
-      }
-      errorMessage.value = e.userMessage;
-    } catch (_) {
-      errorMessage.value = 'resume_chat_failed'.tr;
-    } finally {
-      isTyping.value = false;
-    }
-  }
-
-  /// Populates observables from the `GET messages` response payload.
-  ///
-  /// Accepts both snake_case (`turn_number`, `is_last_turn`) and camelCase
-  /// (`turnNumber`, `isLastTurn`) keys so we stay resilient to any last-mile
-  /// API shape tweaks before backend lands.
-  void _applyRehydratedTranscript(Map<String, dynamic> data) {
-    final rawMessages = (data['messages'] as List<dynamic>? ?? const []);
-    final parsed = rawMessages
-        .whereType<Map<String, dynamic>>()
-        .map(ChatMessage.fromServerJson)
-        .toList();
-    messages.assignAll(parsed);
-
-    final turnNumber =
-        (data['turn_number'] ?? data['turnNumber'] ?? 0) as int? ?? 0;
-    final maxTurns =
-        (data['max_turns'] ?? data['maxTurns'] ?? 10) as int? ?? 10;
-    final isLastTurn =
-        (data['is_last_turn'] ?? data['isLastTurn'] ?? false) as bool? ?? false;
-
-    progress.value =
-        maxTurns == 0 ? 0.0 : (turnNumber / maxTurns).clamp(0.0, 1.0);
-    isChatComplete.value = isLastTurn;
-    _scrollToBottom();
-  }
-
-  /// Creates the onboarding session via unified /onboarding/chat endpoint
-  /// (Mode A — no conversationId). Response includes greeting + conversationId
-  /// in a single round-trip.
-  Future<void> _createSession() async {
-    if (_langCtx.activeCode.value == null || _langCtx.activeCode.value!.isEmpty) {
-      errorMessage.value = 'err_language_required'.tr;
-      Get.offNamed(AppRoutes.onboardingLearningLanguage);
-      return;
-    }
-    isTyping.value = true;
-    errorMessage.value = '';
-    try {
-      final response = await _apiClient.post<OnboardingSession>(
-        ApiEndpoints.onboardingChat,
-        data: {
-          'native_language': _onboardingCtrl.selectedNativeLanguage.value,
-          'target_language': _langCtx.activeCode.value,
-        },
-        fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
-      );
-      if (response.isSuccess && response.data != null) {
-        final session = response.data!;
-        _conversationId = session.conversationId;
-        await _progressSvc.setChatConversationId(_conversationId!);
-        _onboardingCtrl.conversationId = _conversationId;
-        await _handleChatResponse(session);
-      } else {
-        errorMessage.value = response.message;
-      }
-    } on ApiException catch (e) {
-      errorMessage.value = _mapOnboardingError(e, isCreate: true);
-    } catch (_) {
-      errorMessage.value = 'unknown_error'.tr;
-    } finally {
-      isTyping.value = false;
-    }
-  }
-
-  /// Retry entry point used by the error banner. Picks rehydrate vs fresh
-  /// session based on whether a prior conversationId is still persisted, so
-  /// users mid-rehydrate on a flaky network don't lose their transcript.
-  Future<void> retrySession() async {
-    final hasCheckpoint = _progressSvc.read().chat != null;
-    if (hasCheckpoint) {
-      await _rehydrateFromBackend();
-    } else {
-      await _createSession();
-    }
-  }
-
-  Future<void> sendMessage(String text) async {
-    final trimmed = text.trim();
-    if (_conversationId == null || isChatComplete.value) return;
-
-    textEditingController.clear();
-    messages.removeWhere((m) => m.type == ChatMessageType.quickReplies);
-    errorMessage.value = '';
-
-    final lastAiMessage = _getLastAiMessageText();
-    final userMessageId = 'user_${DateTime.now().millisecondsSinceEpoch}';
-    _addUserMessage(trimmed, messageId: userMessageId);
-    isTyping.value = true;
-
-    // Fire grammar check in parallel (non-blocking)
-    _checkGrammar(userMessageId, trimmed, lastAiMessage);
-
-    try {
-      final response = await _apiClient.post<OnboardingSession>(
-        ApiEndpoints.onboardingChat,
-        data: {'conversation_id': _conversationId, 'message': trimmed},
-        fromJson: (data) => OnboardingSession.fromJson(data as Map<String, dynamic>),
-      );
-      if (response.isSuccess && response.data != null) {
-        await _handleChatResponse(response.data!);
-      } else {
-        errorMessage.value = response.message;
-      }
-    } on ApiException catch (e) {
-      errorMessage.value = _mapOnboardingError(e, isCreate: false);
-    } catch (_) {
-      errorMessage.value = 'unknown_error'.tr;
-    } finally {
-      isTyping.value = false;
-    }
-  }
-
-  /// Maps onboarding API errors to user-facing copy.
-  /// 429 differentiates create (5/hr) vs chat (30/hr) rate limits.
-  /// 404 → invalid conversationId; 400 → expired or max turns reached.
-  String _mapOnboardingError(ApiException e, {required bool isCreate}) {
-    switch (e.statusCode) {
-      case 429:
-        return isCreate
-            ? 'chat_rate_limit_create'.tr
-            : 'chat_rate_limit_chat'.tr;
-      case 404:
-        _clearSession();
-        return 'chat_session_invalid'.tr;
-      case 400:
-        _clearSession();
-        return 'chat_session_expired'.tr;
-      default:
-        return e.userMessage;
-    }
-  }
-
-  /// Clears local session state so the user can restart onboarding cleanly.
-  void _clearSession() {
-    _conversationId = null;
-    _progressSvc.clearChat();
-    _onboardingCtrl.conversationId = null;
-    isChatComplete.value = false;
-  }
-
-  /// Shared handler for chat API responses — updates progress, adds AI message, handles completion.
-  Future<void> _handleChatResponse(OnboardingSession session) async {
-    progress.value = (session.turnNumber / 10).clamp(0.0, 1.0);
-    _addAiMessage(session.reply ?? '', messageId: session.messageId);
-    if (session.quickReplies.isNotEmpty) {
-      _addQuickReplies(session.quickReplies);
-    }
-    if (session.isLastTurn) {
-      await _completeOnboarding();
-    }
-  }
-
-  /// Toggle sentence translation. First tap calls API; subsequent taps toggle.
-  Future<void> toggleTranslation(String messageId) async {
-    final index = messages.indexWhere((m) => m.id == messageId);
-    if (index == -1) return;
-    final msg = messages[index];
-
-    // Already has translation — just toggle visibility
-    if (msg.translatedText != null) {
-      msg.showTranslation = !msg.showTranslation;
-      messages.refresh();
-      if (msg.showTranslation) _scrollToBottom();
-      return;
-    }
-
-    try {
-      final response = await _apiClient.post<Map<String, dynamic>>(
-        ApiEndpoints.translate,
-        data: {
-          'type': 'SENTENCE',
-          'message_id': messageId,
-          'source_lang': _onboardingCtrl.selectedLearningLanguage.value,
-          'target_lang': _onboardingCtrl.selectedNativeLanguage.value,
-          if (_conversationId != null) 'conversation_id': _conversationId,
-        },
-        fromJson: (data) => data as Map<String, dynamic>,
-      );
-      if (response.isSuccess && response.data != null) {
-        msg.translatedText = response.data!['translated_content'] as String? ??
-            response.data!['translation'] as String?;
-        msg.showTranslation = true;
-        messages.refresh();
-        _scrollToBottom();
-      } else {
-        Get.snackbar('', response.message,
-            snackPosition: SnackPosition.BOTTOM);
-      }
-    } on ApiException catch (e) {
-      Get.snackbar('', e.userMessage,
-          snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-
-  /// Open word translation bottom sheet for tapped word
-  void onWordTap(String word, BuildContext context) {
-    final cleanWord = word.replaceAll(RegExp(r"[^\p{L}\p{N}'\-]", unicode: true), '').trim();
-    if (cleanWord.isEmpty) return;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => WordTranslationSheetLoader(
-        word: cleanWord,
-        conversationId: _conversationId,
-        onSave: () => saveWord(cleanWord),
-      ),
-    );
-  }
-
-  /// Speak an AI message via TTS
-  void playAudio(String messageId) {
-    final index = messages.indexWhere((m) => m.id == messageId);
-    if (index == -1) return;
-    final text = messages[index].text;
-    if (text == null || text.trim().isEmpty) return;
-    _ttsService.speak(text, language: _targetLanguage);
-  }
-
-  /// Stop TTS playback
-  void stopSpeaking() => _ttsService.stop();
-
-  /// Save word to vocabulary list
-  void saveWord(String word) {
-    // TODO: Implement save word to vocabulary list via API
-  }
-
-  /// Skip onboarding and navigate directly to scenario gift
-  void skipOnboarding() {
-    Get.offNamed(AppRoutes.onboardingScenarioGift);
+  @override
+  void onClose() {
+    scrollController.dispose();
+    textEditingController.dispose();
+    super.onClose();
   }
 
   // ─────────────────────────────────────────────────────────────────
-  // Voice Input
+  // Message helpers (used across session, messaging, and voice parts)
   // ─────────────────────────────────────────────────────────────────
-
-  Future<void> startRecording() async {
-    if (isChatComplete.value) return;
-    await _voiceInputService.startVoiceInput(language: _targetLanguage);
-  }
-
-  Future<void> stopRecording() async {
-    final result = await _voiceInputService.stopVoiceInput();
-    if (result.transcribedText.isNotEmpty) {
-      sendMessage(result.transcribedText);
-      // iOS: fire-and-forget backend transcription for better accuracy
-      if (result.audioFilePath != null) {
-        _sendAudioForTranscription(result.audioFilePath!);
-      }
-    }
-  }
-
-  Future<void> cancelRecording() async {
-    await _voiceInputService.cancelVoiceInput();
-  }
-
-  /// Fire-and-forget: upload audio to /ai/transcribe, update last user message if successful
-  Future<void> _sendAudioForTranscription(String filePath) async {
-    try {
-      final formData = FormData.fromMap({
-        'audio': await MultipartFile.fromFile(filePath, filename: 'voice.m4a'),
-        if (_conversationId != null) 'conversation_id': _conversationId,
-      });
-      final response = await _apiClient.post<Map<String, dynamic>>(
-        ApiEndpoints.transcribeAudio,
-        data: formData,
-        fromJson: (data) => data as Map<String, dynamic>,
-      );
-      if (response.isSuccess && response.data != null) {
-        final accurate = response.data!['text'] as String?;
-        if (accurate != null && accurate.isNotEmpty) {
-          // Update the last user message with accurate transcription
-          for (int i = messages.length - 1; i >= 0; i--) {
-            if (messages[i].type == ChatMessageType.userText) {
-              messages[i].text = accurate;
-              messages.refresh();
-              break;
-            }
-          }
-        }
-      }
-    } catch (_) {
-      // Silent fail — STT text already sent, backend transcription is best-effort
-    }
-  }
-
-  /// Toggle grammar correction visibility for a user message
-  void toggleCorrection(String messageId) {
-    final index = messages.indexWhere((m) => m.id == messageId);
-    if (index == -1) return;
-    messages[index].showCorrection = !messages[index].showCorrection;
-    messages.refresh();
-    if (messages[index].showCorrection) _scrollToBottom();
-  }
-
-  /// Get the last AI message text for grammar correction context
-  String? _getLastAiMessageText() {
-    for (int i = messages.length - 1; i >= 0; i--) {
-      if (messages[i].type == ChatMessageType.aiText) {
-        return messages[i].text;
-      }
-    }
-    return null;
-  }
-
-  /// Fire-and-forget grammar check in parallel with chat API
-  Future<void> _checkGrammar(
-    String messageId,
-    String userText,
-    String? previousAiMessage,
-  ) async {
-    if (previousAiMessage == null) return;
-    try {
-      final response = await _apiClient.post<Map<String, dynamic>>(
-        ApiEndpoints.chatCorrect,
-        data: {
-          'previous_ai_message': previousAiMessage,
-          'user_message': userText,
-          'target_language': _langCtx.activeCode.value,
-          if (_conversationId != null) 'conversation_id': _conversationId,
-        },
-        fromJson: (data) => data as Map<String, dynamic>,
-      );
-      if (response.isSuccess && response.data != null) {
-        final corrected = response.data!['corrected_text'] as String?;
-        if (corrected != null) {
-          final idx = messages.indexWhere((m) => m.id == messageId);
-          if (idx != -1) {
-            messages[idx].correctedText = corrected;
-            messages[idx].showCorrection = true;
-            messages.refresh();
-          }
-        }
-      }
-    } catch (_) {
-      // Silent fail — grammar check is non-critical
-    }
-  }
-
-  Future<void> _completeOnboarding() async {
-    isChatComplete.value = true;
-    try {
-      final response = await _apiClient.post<OnboardingProfile>(
-        ApiEndpoints.onboardingComplete,
-        data: {'conversation_id': _conversationId},
-        fromJson: (data) => OnboardingProfile.fromJson(data as Map<String, dynamic>),
-      );
-      if (response.isSuccess && response.data != null) {
-        _onboardingCtrl.onboardingProfile = response.data;
-        // Persist completion checkpoint so a cold-resume after this point lands
-        // on the scenario-gift screen and refetches the profile.
-        await _progressSvc.setProfileComplete(true);
-      }
-    } on ApiException {
-      // Non-fatal: navigate regardless so user is not stuck
-    } finally {
-      await Future.delayed(const Duration(seconds: 2));
-      Get.offNamed(AppRoutes.onboardingScenarioGift);
-    }
-  }
 
   void _addAiMessage(String text, {String? messageId}) {
     if (text.trim().isEmpty) return;
@@ -529,10 +123,25 @@ class AiChatController extends BaseController {
     });
   }
 
-  @override
-  void onClose() {
-    scrollController.dispose();
-    textEditingController.dispose();
-    super.onClose();
+  /// Speak an AI message via TTS
+  void playAudio(String messageId) {
+    final index = messages.indexWhere((m) => m.id == messageId);
+    if (index == -1) return;
+    final text = messages[index].text;
+    if (text == null || text.trim().isEmpty) return;
+    _ttsService.speak(text, language: _targetLanguage);
+  }
+
+  /// Stop TTS playback
+  void stopSpeaking() => _ttsService.stop();
+
+  /// Save word to vocabulary list
+  void saveWord(String word) {
+    // TODO: Implement save word to vocabulary list via API
+  }
+
+  /// Skip onboarding and navigate directly to scenario gift
+  void skipOnboarding() {
+    Get.offNamed(AppRoutes.onboardingScenarioGift);
   }
 }

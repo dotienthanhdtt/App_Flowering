@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
@@ -39,10 +40,12 @@ class ScenarioCard extends StatelessWidget {
 
   Widget _buildBackground() {
     if (scenario.imageUrl != null && scenario.imageUrl!.isNotEmpty) {
-      return Image.network(
-        scenario.imageUrl!,
+      return CachedNetworkImage(
+        imageUrl: scenario.imageUrl!,
         fit: BoxFit.cover,
-        errorBuilder: (_, e, s) => _PlaceholderBg(scenario: scenario),
+        placeholder: (ctx, url) => _PlaceholderBg(scenario: scenario),
+        errorWidget: (ctx, url, err) => _PlaceholderBg(scenario: scenario),
+        fadeInDuration: const Duration(milliseconds: 120),
       );
     }
     return _PlaceholderBg(scenario: scenario);

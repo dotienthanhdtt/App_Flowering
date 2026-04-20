@@ -13,6 +13,11 @@ import '../models/scenarios_feed_response.dart';
 class ScenariosService extends GetxService {
   ApiClient get _apiClient => Get.find<ApiClient>();
 
+  // Feed responses change rarely; a 60s in-memory cache makes tab re-entry
+  // and back-navigation feel instant. CacheInvalidatorService flushes this
+  // automatically on language switch.
+  static const Duration _feedCacheTtl = Duration(seconds: 60);
+
   Future<ApiResponse<ScenariosFeedResponse<ScenarioFeedItem>>> getDefaultFeed({
     int page = 1,
     int limit = 20,
@@ -20,6 +25,7 @@ class ScenariosService extends GetxService {
     return _apiClient.get<ScenariosFeedResponse<ScenarioFeedItem>>(
       ApiEndpoints.scenariosDefault,
       queryParameters: {'page': page, 'limit': limit},
+      cacheTtl: _feedCacheTtl,
       fromJson: (data) => ScenariosFeedResponse<ScenarioFeedItem>.fromJson(
         data as Map<String, dynamic>,
         ScenarioFeedItem.fromJson,
@@ -35,6 +41,7 @@ class ScenariosService extends GetxService {
     return _apiClient.get<ScenariosFeedResponse<PersonalScenarioItem>>(
       ApiEndpoints.scenariosPersonal,
       queryParameters: {'page': page, 'limit': limit},
+      cacheTtl: _feedCacheTtl,
       fromJson: (data) => ScenariosFeedResponse<PersonalScenarioItem>.fromJson(
         data as Map<String, dynamic>,
         PersonalScenarioItem.fromJson,

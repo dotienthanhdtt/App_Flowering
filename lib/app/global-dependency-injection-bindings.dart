@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import '../core/services/cache-invalidator-service.dart';
 import '../core/services/language-context-service.dart';
@@ -121,59 +123,81 @@ class AppBindings extends Bindings {
   }
 }
 
-/// Initialize all core services in dependency order
+/// Tracks whether [initializeDeferredServices] has finished running.
+/// Screens that touch a deferred service on an unusually fast route can
+/// `await deferredInitDone` to guarantee the service is ready.
+final Completer<void> _deferredInitCompleter = Completer<void>();
+Future<void> get deferredInitDone => _deferredInitCompleter.future;
+
+/// Initialize only services required to paint the first frame and make the
+/// splash-screen auth decision.
 ///
-/// Call this in main.dart before runApp()
-/// Services are initialized with proper dependency chain
-Future<void> initializeServices() async {
-  // Auth storage first (required by API client)
+/// Call this in `main.dart` BEFORE `runApp`. Deferred services are kicked
+/// off after the first frame via [initializeDeferredServices].
+Future<void> initializeCriticalServices() async {
+  // Auth storage (splash reads cached token to route)
   final authStorage = Get.put(AuthStorage());
   await authStorage.init();
 
-  // General storage service
+  // Storage — onboarding progress, LRU caches
   final storageService = Get.put(StorageService());
   await storageService.init();
 
-  // Language context — must init BEFORE ApiClient so interceptor has a code on boot
+  // Language context — must init before ApiClient so interceptor has a code
   final languageContext = Get.put(LanguageContextService());
   await languageContext.init();
 
-  // Cache invalidator — subscribes to language changes; must init after language context
+  // Cache invalidator — subscribes to language changes
   final cacheInvalidator = Get.put(CacheInvalidatorService());
   await cacheInvalidator.init();
 
-  // Onboarding progress — depends on StorageService; runs legacy-key migration
+  // Onboarding progress — splash uses this to pick the resume route
   final onboardingProgress = Get.put(OnboardingProgressService());
   await onboardingProgress.init();
 
-  // Network connectivity monitoring
-  final connectivityService = Get.put(ConnectivityService());
-  await connectivityService.init();
-
-  // Audio providers (lazy — initialized by services)
-  Get.put<TtsProviderContract>(FlutterTtsProvider());
-  Get.put<SttProviderContract>(SpeechToTextProvider());
-  Get.put<AudioRecorderProviderContract>(RecordAudioProvider());
-
-  // Audio services — TTS before VoiceInput (VoiceInput depends on TTS)
-  final ttsService = Get.put(TtsService());
-  await ttsService.init();
-
-  final voiceInputService = Get.put(VoiceInputService());
-  await voiceInputService.init();
-
-  // API client last (depends on auth storage)
+  // API client — first-frame routes may kick off prefetches
   final apiClient = Get.put(ApiClient());
   await apiClient.init(authStorage);
+}
 
-  // RevenueCat SDK — must be after API client
-  final revenueCatService = Get.put(RevenueCatService());
-  await revenueCatService.init();
+/// Initialize non-critical services post-first-frame. Safe to call once —
+/// subsequent calls are no-ops. Completes [deferredInitDone] on success.
+Future<void> initializeDeferredServices() async {
+  if (_deferredInitCompleter.isCompleted) return;
+  try {
+    // Connectivity monitoring — offline banner appears only after 1st frame
+    final connectivityService = Get.put(ConnectivityService());
+    await connectivityService.init();
 
-  // Subscription service — depends on RevenueCatService, ApiClient, AuthStorage, StorageService
-  final subscriptionService = Get.put(SubscriptionService());
-  await subscriptionService.init();
+    // Audio stack — only used on chat screen
+    Get.put<TtsProviderContract>(FlutterTtsProvider());
+    Get.put<SttProviderContract>(SpeechToTextProvider());
+    Get.put<AudioRecorderProviderContract>(RecordAudioProvider());
 
-  // Translation service (depends on API client)
-  Get.put(TranslationService(), permanent: true);
+    final ttsService = Get.put(TtsService());
+    await ttsService.init();
+
+    final voiceInputService = Get.put(VoiceInputService());
+    await voiceInputService.init();
+
+    // Subscription stack — not needed before login completes
+    final revenueCatService = Get.put(RevenueCatService());
+    await revenueCatService.init();
+
+    final subscriptionService = Get.put(SubscriptionService());
+    await subscriptionService.init();
+
+    Get.put(TranslationService(), permanent: true);
+  } finally {
+    if (!_deferredInitCompleter.isCompleted) {
+      _deferredInitCompleter.complete();
+    }
+  }
+}
+
+/// Legacy entry point — preserved for callers/tests that expect the old
+/// eager init order. Equivalent to critical + deferred run sequentially.
+Future<void> initializeServices() async {
+  await initializeCriticalServices();
+  await initializeDeferredServices();
 }

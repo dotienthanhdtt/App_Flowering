@@ -16,6 +16,9 @@ import '../../../core/services/storage_service.dart';
 import '../../onboarding/services/onboarding_progress_service.dart';
 import '../models/auth_response_model.dart';
 import '../utils/firebase_auth_error_mapper.dart';
+import 'auth_validators.dart';
+
+part 'auth_controller_social.dart';
 
 /// Manages email/password auth + social auth stubs.
 /// Reads conversationId from StorageService to link onboarding with account.
@@ -44,29 +47,13 @@ class AuthController extends BaseController {
 
   String? get _conversationId => _progressSvc.read().chat?.conversationId;
 
-  // ── Validators ──────────────────────────────────────────────────
+  // ── Validators (delegate to pure functions in auth_validators.dart) ──
 
-  String? validateFullName(String? v) {
-    if (v == null || v.trim().isEmpty) return 'full_name_required'.tr;
-    return null;
-  }
-
-  String? validateEmail(String? v) {
-    if (v == null || v.trim().isEmpty) return 'email_required'.tr;
-    if (!GetUtils.isEmail(v.trim())) return 'email_invalid'.tr;
-    return null;
-  }
-
-  String? validatePassword(String? v) {
-    if (v == null || v.isEmpty) return 'password_required'.tr;
-    if (v.length < 8) return 'password_min_length'.tr;
-    return null;
-  }
-
-  String? validateConfirmPassword(String? v, String password) {
-    if (v != password) return 'passwords_not_match'.tr;
-    return null;
-  }
+  String? validateFullName(String? v) => validateFullNameFn(v);
+  String? validateEmail(String? v) => validateEmailFn(v);
+  String? validatePassword(String? v) => validatePasswordFn(v);
+  String? validateConfirmPassword(String? v, String password) =>
+      validateConfirmPasswordFn(v, password);
 
   // ── Auth actions ─────────────────────────────────────────────────
 
@@ -152,113 +139,6 @@ class AuthController extends BaseController {
     // onboarding intro screens instead of re-entering onboarding flows.
     await _storageService.setHasCompletedLogin();
     Get.offAllNamed(AppRoutes.home);
-  }
-
-  // ── Social auth via Firebase ──────────────────────────────────
-
-  Future<void> signInWithGoogle() async {
-    errorMessage.value = '';
-    try {
-      // serverClientId = Web Client ID (type 3) from google-services.json
-      // Required on Android to receive an idToken from Google Sign-In
-      final googleSignIn = GoogleSignIn(
-        scopes: ['email'],
-        serverClientId:
-            '898715197112-g89g04i54mpeqcjau6ptpu6vn33iful0.apps.googleusercontent.com',
-      );
-      // No overlay during native picker — OS owns that UI
-      final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) return; // user cancelled
-
-      // Native picker closed with an account — show overlay during Firebase/API calls
-      isLoading.value = true;
-      _showLoadingOverlay();
-      final googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await _authenticateWithFirebase(credential);
-    } on FirebaseAuthException catch (e) {
-      errorMessage.value = mapFirebaseAuthErrorCode(e.code).tr;
-    } catch (e) {
-      debugPrint('Google sign-in error: $e');
-      errorMessage.value = 'google_sign_in_failed'.tr;
-    } finally {
-      isLoading.value = false;
-      _hideLoadingOverlay();
-    }
-  }
-
-  Future<void> signInWithApple() async {
-    if (!Platform.isIOS) return;
-    errorMessage.value = '';
-    try {
-      // No overlay during native picker — OS owns that UI
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-
-      // Native picker closed with credentials — show overlay during Firebase/API calls
-      isLoading.value = true;
-      _showLoadingOverlay();
-      final oauthCredential = OAuthProvider('apple.com').credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
-      await _authenticateWithFirebase(oauthCredential);
-    } on SignInWithAppleAuthorizationException {
-      // user cancelled — do nothing
-    } on FirebaseAuthException catch (e) {
-      errorMessage.value = mapFirebaseAuthErrorCode(e.code).tr;
-    } catch (e) {
-      debugPrint('Apple sign-in error: $e');
-      errorMessage.value = 'apple_sign_in_failed'.tr;
-    } finally {
-      isLoading.value = false;
-      _hideLoadingOverlay();
-    }
-  }
-
-  void _showLoadingOverlay() {
-    if (Get.isDialogOpen ?? false) return;
-    Get.dialog(
-      const Center(child: LoadingWidget()),
-      barrierDismissible: false,
-      barrierColor: Colors.black54,
-    );
-  }
-
-  void _hideLoadingOverlay() {
-    if (Get.isDialogOpen ?? false) Get.back();
-  }
-
-  /// Signs in to Firebase, gets ID token, then calls backend /auth/firebase.
-  Future<void> _authenticateWithFirebase(AuthCredential credential) async {
-    final userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-    final idToken = await userCredential.user?.getIdToken();
-    if (idToken == null) {
-      errorMessage.value = 'firebase_token_error'.tr;
-      return;
-    }
-    final response = await _apiClient.post<AuthResponse>(
-      ApiEndpoints.loginFirebase,
-      data: {
-        'id_token': idToken,
-        'display_name': userCredential.user?.displayName,
-        if (_conversationId != null) 'conversation_id': _conversationId,
-      },
-      fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
-    );
-    if (response.isSuccess && response.data != null) {
-      await _handleAuthSuccess(response.data!);
-    } else {
-      errorMessage.value = response.message;
-    }
   }
 
   @override

@@ -1,10 +1,14 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 
-/// Retry interceptor with exponential backoff for network/server errors
+/// Retry interceptor with jittered exponential backoff for network/server
+/// errors. Jitter avoids thundering-herd spikes against a recovering server.
 class RetryInterceptor extends Interceptor {
   final int maxRetries;
   final Duration initialDelay;
   final Dio _dio;
+  final Random _rand = Random();
 
   RetryInterceptor({
     required Dio dio,
@@ -29,8 +33,10 @@ class RetryInterceptor extends Interceptor {
       return;
     }
 
-    // Calculate delay with exponential backoff
-    final delay = initialDelay * (1 << retryCount);
+    // Exponential backoff with ±50% jitter (range: 0.5×–1.5× base delay).
+    final base = initialDelay.inMilliseconds * (1 << retryCount);
+    final jitter = 0.5 + _rand.nextDouble();
+    final delay = Duration(milliseconds: (base * jitter).round());
 
     await Future.delayed(delay);
 
@@ -51,18 +57,24 @@ class RetryInterceptor extends Interceptor {
   }
 
   bool _shouldRetry(DioException err) {
-    // Retry on network errors
+    final method = err.requestOptions.method.toUpperCase();
+    final isIdempotent = method == 'GET' || method == 'HEAD' || method == 'OPTIONS';
+    final retrySafe = err.requestOptions.extra['retry_safe'] == true;
+
+    // Network errors: always safe to retry on idempotent verbs, or when
+    // caller opts in with `retry_safe: true` (e.g., deduped POSTs).
     if (err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.sendTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
         err.type == DioExceptionType.connectionError) {
-      return true;
+      return isIdempotent || retrySafe;
     }
 
-    // Retry on 5xx server errors
+    // 5xx server errors: only retry idempotent or explicitly safe requests,
+    // otherwise a POST could be applied twice server-side.
     final statusCode = err.response?.statusCode;
     if (statusCode != null && statusCode >= 500) {
-      return true;
+      return isIdempotent || retrySafe;
     }
 
     return false;

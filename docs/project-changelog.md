@@ -2,6 +2,36 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-04-21] Flutter App Optimization Pass ✅ COMPLETED
+
+#### Overview
+Seven-phase optimization pass covering performance, memory, startup time, file-size hygiene, and shared-widget consolidation. Plan: `plans/260421-1530-flutter-app-optimization/`.
+
+#### Key Changes
+
+- **Performance** — scoped `Obx` in `AiChatScreen._ChatList`, `FloweringTab`, `ForYouTab` so list rebuilds fire per-concern instead of on every typing/loading flip.
+- **Image caching** — `ScenarioCard` + `FeedScenarioCard` now use `CachedNetworkImage` (eliminates tab-back flicker and extra feed bandwidth).
+- **Auth path** — `AuthInterceptor.onRequest` reads the sync `AuthStorage.cachedAccessToken` first, skipping the per-request keychain I/O.
+- **Retry safety** — `RetryInterceptor` restricts 5xx retry to GET/HEAD/OPTIONS (or `retry_safe: true` extras) and applies ±50% jitter to the backoff.
+- **GET cache** — `ApiClient.get` gained an opt-in `cacheTtl` in-memory LRU (20 entries). Feed endpoints wired to a 60 s TTL; `CacheInvalidatorService` flushes on language switch.
+- **Controller lifecycle** — `BaseController` now owns a `CancelToken` cancelled in `onClose`; `ApiClient.get/post/put/delete/uploadFile` forward it to Dio so in-flight requests drop their results on dispose.
+- **Hive box LRU** — `StorageService` caps open language lesson boxes at 2, closing the LRU box on overflow.
+- **Temp recording sweep** — `RecordAudioProvider.cleanupStaleRecordings()` sweeps orphaned `voice_input_*.m4a` files >1 h old on `VoiceInputService.init()`.
+- **Deferred startup** — `initializeServices()` split into `initializeCriticalServices()` (auth/storage/lang-ctx/ApiClient) + `initializeDeferredServices()` (audio, RevenueCat, subscriptions, translation). The latter runs via `addPostFrameCallback` in `main.dart` — first frame paints without waiting on non-critical services.
+- **File splits (< 200 lines/file)** — `ai_chat_controller.dart` (538 → 5 part files), `word-translation-sheet.dart` (338 → 4 files), `storage_service.dart` (299 → 4 files), `auth_controller.dart` (274 → 3 files), `app-page-definitions-with-transitions.dart` (257 → 6 files), `language-picker-sheet.dart` (254 → 2 files). Pattern used: `part`/`part of` + public extension for controllers/services that need private-field access.
+- **Shared widget** — `EmptyOrErrorView` extracted from duplicate `_EmptyOrError` in both feed tabs.
+- **Dead code removal** — `lib/core/services/audio_service.dart` (282 lines, unreferenced — replaced by `TtsService` + `VoiceInputService` months ago) deleted.
+
+#### Non-Goals
+- Did not sweep every existing controller to use `cancelToken` — infrastructure is in place, existing call sites keep working unchanged.
+- Did not split 5 files in the 208–230 line range (acceptable overage vs. refactor churn).
+
+#### Test Status
+- `flutter analyze lib/`: 0 errors (pre-existing kebab-case info lints only).
+- `flutter test`: 57 pass, 6 pre-existing DI-setup failures in `widget_test.dart` + `ai_chat_binding_cold_resume_test.dart` (documented in `plans/reports/tester-260419-0202-multi-language-phases-1-7.md`).
+
+---
+
 ### [2026-04-20] Scenarios API v2 Migration: Home Top-Tabs + For You Feed ✅ COMPLETED
 
 #### Overview

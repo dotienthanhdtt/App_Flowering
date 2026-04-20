@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../network/api_client.dart';
 import 'language-context-service.dart';
 import 'storage_service.dart';
 
@@ -36,6 +37,10 @@ class CacheInvalidatorService extends GetxService {
       _baselineCode = newCode;
       if (prevCode != null && prevCode.isNotEmpty) {
         await storage.clearLessonsCacheForLang(prevCode);
+      }
+      // Drop any language-scoped GET cache so the new language fetches fresh.
+      if (Get.isRegistered<ApiClient>()) {
+        Get.find<ApiClient>().clearGetCache();
       }
     });
 

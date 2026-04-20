@@ -5,6 +5,7 @@ import 'contracts/audio-recorder-provider-contract.dart';
 import 'contracts/stt-provider-contract.dart';
 import 'models/stt-result.dart';
 import 'models/voice-input-result.dart';
+import 'providers/record-audio-provider.dart';
 import 'tts-service.dart';
 
 class VoiceInputService extends GetxService {
@@ -40,6 +41,10 @@ class VoiceInputService extends GetxService {
     // tap via [_ensureSttInitialized]. This avoids prompting for microphone
     // permission at app launch.
     sttAvailable.value = true;
+
+    // Best-effort sweep of orphaned voice-input recordings left in the temp
+    // dir by prior sessions (e.g., crashes, failed uploads). Fire-and-forget.
+    unawaited(RecordAudioProvider.cleanupStaleRecordings());
 
     return this;
   }

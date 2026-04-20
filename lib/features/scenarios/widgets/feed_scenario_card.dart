@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -69,10 +70,12 @@ class FeedScenarioCard extends StatelessWidget {
   Widget _buildBackground() {
     final url = item.imageUrl;
     if (url != null && url.isNotEmpty) {
-      return Image.network(
-        url,
+      return CachedNetworkImage(
+        imageUrl: url,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _buildPlaceholder(),
+        placeholder: (ctx, url) => _buildPlaceholder(),
+        errorWidget: (ctx, url, err) => _buildPlaceholder(),
+        fadeInDuration: const Duration(milliseconds: 120),
       );
     }
     return _buildPlaceholder();

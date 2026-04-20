@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import '../network/api_exceptions.dart';
 
@@ -5,6 +6,20 @@ import '../network/api_exceptions.dart';
 abstract class BaseController extends GetxController {
   final isLoading = false.obs;
   final errorMessage = ''.obs;
+
+  /// Per-controller cancel token. Cancelled in [onClose] so in-flight
+  /// requests drop their results instead of mutating disposed state.
+  /// Callers may pass this to [ApiClient] methods via the `cancelToken` arg.
+  final CancelToken _lifecycleToken = CancelToken();
+  CancelToken get cancelToken => _lifecycleToken;
+
+  @override
+  void onClose() {
+    if (!_lifecycleToken.isCancelled) {
+      _lifecycleToken.cancel('controller_disposed');
+    }
+    super.onClose();
+  }
 
   /// Wrap API calls with loading state and error handling
   Future<T?> apiCall<T>(
@@ -21,12 +36,14 @@ abstract class BaseController extends GetxController {
 
       final result = await call();
 
+      if (_lifecycleToken.isCancelled) return null;
       if (onSuccess != null) {
         onSuccess(result);
       }
 
       return result;
     } on ApiException catch (e) {
+      if (_lifecycleToken.isCancelled) return null;
       errorMessage.value = e.userMessage;
 
       if (onError != null) {
@@ -37,6 +54,10 @@ abstract class BaseController extends GetxController {
 
       return null;
     } catch (e) {
+      // Dio cancellation surfaces as a DioException — treat as a no-op drop.
+      if (e is DioException && CancelToken.isCancel(e)) return null;
+      if (_lifecycleToken.isCancelled) return null;
+
       const message = 'Something went wrong';
       errorMessage.value = message;
 
@@ -51,7 +72,7 @@ abstract class BaseController extends GetxController {
 
       return null;
     } finally {
-      if (showLoading) {
+      if (showLoading && !_lifecycleToken.isCancelled) {
         isLoading.value = false;
       }
     }
