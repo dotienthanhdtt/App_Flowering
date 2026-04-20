@@ -22,7 +22,7 @@ class ChatHomeScreen extends StatelessWidget {
     return SafeArea(
       child: DefaultTabController(
         length: 2,
-        initialIndex: 1,
+        initialIndex: 0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

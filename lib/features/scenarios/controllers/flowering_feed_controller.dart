@@ -20,6 +20,10 @@ class FloweringFeedController extends BaseController {
   int _page = 1;
   bool _hasMore = true;
   Worker? _langWorker;
+  // Monotonic fetch generation. Every call bumps it; responses whose captured
+  // generation no longer matches are dropped. Lets a refresh cancel-in-effect
+  // the initial fetch without awaiting it.
+  int _fetchGen = 0;
 
   bool get hasMore => _hasMore;
   int get currentPage => _page;
@@ -29,6 +33,11 @@ class FloweringFeedController extends BaseController {
     super.onInit();
     fetchFeed();
     _langWorker = ever<String?>(_langCtx.activeCode, (_) {
+      // Clear synchronously so the tab's empty+loading branch lights up
+      // (full LoadingWidget). Pull-to-refresh intentionally does NOT clear —
+      // there the PullToRefreshList indicator is the loading signal.
+      items.clear();
+      errorMessage.value = '';
       fetchFeed(refresh: true);
     });
   }
@@ -41,18 +50,23 @@ class FloweringFeedController extends BaseController {
   }
 
   Future<void> fetchFeed({bool refresh = false}) async {
-    if (isLoading.value) return;
+    // Pagination dedupes against concurrent calls; explicit refresh bypasses
+    // the guard so a pull or language-switch can supersede an in-flight fetch.
+    if (!refresh && isLoading.value) return;
     if (!refresh && !_hasMore) return;
 
     if (refresh) {
       _page = 1;
       _hasMore = true;
     }
+    final gen = ++_fetchGen;
 
     await apiCall(
       () => _service.getDefaultFeed(page: _page, limit: _pageLimit),
       showLoading: items.isEmpty,
       onSuccess: (resp) {
+        // Drop stale responses from a fetch superseded by a newer one.
+        if (gen != _fetchGen) return;
         if (!resp.isSuccess || resp.data == null) {
           errorMessage.value = resp.message;
           return;

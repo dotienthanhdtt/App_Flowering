@@ -35,12 +35,16 @@ class CacheInvalidatorService extends GetxService {
       if (newCode == _baselineCode) return;
       final prevCode = _baselineCode;
       _baselineCode = newCode;
-      if (prevCode != null && prevCode.isNotEmpty) {
-        await storage.clearLessonsCacheForLang(prevCode);
-      }
-      // Drop any language-scoped GET cache so the new language fetches fresh.
+      // Drop the in-memory GET cache SYNCHRONOUSLY before any await — feed
+      // controllers listen to the same `activeCode` and will fire immediately
+      // after this listener. If we await first, their refresh reads stale
+      // cached responses keyed by path+query (the cache key doesn't include
+      // the X-Learning-Language header).
       if (Get.isRegistered<ApiClient>()) {
         Get.find<ApiClient>().clearGetCache();
+      }
+      if (prevCode != null && prevCode.isNotEmpty) {
+        await storage.clearLessonsCacheForLang(prevCode);
       }
     });
 

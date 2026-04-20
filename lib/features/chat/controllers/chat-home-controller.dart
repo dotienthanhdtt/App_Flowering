@@ -5,6 +5,8 @@ import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/services/language-context-service.dart';
 import '../../onboarding/models/onboarding_language_model.dart';
+import '../../scenarios/controllers/flowering_feed_controller.dart';
+import '../../scenarios/controllers/for_you_feed_controller.dart';
 
 /// Controls the Chat home screen header — manages the active-learning-language
 /// flag button and the picker sheet. Body content (scenarios) is owned by
@@ -21,6 +23,11 @@ class ChatHomeController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    // Eagerly resolve both feed controllers so each registers its
+    // language-change listener immediately — otherwise only the initially
+    // visible tab's API reloads when the active language switches.
+    Get.find<ForYouFeedController>();
+    Get.find<FloweringFeedController>();
     // Fire-and-forget so first paint isn't blocked on the languages endpoint.
     loadAvailableLanguages();
     _activeCodeWorker = ever<String?>(_langCtx.activeCode, _syncActiveFromCode);

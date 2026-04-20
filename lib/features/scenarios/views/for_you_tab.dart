@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/empty_or_error_view.dart';
 import '../../../shared/widgets/loading_widget.dart';
+import '../../../shared/widgets/pull-to-refresh-list.dart';
 import '../controllers/for_you_feed_controller.dart';
 import '../widgets/personal_feed_card.dart';
 
@@ -34,7 +35,8 @@ class _ForYouTabState extends State<ForYouTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return RefreshIndicator(
+    return PullToRefreshList(
+      isRefreshing: _controller.isRefreshing,
       onRefresh: _controller.refreshFeed,
       child: NotificationListener<ScrollNotification>(
         onNotification: _onScroll,
@@ -86,4 +88,3 @@ class _ForYouTabState extends State<ForYouTab>
     );
   }
 }
-

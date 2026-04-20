@@ -25,7 +25,7 @@ class SplashScreen extends BaseScreen<SplashController> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
       ),
       child: Center(
         child: TweenAnimationBuilder<double>(

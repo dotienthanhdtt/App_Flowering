@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../shared/widgets/empty_or_error_view.dart';
 import '../../../shared/widgets/loading_widget.dart';
+import '../../../shared/widgets/pull-to-refresh-list.dart';
 import '../controllers/flowering_feed_controller.dart';
 import '../widgets/feed_scenario_card.dart';
 
@@ -34,9 +35,8 @@ class _FloweringTabState extends State<FloweringTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // Scope-split: the grid only rebuilds on items changes; loading and
-    // empty/error branches render as siblings via their own Obx.
-    return RefreshIndicator(
+    return PullToRefreshList(
+      isRefreshing: _controller.isRefreshing,
       onRefresh: _controller.refreshFeed,
       child: NotificationListener<ScrollNotification>(
         onNotification: _onScroll,
@@ -92,4 +92,3 @@ class _FloweringTabState extends State<FloweringTab>
     );
   }
 }
-
