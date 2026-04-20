@@ -147,6 +147,46 @@ None — all fixes are backward compatible and transparent to consumers.
 
 ---
 
+### [2026-04-20] Home Language Switcher UI & Onboarding Session Rehydration ✅ IN PROGRESS
+
+#### Overview
+UI components for home dashboard language selection and session rehydration from backend on cold app resume. Enables users to switch learning languages from the home screen with full context persistence.
+
+#### Features Landed
+- **HomeLanguageButton widget** (`lib/features/chat_home/widgets/home-language-button.dart`) — New
+  - Displays currently active learning language with flag emoji
+  - Tap to trigger LanguagePickerSheet
+  - Positioned in ChatHomeScreen header
+  
+- **LanguagePickerSheet widget** (`lib/features/chat_home/widgets/language-picker-sheet.dart`) — New
+  - Bottom modal sheet listing available languages
+  - Language selection with automatic cache invalidation
+  - Integrates LanguageContextService for state updates
+
+- **OnboardingChat Session Rehydration** (integration completed Apr 20)
+  - GET `/onboarding/conversations/:id/messages` on cold resume
+  - ChatController loads previous session context on app restart
+  - Full message history restoration from backend
+
+- **UI Refresh** (Apr 20)
+  - Updated `scenario-card.dart` lesson card styling
+  - Improved ChatHome header layout to accommodate language switcher
+
+#### Files Modified/Created
+- `lib/features/chat_home/widgets/home-language-button.dart` (NEW)
+- `lib/features/chat_home/widgets/language-picker-sheet.dart` (NEW)
+- `lib/features/lessons/widgets/scenario-card.dart` — Styling refresh
+- `lib/features/chat_home/controllers/chat_home_controller.dart` — Language picker integration
+- `lib/features/chat/controllers/ai_chat_controller.dart` — Session rehydration endpoint call
+
+#### Status
+- ✅ Widgets implemented and integrated
+- ✅ Session rehydration endpoint wired
+- ✅ Language context service integration complete
+- 🔄 Testing in progress (phase 8 pending)
+
+---
+
 ### [2026-04-15] Onboarding Progress Resume: Persist Pre-Auth Checkpoints ✅ COMPLETED
 
 #### Overview

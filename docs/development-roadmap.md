@@ -6,8 +6,8 @@
 **Framework:** Flutter 3.10.3+
 **Architecture:** Feature-first with GetX
 **Start Date:** 2026-02-05
-**Current Status Date:** 2026-04-19
-**Completion Estimate:** Phases 1-6.12 complete, Phases 7-10 pending
+**Current Status Date:** 2026-04-20
+**Completion Estimate:** Phases 1-6.12 complete, Phase 7 in progress (~50%), Phases 8-10 pending
 
 ## Roadmap Overview
 
@@ -25,15 +25,15 @@ Phase 6.9: Audio Architecture (TTS/STT) ████████████ 100
 Phase 6.10: Onboarding Progress Resume ████████████ 100% (2h) ✅ COMPLETED 2026-04-15
 Phase 6.11: Multi-Language Adaptation ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-19
 Phase 6.12: Critical Fixes (auth, casing, cache, controller, Firebase) ████████████ 100% (18h) ✅ COMPLETED 2026-04-19
-Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-25
+Phase 7: Home Dashboard ██████░░░░░░ 50% (1.5h) 🔄 In Progress ~2026-04-25
 Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-05-01
 Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-10
 Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-20
 ```
 
-**Overall Progress:** 100% of foundation + onboarding + auth + audio + persistence + multi-language + critical fixes (Phases 1-6.12 complete)
-**Completed:** 46.5 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture, onboarding progress resume, multi-language context + interceptors + cache invalidation, 7 critical bug fixes)
-**Remaining:** Home dashboard, expanded chat, lessons, profile/settings (~8 hours estimated)
+**Overall Progress:** 100% of foundation + onboarding + auth + audio + persistence + multi-language + critical fixes (Phases 1-6.12 complete); Phase 7 50% complete (home language switcher UI + session rehydration)
+**Completed:** 47 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture, onboarding progress resume, multi-language context + interceptors + cache invalidation, 7 critical bug fixes, home language button/picker widgets, session rehydration)
+**Remaining:** Complete Phase 7 home dashboard polish, expanded chat, lessons, profile/settings (~7.5 hours estimated)
 
 ## Phase Details
 

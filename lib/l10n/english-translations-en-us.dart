@@ -102,6 +102,9 @@ const Map<String, String> enUS = {
   'read_empty': 'No lessons available',
   'lesson_count': '@count scenarios',
   'lesson_locked': 'Locked',
+  'language_picker_title': 'Learning language',
+  'language_picker_empty': 'No languages yet. Add one from settings.',
+  'language_picker_close': 'Close',
 
   // Vocabulary
   'vocabulary_title': 'Vocabulary',

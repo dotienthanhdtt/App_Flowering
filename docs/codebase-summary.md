@@ -18,7 +18,7 @@
 ### Networking & Storage
 - **HTTP Client:** Dio 5.4.0
 - **Local Cache:** Hive 2.2.3, Hive Flutter 1.1.0
-- **Token Storage:** AuthStorage (Hive-based, separate 'auth' box)
+- **Token Storage:** AuthStorage (flutter_secure_storage, Keychain/Keystore, hardware-backed)
 
 ### Audio & Media
 - **Audio Recording:** record 6.2.0
@@ -260,11 +260,15 @@ Complete dependency setup with all required packages.
 
 #### Core Services Layer
 - StorageService with LRU eviction for lessons (100MB) and FIFO for chat (10MB)
-- AuthStorage using Hive for token management
+- AuthStorage using flutter_secure_storage (Keychain/Keystore, hardware-backed)
+- LanguageContextService for active language state management (Phase 6.11 ✅)
+- CacheInvalidatorService for language-scoped cache invalidation (Phase 6.11 ✅)
 - ConnectivityService with online/offline detection
-- AudioService for recording/playback with proper cleanup
-- Error handling for all Hive and audio operations
-- Memory leak fixes in audio service
+- TtsService + VoiceInputService for audio I/O (Phase 6.9 ✅)
+- TranslationService for i18n
+- OnboardingProgressService for checkpoint persistence (Phase 6.10 ✅)
+- RevenueCatService + SubscriptionService for in-app purchases
+- Error handling for all operations with proper cleanup
 - path_provider dependency added
 
 ### ✅ Completed (Phase 4)
@@ -337,13 +341,19 @@ Complete dependency setup with all required packages.
 - `english-translations-en-us.dart` - English strings
 - `vietnamese-translations-vi-vn.dart` - Vietnamese strings
 
-#### Global Dependencies
+#### Global Dependencies (11 services)
 Services registered in `global-dependency-injection-bindings.dart`:
-- ApiClient
-- StorageService
-- AuthStorage
-- ConnectivityService
-- AudioService
+1. AuthStorage (flutter_secure_storage)
+2. StorageService (Hive)
+3. LanguageContextService
+4. CacheInvalidatorService
+5. OnboardingProgressService
+6. ConnectivityService
+7. Audio Providers (TtsProvider, SttProvider, RecorderProvider)
+8. TtsService + VoiceInputService
+9. ApiClient (Dio with interceptor chain)
+10. RevenueCatService + SubscriptionService
+11. TranslationService (permanent lifetime)
 
 #### App Configuration
 - Main app widget with GetX integration

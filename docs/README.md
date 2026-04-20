@@ -2,9 +2,9 @@
 
 Welcome to the Flowering Flutter documentation. This directory contains comprehensive documentation for the AI-powered language learning app.
 
-**Last Updated:** April 15, 2026
-**Current Phase:** 6.10 (Onboarding Progress Resume) - Ready for Phase 7
-**Status:** All infrastructure, user acquisition, and session persistence features complete
+**Last Updated:** April 20, 2026
+**Current Phase:** 6.12 (Critical Fixes) Complete; Phase 7 (Home Language Switcher) In Progress (50%)
+**Status:** All infrastructure, user acquisition, session persistence, and critical fixes complete; home language UI in progress
 
 ## Quick Navigation
 
@@ -65,20 +65,22 @@ Feature-first clean architecture with 4 layers:
 
 ## Current Implementation Status
 
-### Complete (Phase 1-6.8)
+### Complete (Phase 1-6.12)
 - Project setup and dependencies
-- Network layer (ApiClient, interceptors, error handling)
-- Core services (Storage, Auth, Connectivity, Audio)
-- Base classes (BaseController, BaseScreen)
+- Network layer (ApiClient, interceptors, error handling, retry logic)
+- Core services (Storage, Auth, Connectivity, Audio, Language Context, Cache Invalidation)
+- Base classes (BaseController, BaseScreen, BaseStatelessScreen)
 - Routing (16 routes with transitions)
 - Localization (99+ keys per language: EN, VI)
-- **Onboarding flow:** 8 screens (splash, welcome, language selection, AI chat, scenario)
-- **Authentication:** 5 screens (login, signup, forgot password, OTP, new password)
+- **Onboarding flow:** 8 screens with session rehydration and checkpoint persistence
+- **Authentication:** 5 screens (login, signup, forgot password, OTP, new password) with Firebase error mapping
 - **Navigation:** 4-tab bottom navigation (Chat, Read, Vocabulary, Profile)
-- **Chat feature:** Grammar correction, translation support, message bubbles
+- **Chat feature:** Grammar correction, translation support, message bubbles, TTS/STT, session rehydration
+- **Multi-language support:** Active language context, cache scoping, language switching without data loss
+- **Critical fixes:** Token refresh race conditions, API contract alignment (camelCase→snake_case), error disclosure mitigation
 
-### Pending (Phase 7-10)
-- Home dashboard with learning statistics
+### In Progress & Pending (Phase 7-10)
+- **Phase 7 (50% complete):** Home dashboard UI with language switcher button and language picker sheet
 - Expanded chat with full history and persistence
 - Lessons browser with offline caching
 - Profile and settings pages

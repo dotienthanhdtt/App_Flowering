@@ -121,7 +121,7 @@ class AppSizes {
   // ═══════════════════════════════════════════════════════════════════
   // ── OTHER COMPONENT SIZES ──
   // ═══════════════════════════════════════════════════════════════════
-  static const double topBarHeight = 56;
+  static const double topBarHeight = 48;
   static const double navIconSize = 24;
   static const double navFontSize = 10;
   static const double navItemGap = 4;

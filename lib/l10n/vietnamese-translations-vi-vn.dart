@@ -102,6 +102,9 @@ const Map<String, String> viVN = {
   'read_empty': 'Chưa có bài học',
   'lesson_count': '@count tình huống',
   'lesson_locked': 'Đã khóa',
+  'language_picker_title': 'Ngôn ngữ học',
+  'language_picker_empty': 'Chưa có ngôn ngữ. Thêm trong phần cài đặt.',
+  'language_picker_close': 'Đóng',
 
   // Vocabulary
   'vocabulary_title': 'Từ vựng',

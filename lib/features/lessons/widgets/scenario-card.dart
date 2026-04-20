@@ -7,10 +7,10 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../models/lesson-models.dart';
 
-/// Scenario card matching design `ScenarioCard` in design.pen.
+/// Scenario card matching design `QKWzO` (ScenarioCard) in flowering_design.pen.
 ///
-/// Layout: full-size background image, frosted gradient overlay at bottom
-/// (level dots + title), optional status badge top-right.
+/// Layout: full-size background image, frosted backdrop-blur panel at the
+/// bottom with the scenario title only, optional status badge top-right.
 ///
 /// Status behaviour:
 /// - available / trial → normal card
@@ -22,13 +22,11 @@ class ScenarioCard extends StatelessWidget {
 
   const ScenarioCard({super.key, required this.scenario, this.onTap});
 
-  // Design spec: 180×230, body overlay 90px from bottom
+  // Design QKWzO: 180×230, body overlay 53px high, padding [10,12]
   static const double _aspectRatio = 180 / 230;
-  static const double _bodyHeight = 90.0;
+  static const double _bodyHeight = 53.0;
   static const double _badgeSize = 20.0;
   static const Color _learnedColor = Color(0xFF6BAF7A);
-  static const Color _levelLabelColor = Color(0xFF9C9585);
-  static const Color _dotEmpty = Color(0xFFE5DFC9);
 
   @override
   Widget build(BuildContext context) {
@@ -85,99 +83,39 @@ class ScenarioCard extends StatelessWidget {
     );
   }
 
-  /// Frosted gradient overlay — matches design `Card3Body` gradient + blur.
+  /// Frosted backdrop-blur panel — matches design `Card3Body`:
+  /// transparent-cream tint (#FFFCFC00) + background_blur radius 20.
+  /// A light tint is added over the blur so dark title text stays legible
+  /// against busy images.
   Widget _buildBodyOverlay() {
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0x00FFFFFF),
-                Color(0x0AFFFFFF),
-                Color(0x33FFFFFF),
-                Color(0x80FFFFFF),
-                Color(0xCCFFFFFF),
-                Color(0xDDFFFFFF),
-              ],
-            ),
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: const Color(0x66FFFCFC),
+            borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(AppSizes.radiusL),
               bottomRight: Radius.circular(AppSizes.radiusL),
             ),
           ),
-          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              _buildLevelRow(),
-              const SizedBox(height: 6),
-              Text(
-                scenario.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimaryColor,
-                  height: 1.3,
-                ),
-              ),
-            ],
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            scenario.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimaryColor,
+              height: 1.3,
+            ),
           ),
         ),
       ),
     );
-  }
-
-  Widget _buildLevelRow() {
-    final filledCount = _difficultyToFilled(scenario.difficulty);
-    return Row(
-      children: [
-        const Text(
-          'Level',
-          style: TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: _levelLabelColor,
-          ),
-        ),
-        const SizedBox(width: 4),
-        ...List.generate(5, (i) => _buildDot(i < filledCount)),
-      ],
-    );
-  }
-
-  Widget _buildDot(bool filled) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 3),
-      child: Container(
-        width: 6,
-        height: 6,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: filled ? AppColors.primaryColor : _dotEmpty,
-        ),
-      ),
-    );
-  }
-
-  /// beginner=2, intermediate=3, advanced=5
-  int _difficultyToFilled(String difficulty) {
-    switch (difficulty) {
-      case 'intermediate':
-        return 3;
-      case 'advanced':
-        return 5;
-      default:
-        return 2; // beginner
-    }
   }
 
   Widget _buildStatusBadge() {

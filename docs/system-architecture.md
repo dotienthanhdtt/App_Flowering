@@ -33,7 +33,10 @@ Flowering uses a **feature-first clean architecture** with Flutter and GetX for 
 │  │   Core Services ✅                                   │   │
 │  │   - ApiClient (Dio HTTP Client) ✅                   │   │
 │  │   - StorageService (Hive Cache) ✅                   │   │
-│  │   - AuthStorage (Token Storage) ✅                   │   │
+│  │   - AuthStorage (Secure Token Storage) ✅             │   │
+│  │   - LanguageContextService (Active Language) ✅       │   │
+│  │   - CacheInvalidatorService (Language-Scoped) ✅      │   │
+│  │   - TranslationService (i18n) ✅                      │   │
 │  │   - AudioService (Voice I/O) ✅                      │   │
 │  │   - ConnectivityService (Network Status) ✅          │   │
 │  └──────────────────────────────────────────────────────┘   │
@@ -70,7 +73,7 @@ lib/
 │   │   └── auth_interceptor.dart      # Token injection
 │   ├── services/                      # Core services
 │   │   ├── storage_service.dart       # Hive operations
-│   │   ├── auth_storage.dart          # Secure token storage
+│   │   ├── auth_storage.dart          # flutter_secure_storage (Keychain/Keystore, hardware-backed)
 │   │   ├── connectivity_service.dart  # Network monitoring
 │   │   └── audio/                     # Audio I/O (TTS & STT)
 │   │       ├── models/                # TtsEvent, SttResult, VoiceInputResult
@@ -824,8 +827,9 @@ if (response.statusCode == 401) {
 ```dart
 Get.lazyPut(() => AuthStorage());
 Get.lazyPut(() => StorageService());
-Get.lazyPut(() => LanguageContextService());      // Phase 6.11 ✅
-Get.lazyPut(() => CacheInvalidatorService());     // Phase 6.11 ✅
+Get.lazyPut(() => LanguageContextService());
+Get.lazyPut(() => CacheInvalidatorService());
+Get.lazyPut(() => OnboardingProgressService());
 Get.lazyPut(() => ConnectivityService());
 
 // Audio providers (contracts)
@@ -837,44 +841,75 @@ Get.lazyPut<AudioRecorderProviderContract>(() => RecordAudioProvider());
 Get.lazyPut(() => TtsService());
 Get.lazyPut(() => VoiceInputService());
 
-Get.lazyPut(() => ApiClient());  // Last, after LanguageContextService
+Get.lazyPut(() => ApiClient());  // Requires LanguageContextService for interceptors
+Get.lazyPut(() => RevenueCatService());
+Get.lazyPut(() => SubscriptionService());
+
+Get.put(TranslationService(), permanent: true);  // Permanent lifetime
 ```
 
 **Service Initialization:**
-All services extend `GetxService` and implement `init()` method:
+All services extend `GetxService` and implement `init()` method. Initialize in strict order:
 ```dart
-// Must init in order
+// 1. Token & storage
 final authStorage = Get.find<AuthStorage>();
 await authStorage.init();
 
 final storage = Get.find<StorageService>();
 await storage.init();
 
-final langContext = Get.find<LanguageContextService>();  // Phase 6.11 ✅
+// 2. Language context (required before cache invalidation)
+final langContext = Get.find<LanguageContextService>();
 await langContext.init();
 
-final cacheInvalidator = Get.find<CacheInvalidatorService>();  // Phase 6.11 ✅
+final cacheInvalidator = Get.find<CacheInvalidatorService>();
 await cacheInvalidator.init();
 
+// 3. Onboarding state
+final onboardingProgress = Get.find<OnboardingProgressService>();
+await onboardingProgress.init();
+
+// 4. Network & audio
 final connectivity = Get.find<ConnectivityService>();
 await connectivity.init();
 
-// Audio + other services...
+Get.find<TtsProviderContract>().init();
+Get.find<SttProviderContract>().init();
+Get.find<AudioRecorderProviderContract>().init();
 
+final ttsService = Get.find<TtsService>();
+await ttsService.init();
+
+final voiceInputService = Get.find<VoiceInputService>();
+await voiceInputService.init();
+
+// 5. API client (requires language context for interceptor)
 final apiClient = Get.find<ApiClient>();
-await apiClient.init();  // Last, for interceptors
+await apiClient.init();
+
+// 6. Subscriptions & i18n
+final revenueCat = Get.find<RevenueCatService>();
+await revenueCat.init();
+
+final subscriptionService = Get.find<SubscriptionService>();
+await subscriptionService.init();
+
+final translationService = Get.find<TranslationService>();
+await translationService.init();
 ```
 
-**Initialization Order (Phase 6.11 ✅ Updated for Multi-Language):**
-1. AuthStorage
-2. StorageService (loads preferences)
-3. **LanguageContextService** (loads `active_language_code`, `active_language_id` from Hive)
-4. **CacheInvalidatorService** (subscribes to language changes, runs migration flush)
-5. ConnectivityService
-6. Audio providers (TtsProvider, SttProvider, RecorderProvider)
-7. TtsService
-8. VoiceInputService
-9. ApiClient (now has access to LanguageContextService for interceptor)
+**Initialization Order (Phase 6.11+ ✅ Updated for Multi-Language):**
+1. AuthStorage (flutter_secure_storage, Keychain/Keystore)
+2. StorageService (Hive operations, loads preferences)
+3. LanguageContextService (loads active_language_code, active_language_id from Hive)
+4. CacheInvalidatorService (subscribes to language changes, runs migration flush)
+5. OnboardingProgressService (restores onboarding checkpoints from Hive)
+6. ConnectivityService (network status monitoring)
+7. Audio providers (TtsProvider, SttProvider, RecorderProvider)
+8. TtsService + VoiceInputService (queue-based TTS, STT + recording)
+9. ApiClient (Dio client with interceptor chain; accesses LanguageContextService)
+10. RevenueCatService + SubscriptionService (in-app purchases)
+11. TranslationService (i18n, permanent lifetime)
 
 ### Feature Bindings
 

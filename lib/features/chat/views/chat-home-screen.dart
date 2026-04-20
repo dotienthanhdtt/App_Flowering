@@ -10,6 +10,8 @@ import '../../../shared/widgets/pull-to-refresh-list.dart';
 import '../../lessons/models/lesson-models.dart';
 import '../../lessons/widgets/scenario-card.dart';
 import '../controllers/chat-home-controller.dart';
+import '../widgets/home-language-button.dart';
+import '../widgets/language-picker-sheet.dart';
 
 /// Chat home tab — shows /lessons scenarios grouped by category for selection.
 /// Tab child screen — exempt from BaseScreen to avoid nested Scaffold.
@@ -23,61 +25,45 @@ class ChatHomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(controller),
+          _buildHeader(context, controller),
           Expanded(child: _buildBody(controller)),
         ],
       ),
     );
   }
 
-  /// Header: scenario count badge (orange pill) + search button.
-  Widget _buildHeader(ChatHomeController controller) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Obx(() => _buildCountBadge(controller.totalScenarios)),
-          _buildSearchButton(),
-        ],
+  /// Header: language-flag dropdown (left) per `09_chat_screen`.
+  /// Right side reserved for future streak pill (design node `6Rcjp`).
+  Widget _buildHeader(BuildContext context, ChatHomeController controller) {
+    return SizedBox(
+      height: AppSizes.topBarHeight,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Obx(() => HomeLanguageButton(
+                  active: controller.activeLanguage.value,
+                  onTap: () => _openLanguagePicker(context, controller),
+                )),
+            const SizedBox(width: 40),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCountBadge(int count) {
-    if (count == 0) return const SizedBox.shrink();
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSizes.space4,
-        vertical: AppSizes.space1 + 2,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor,
-        borderRadius: BorderRadius.circular(AppSizes.radiusPill),
-      ),
-      child: AppText(
-        'lesson_count'.trParams({'count': count.toString()}),
-        variant: AppTextVariant.bodySmall,
-        color: AppColors.textOnPrimaryColor,
-        fontWeight: FontWeight.w600,
-      ),
-    );
-  }
-
-  Widget _buildSearchButton() {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.borderLightColor),
-      ),
-      child: const Icon(
-        LucideIcons.search,
-        color: AppColors.textSecondaryColor,
-        size: AppSizes.iconL,
-      ),
+  Future<void> _openLanguagePicker(
+    BuildContext context,
+    ChatHomeController controller,
+  ) async {
+    await controller.loadAvailableLanguages();
+    if (!context.mounted) return;
+    await LanguagePickerSheet.show(
+      context,
+      languages: controller.availableLanguages.toList(),
+      activeCode: controller.activeLanguage.value?.code,
+      onSelect: controller.switchActiveLanguage,
     );
   }
 
@@ -98,7 +84,7 @@ class ChatHomeScreen extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           itemCount: controller.categories.length,
           itemBuilder: (_, i) =>
               _buildCategorySection(controller.categories[i]),
