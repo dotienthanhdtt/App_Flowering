@@ -18,6 +18,7 @@ import '../features/subscription/controllers/subscription-controller.dart';
 import '../features/subscription/services/revenuecat-service.dart';
 import '../features/subscription/services/subscription-service.dart';
 import '../core/services/translation-service.dart';
+import '../features/scenarios/services/scenarios_service.dart';
 
 /// Global dependency injection for core services
 ///
@@ -109,6 +110,12 @@ class AppBindings extends Bindings {
     // across multiple screens (settings, profile, etc.)
     Get.lazyPut<SubscriptionController>(
       () => SubscriptionController(),
+      fenix: true,
+    );
+
+    // Scenarios service — shared by both Home feed controllers.
+    Get.lazyPut<ScenariosService>(
+      () => ScenariosService(),
       fenix: true,
     );
   }

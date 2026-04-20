@@ -10,7 +10,7 @@ Flowering uses a **feature-first clean architecture** with Flutter and GetX for 
 ┌─────────────────────────────────────────────────────────────┐
 │                         Presentation Layer                   │
 │  ┌──────────────────────────────────────────────────────┐   │
-│  │   Features (Auth, Home, Chat, Lessons, Profile)      │   │
+│  │   Features (Auth, Home, Chat, Scenarios, Profile)    │   │
 │  │   - Views (UI Components)                            │   │
 │  │   - Controllers (Business Logic)                     │   │
 │  │   - Bindings (Dependency Injection)                  │   │

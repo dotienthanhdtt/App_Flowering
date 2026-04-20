@@ -315,4 +315,15 @@ const Map<String, String> enUS = {
   'empty_explore_lessons': 'Explore Lessons',
   'empty_no_internet': 'No internet connection',
   'empty_check_connection': 'Check your connection and try again',
+
+  // Scenarios (Home top-tabs)
+  'tab_for_you': 'For You',
+  'tab_flowering': 'Flowering',
+  'scenarios_empty_default': 'No scenarios yet',
+  'scenarios_empty_personal':
+      'Complete onboarding to unlock personalized scenarios',
+  'scenarios_error_generic': "Couldn't load scenarios. Pull to retry.",
+  'access_tier_pro_badge': 'PRO',
+  'source_ai_badge': 'AI',
+  'source_kol_badge': 'KOL',
 };

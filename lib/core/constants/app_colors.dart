@@ -60,6 +60,7 @@ class AppColors {
   // Accent
   static const Color lavenderLightColor = Color(0xFFEDE8F5);
   static const Color roseLightColor = Color(0xFFFBE8E8);
+  static const Color accentGoldColor = Color(0xFFD4A017);
 
   // Warning — dark text for warning banners
   static const Color warningDarkColor = Color(0xFF856404);

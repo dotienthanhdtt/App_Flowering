@@ -5,24 +5,22 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../models/lesson-models.dart';
+import '../models/scenario_access_tier.dart';
+import '../models/scenario_feed_item.dart';
+import '../models/scenario_user_status.dart';
+import 'access_tier_badge.dart';
 
-/// Scenario card matching design `QKWzO` (ScenarioCard) in flowering_design.pen.
+/// Scenario card for the Flowering (default) tab.
 ///
-/// Layout: full-size background image, frosted backdrop-blur panel at the
-/// bottom with the scenario title only, optional status badge top-right.
-///
-/// Status behaviour:
-/// - available / trial → normal card
-/// - locked → semi-transparent dark overlay + lock badge
-/// - learned → green check badge top-right
-class ScenarioCard extends StatelessWidget {
-  final LessonScenario scenario;
+/// Layout: full-bleed image + frosted title overlay at the bottom.
+/// Top-left: PRO pill when `accessTier == premium`.
+/// Top-right: status badge (check for learned, lock + dark overlay for locked).
+class FeedScenarioCard extends StatelessWidget {
+  final ScenarioFeedItem item;
   final VoidCallback? onTap;
 
-  const ScenarioCard({super.key, required this.scenario, this.onTap});
+  const FeedScenarioCard({super.key, required this.item, this.onTap});
 
-  // Design QKWzO: 180×230, body overlay 53px high, padding [10,12]
   static const double _aspectRatio = 180 / 230;
   static const double _bodyHeight = 53.0;
   static const double _badgeSize = 20.0;
@@ -30,6 +28,8 @@ class ScenarioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLocked = item.status == ScenarioUserStatus.locked;
+
     return AspectRatio(
       aspectRatio: _aspectRatio,
       child: GestureDetector(
@@ -40,19 +40,24 @@ class ScenarioCard extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               _buildBackground(),
-              if (scenario.status == 'locked')
-                Container(color: Colors.black.withValues(alpha: 0.35)),
+              if (isLocked) Container(color: Colors.black.withValues(alpha: 0.35)),
               Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
                 height: _bodyHeight,
-                child: _buildBodyOverlay(),
+                child: _buildTitleOverlay(),
               ),
+              if (item.accessTier == ScenarioAccessTier.premium)
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: AccessTierBadge(tier: item.accessTier),
+                ),
               Positioned(
                 top: 8,
                 right: 8,
-                child: _buildStatusBadge(),
+                child: _buildStatusBadge(item.status),
               ),
             ],
           ),
@@ -62,11 +67,12 @@ class ScenarioCard extends StatelessWidget {
   }
 
   Widget _buildBackground() {
-    if (scenario.imageUrl != null && scenario.imageUrl!.isNotEmpty) {
+    final url = item.imageUrl;
+    if (url != null && url.isNotEmpty) {
       return Image.network(
-        scenario.imageUrl!,
+        url,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stack) => _buildPlaceholder(),
+        errorBuilder: (_, _, _) => _buildPlaceholder(),
       );
     }
     return _buildPlaceholder();
@@ -83,18 +89,14 @@ class ScenarioCard extends StatelessWidget {
     );
   }
 
-  /// Frosted backdrop-blur panel — matches design `Card3Body`:
-  /// transparent-cream tint (#FFFCFC00) + background_blur radius 20.
-  /// A light tint is added over the blur so dark title text stays legible
-  /// against busy images.
-  Widget _buildBodyOverlay() {
+  Widget _buildTitleOverlay() {
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0x66FFFCFC),
-            borderRadius: const BorderRadius.only(
+          decoration: const BoxDecoration(
+            color: Color(0x66FFFCFC),
+            borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(AppSizes.radiusL),
               bottomRight: Radius.circular(AppSizes.radiusL),
             ),
@@ -102,7 +104,7 @@ class ScenarioCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           alignment: Alignment.centerLeft,
           child: Text(
-            scenario.title,
+            item.title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -118,15 +120,20 @@ class ScenarioCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
-    if (scenario.status == 'learned') {
-      return _badge(_learnedColor, LucideIcons.check);
+  /// `learned` wins if somehow both states are set — explicit precedence.
+  Widget _buildStatusBadge(ScenarioUserStatus status) {
+    switch (status) {
+      case ScenarioUserStatus.learned:
+        return _badge(_learnedColor, LucideIcons.check);
+      case ScenarioUserStatus.locked:
+        return _badge(
+          Colors.white,
+          LucideIcons.lock,
+          iconColor: AppColors.textSecondaryColor,
+        );
+      case ScenarioUserStatus.available:
+        return const SizedBox.shrink();
     }
-    if (scenario.status == 'locked') {
-      return _badge(Colors.white, LucideIcons.lock,
-          iconColor: AppColors.textSecondaryColor);
-    }
-    return const SizedBox.shrink();
   }
 
   Widget _badge(Color bg, IconData icon, {Color iconColor = Colors.white}) {

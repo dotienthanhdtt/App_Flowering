@@ -315,4 +315,15 @@ const Map<String, String> viVN = {
   'empty_explore_lessons': 'Khám phá bài học',
   'empty_no_internet': 'Không có kết nối internet',
   'empty_check_connection': 'Kiểm tra kết nối và thử lại',
+
+  // Scenarios (Home top-tabs)
+  'tab_for_you': 'Dành cho bạn',
+  'tab_flowering': 'Flowering',
+  'scenarios_empty_default': 'Chưa có kịch bản',
+  'scenarios_empty_personal':
+      'Hoàn thành giới thiệu để mở khóa kịch bản cá nhân hóa',
+  'scenarios_error_generic': 'Không thể tải kịch bản. Kéo để thử lại.',
+  'access_tier_pro_badge': 'PRO',
+  'source_ai_badge': 'AI',
+  'source_kol_badge': 'KOL',
 };

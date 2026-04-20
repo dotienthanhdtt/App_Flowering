@@ -2,6 +2,41 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-04-20] Scenarios API v2 Migration: Home Top-Tabs + For You Feed ✅ COMPLETED
+
+#### Overview
+Breaking migration of the mobile Home first tab from `/lessons` (category-grouped) to the v2 `/scenarios/*` endpoints. Introduces two top-tabs ("For You" | "Flowering"), the new `access_tier`/`status`/`type` contract fields, and a text-only personalized feed. Drops the `trial` status branch and all `/lessons`-era types.
+
+#### Key Changes
+
+- **New `scenarios` feature** (`lib/features/scenarios/`)
+  - Models: `ScenarioFeedItem`, `PersonalScenarioItem`, `ScenariosFeedResponse<T>`, `ScenariosPagination`
+  - Enums with defensive `fromString`: `ScenarioAccessTier`, `ScenarioUserStatus`, `ScenarioType`, `PersonalSource`
+  - `ScenariosService` — singleton wrapping `/scenarios/default` + `/scenarios/personal`
+  - Controllers: `FloweringFeedController`, `ForYouFeedController` — paginated + language-change workers
+  - Views: `FloweringTab` (2-col grid), `ForYouTab` (text-only list), both with keep-alive + pull-to-refresh
+  - Widgets: `FeedScenarioCard`, `PersonalFeedCard`, `AccessTierBadge` (PRO pill), `SourceBadge` (AI / KOL)
+
+- **Home restructure** — `ChatHomeScreen` now hosts `DefaultTabController(length: 2, initialIndex: 1)` under the language header. Default tab: Flowering.
+- **API endpoints** — added `scenariosDefault`, `scenariosPersonal`; removed `lessons`, `lessonDetail`.
+- **Onboarding `Scenario` model** — optional `accessTier`, `type` fields parsed only when backend sets them.
+- **Legacy cleanup** — deleted `lesson-models.dart` and the old `lessons/widgets/scenario-card.dart`; stripped lessons logic (`categories`, `fetchLessons`, `_mergeCategories`, `refreshLessons`) from `ChatHomeController`, leaving only header/language state.
+- **Design tokens** — added `AppColors.accentGoldColor` (`#D4A017`) for the PRO pill.
+- **Translations** — 8 new keys (both en-US and vi-VN): `tab_for_you`, `tab_flowering`, `scenarios_empty_default`, `scenarios_empty_personal`, `scenarios_error_generic`, `access_tier_pro_badge`, `source_ai_badge`, `source_kol_badge`.
+
+#### Non-Goals (V1)
+- No `/scenarios/redeem` UI (gift-code flow deferred).
+- No `roles[]` on `UserModel`.
+- No changes to the 403 `language-recovery-interceptor`.
+
+#### Tests
+- Added 27 tests under `test/features/scenarios/`: widget matrix for cards + badges, controller pagination + language-change refresh via fake `ScenariosService`. All green.
+
+#### Files
+- Created: `lib/features/scenarios/models/*`, `lib/features/scenarios/services/scenarios_service.dart`, `lib/features/scenarios/controllers/*`, `lib/features/scenarios/bindings/scenarios_binding.dart`, `lib/features/scenarios/views/*`, `lib/features/scenarios/widgets/*`, `test/features/scenarios/**`
+- Modified: `lib/features/chat/views/chat-home-screen.dart`, `lib/features/chat/controllers/chat-home-controller.dart`, `lib/features/home/bindings/main-shell-binding.dart`, `lib/app/global-dependency-injection-bindings.dart`, `lib/core/constants/api_endpoints.dart`, `lib/core/constants/app_colors.dart`, `lib/features/onboarding/models/scenario_model.dart`, `lib/l10n/english-translations-en-us.dart`, `lib/l10n/vietnamese-translations-vi-vn.dart`
+- Deleted: `lib/features/lessons/models/lesson-models.dart`, `lib/features/lessons/widgets/scenario-card.dart`
+
 ### [2026-04-19] feat/update-onboarding Critical Fixes: 7 Production-Ready Patches ✅ COMPLETED
 
 #### Overview

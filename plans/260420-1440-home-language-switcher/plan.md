@@ -1,4 +1,12 @@
+---
+status: completed
+supersededBy: 260420-1530-mobile-scenarios-api-v2-migration
+completedDate: 2026-04-20
+---
+
 # Home Language Switcher — Plan Overview
+
+**Status:** Completed — code shipped (widgets + l10n + controller wiring all present in `feat/mobile-multi-language` branch). Subsequent Home restructure folds into `260420-1530-mobile-scenarios-api-v2-migration`; that plan preserves these widgets untouched.
 
 **Created:** 2026-04-20
 **Scope:** Update `/home` first tab (ChatHomeScreen) header to match `09_chat_screen` in `flowering_design.pen`. Replace count-pill + search icon with a language-flag button that opens a language picker and drives the `X-Learning-Language` request header.
