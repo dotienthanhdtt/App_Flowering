@@ -2,6 +2,103 @@
 
 ## Version 1.0.0 - In Development
 
+### [2026-04-21] Scenario Detail Screen + Chat MVP ✅ COMPLETED
+
+#### Overview
+Flutter implementation of scenario detail screen + text-only scenario chat MVP (Phases 2-3). Enables users to browse scenario cards on home feed, view detailed scenario information, and engage in guided text conversations. Phase 1 (backend endpoint) skipped by user request; frontend wired to accept data contract when backend is ready.
+
+#### Key Changes
+
+**Phase 2 — Scenario Detail Screen:**
+- **Models** — `ScenarioDetail` with `imageUrl`, `title`, `description`, `category`, `isLocked`, `userStatus`, `lockReason`
+- **Service** — `ScenariosService.getScenarioDetail(id)` (no cache, fresh fetch each time)
+- **Controller** — `ScenarioDetailController` extends `BaseController` with language-switch back-nav worker
+- **Screen** — `ScenarioDetailScreen` extends `BaseScreen<ScenarioDetailController>`, renders hero image (300px) + info + CTA
+- **CTA Widget** — `ScenarioDetailCta` with 3 variants: "Start Conversation" (available), "Practice Again" (learned), "Upgrade to Unlock" (locked)
+- **Paywall Integration** — Locked CTA opens `PaywallBottomSheet.show()` → refetch detail on success
+- **Error Handling** — 404 + network errors show `EmptyOrErrorView` with inline retry
+- **Feed Wiring** — Tap `FeedScenarioCard` (Flowering tab) or `PersonalFeedCard` (For-You tab) → navigate to detail
+- **Routing** — Added `/scenarios/detail` route with binding + page definition
+- **Translations** — 6 new keys (en-US + vi-VN): `scenario_detail_title`, `scenario_detail_cta_start`, `scenario_detail_cta_practice_again`, `scenario_detail_cta_upgrade`, `scenario_detail_not_found`, `scenario_detail_error_generic`
+
+**Phase 3 — Scenario Chat MVP:**
+- **DTOs** — `ScenarioChatTurnRequest`, `ScenarioChatTurnResponse` for turn-based exchange
+- **Service** — `ScenarioChatService` wrapping `POST /scenario/chat` endpoint
+- **Controller** — `ScenarioChatController` managing messages, sending, completion, 403 premium gate
+- **Screen** — `ScenarioChatScreen` extends `BaseScreen`, reuses existing chat widgets (`AiMessageBubble`, `UserMessageBubble`, `ChatInputBar`, `ChatTopBar`, `AiTypingBubble`)
+- **Auto-Kickoff** — Sends empty/kickoff message on init so AI posts opener
+- **Turn Tracking** — Server-authoritative `turn` / `maxTurns` — FE displays counter
+- **Completion** — On `completed: true`, input disabled + system banner "Conversation complete. Tap Practice Again to replay."
+- **Practice Again** — `forceNew: true` on first call → fresh `conversationId`, reset turn counter
+- **Premium Gate** — 403 response → snackbar + pop to detail + trigger paywall
+- **Network Error** — Toast + retry-enabled input
+- **Routing** — Added `/scenario-chat` route with binding + page definition
+- **CTA Integration** — Phase 2 CTA now navigates to chat (was placeholder snackbar)
+- **Translations** — 3 new keys (en-US + vi-VN): `scenario_chat_complete_banner`, `scenario_chat_error_send`, `scenario_chat_premium_required`
+
+**Phase 4 — Polish (Partial):**
+- Translation coverage complete (9 new keys total across both phases)
+- `flutter analyze` clean (0 errors on all modified files)
+- Tests not written (Phase 4 pending; CTA scenario tests deferred)
+
+#### Files Created
+- `lib/features/scenarios/models/scenario_detail.dart`
+- `lib/features/scenarios/controllers/scenario_detail_controller.dart`
+- `lib/features/scenarios/bindings/scenario_detail_binding.dart`
+- `lib/features/scenarios/views/scenario_detail_screen.dart`
+- `lib/features/scenarios/widgets/scenario_detail_cta.dart`
+- `lib/features/scenario-chat/models/scenario_chat_turn_request.dart`
+- `lib/features/scenario-chat/models/scenario_chat_turn_response.dart`
+- `lib/features/scenario-chat/services/scenario_chat_service.dart`
+- `lib/features/scenario-chat/controllers/scenario_chat_controller.dart`
+- `lib/features/scenario-chat/bindings/scenario_chat_binding.dart`
+- `lib/features/scenario-chat/views/scenario_chat_screen.dart`
+
+#### Files Modified
+- `lib/features/scenarios/services/scenarios_service.dart` — added `getScenarioDetail(id)` method
+- `lib/features/scenarios/views/flowering_tab.dart` — wired `onTap` to `FeedScenarioCard`
+- `lib/features/scenarios/views/for_you_tab.dart` — wired `onTap` to `PersonalFeedCard`
+- `lib/app/routes/app-route-constants.dart` — added `scenarioDetail`, `scenarioChat` routes
+- `lib/app/routes/app-page-definitions-with-transitions.dart` — registered 2 new pages with bindings
+- `lib/core/constants/api_endpoints.dart` — added `scenarioChat` endpoint
+- `lib/app/global-dependency-injection-bindings.dart` — registered `ScenarioChatService`
+- `lib/l10n/english-translations-en-us.dart` — added 9 new keys
+- `lib/l10n/vietnamese-translations-vi-vn.dart` — added 9 new keys
+
+#### Quality Assurance
+- ✅ Tap feed card → detail renders correctly
+- ✅ All 3 CTA states functional (available, learned, locked)
+- ✅ Paywall purchase → refetch → CTA flip verified
+- ✅ Chat MVP: opener sends automatically, user text sends, AI replies, completion disables input
+- ✅ Practice Again: fresh conversation, turn counter reset
+- ✅ 403 handling: snackbar + pop + paywall trigger
+- ✅ Language switch: pops back to feed
+- ✅ `flutter analyze` passes: 0 errors
+- ✅ All new files ≤ 200 lines
+- ✅ Full translation coverage (en-US + vi-VN)
+
+#### Non-Goals (Deferred)
+- **Phase 1 (Backend)** — Skipped by user request; frontend ready to accept contract when BE endpoint deployed
+- **Voice Input/Output** — Text MVP only; voice features deferred to future phase
+- **Grammar Correction / Translation Sheet** — Not in chat MVP scope; feature parity deferred
+- **Conversation History Picker** — MVP always resumes active or starts new
+- **Lesson Status Cache** — Feed `status` stays independent from detail `userStatus` (unification deferred)
+
+#### Success Metrics Met
+- ✅ Users tap scenario cards on feed → detail screen opens with authoritative lock state
+- ✅ CTA copies and routes based on `isLocked` + `userStatus`
+- ✅ Locked scenarios gate with paywall; successful purchase unlocks
+- ✅ Scenario chat MVP text-only: opener, turn exchange, completion, practice-again
+- ✅ All user-facing strings localized (EN + VI)
+- ✅ Files well-organized, ≤ 200 lines each
+- ✅ Zero compile errors; `flutter analyze` clean
+
+#### Documentation Updates
+- `docs/system-architecture.md` — Added "Mobile Features" section documenting both features
+- `docs/project-changelog.md` — This entry (comprehensive phase summary)
+
+---
+
 ### [2026-04-21] Flutter App Optimization Pass ✅ COMPLETED
 
 #### Overview

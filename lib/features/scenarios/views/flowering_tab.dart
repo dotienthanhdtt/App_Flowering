@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../shared/widgets/empty_or_error_view.dart';
 import '../../../shared/widgets/loading_widget.dart';
 import '../../../shared/widgets/pull-to-refresh-list.dart';
+import '../../../app/routes/app-route-constants.dart';
 import '../controllers/flowering_feed_controller.dart';
 import '../widgets/feed_scenario_card.dart';
 
@@ -85,7 +86,13 @@ class _FloweringTabState extends State<FloweringTab>
               childAspectRatio: 180 / 230,
             ),
             itemCount: items.length,
-            itemBuilder: (_, i) => FeedScenarioCard(item: items[i]),
+            itemBuilder: (_, i) => FeedScenarioCard(
+              item: items[i],
+              onTap: () => Get.toNamed(
+                AppRoutes.scenarioDetail,
+                arguments: {'id': items[i].id},
+              ),
+            ),
           );
         }),
       ),

@@ -326,4 +326,18 @@ const Map<String, String> viVN = {
   'access_tier_pro_badge': 'PRO',
   'source_ai_badge': 'AI',
   'source_kol_badge': 'KOL',
+
+  // Scenario Detail (Phase 2)
+  'scenario_detail_title': 'Kịch bản',
+  'scenario_detail_cta_start': 'Bắt đầu hội thoại',
+  'scenario_detail_cta_practice_again': 'Luyện lại',
+  'scenario_detail_cta_upgrade': 'Nâng cấp để mở khóa',
+  'scenario_detail_not_found': 'Không tìm thấy kịch bản',
+  'scenario_detail_error_generic': 'Không thể tải kịch bản',
+
+  // Scenario Chat (Phase 3)
+  'scenario_chat_complete_banner':
+      'Đã hoàn thành hội thoại. Nhấn Luyện lại để thực hành tiếp.',
+  'scenario_chat_error_send': 'Không thể gửi. Vui lòng thử lại.',
+  'scenario_chat_premium_required': 'Cần gói Premium cho kịch bản này.',
 };

@@ -326,4 +326,18 @@ const Map<String, String> enUS = {
   'access_tier_pro_badge': 'PRO',
   'source_ai_badge': 'AI',
   'source_kol_badge': 'KOL',
+
+  // Scenario Detail (Phase 2)
+  'scenario_detail_title': 'Scenario',
+  'scenario_detail_cta_start': 'Start Conversation',
+  'scenario_detail_cta_practice_again': 'Practice Again',
+  'scenario_detail_cta_upgrade': 'Upgrade to Unlock',
+  'scenario_detail_not_found': 'Scenario not found',
+  'scenario_detail_error_generic': 'Could not load scenario',
+
+  // Scenario Chat (Phase 3)
+  'scenario_chat_complete_banner':
+      'Conversation complete. Tap Practice Again to replay.',
+  'scenario_chat_error_send': "Couldn't send. Try again.",
+  'scenario_chat_premium_required': 'Premium required for this scenario.',
 };

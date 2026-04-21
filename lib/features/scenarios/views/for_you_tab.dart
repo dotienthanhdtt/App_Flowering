@@ -6,6 +6,7 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/empty_or_error_view.dart';
 import '../../../shared/widgets/loading_widget.dart';
 import '../../../shared/widgets/pull-to-refresh-list.dart';
+import '../../../app/routes/app-route-constants.dart';
 import '../controllers/for_you_feed_controller.dart';
 import '../widgets/personal_feed_card.dart';
 
@@ -81,7 +82,13 @@ class _ForYouTabState extends State<ForYouTab>
             itemCount: items.length,
             separatorBuilder: (ctx, i) =>
                 const SizedBox(height: AppSizes.space3),
-            itemBuilder: (_, i) => PersonalFeedCard(item: items[i]),
+            itemBuilder: (_, i) => PersonalFeedCard(
+              item: items[i],
+              onTap: () => Get.toNamed(
+                AppRoutes.scenarioDetail,
+                arguments: {'id': items[i].id},
+              ),
+            ),
           );
         }),
       ),

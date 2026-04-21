@@ -1074,6 +1074,74 @@ Get.updateLocale(const Locale('vi', 'VN'))  // Switch language
 - Portrait-only orientation
 - Transparent status bar with dark icons
 
+## Mobile Features
+
+### Scenario Detail Screen (Phase 2 ✅)
+
+Feature for viewing individual scenario details with server-authoritative lock state and CTA routing.
+
+**Location:** `lib/features/scenarios/views/scenario_detail_screen.dart`
+
+**Components:**
+- `ScenarioDetail` model with `imageUrl`, `title`, `description`, `isLocked`, `userStatus`, `category`
+- `ScenarioDetailController` extends `BaseController` with language-aware back-nav
+- `ScenarioDetailScreen` extends `BaseScreen<ScenarioDetailController>`
+- `ScenarioDetailCta` widget displaying 3 variants: Start Conversation, Practice Again, Upgrade to Unlock
+- `ScenarioCategoryRef` value type for category metadata
+- `ScenariosService.getScenarioDetail()` method (no cache, fresh fetch each time)
+
+**Key Features:**
+- Tap feed card (Flowering/For-You) → navigate to detail via `/scenarios/detail?id={id}`
+- Hero image (300px) using `CachedNetworkImage`
+- CTA label/action driven by `userStatus` + `isLocked` from server
+- Locked scenarios trigger `PaywallBottomSheet.show()` → refetch on success to flip CTA
+- Language change during detail → pop back to feed
+- 404 + network errors → inline `EmptyOrErrorView` with retry
+
+**State Management:**
+- Reactive: `detail` (Rxn<ScenarioDetail>), `notFound` (RxBool), `isLoading` + `errorMessage` (inherited)
+- Language monitor: worker listening to `LanguageContextService.activeCode` for back-nav
+
+**Translations (6 keys):**
+- `scenario_detail_title`, `scenario_detail_cta_start`, `scenario_detail_cta_practice_again`, `scenario_detail_cta_upgrade`, `scenario_detail_not_found`, `scenario_detail_error_generic`
+
+### Scenario Chat (Text MVP) (Phase 3 ✅)
+
+Minimal text-only chat interface for scenario conversations with server-driven turn tracking.
+
+**Location:** `lib/features/scenario-chat/views/scenario_chat_screen.dart`
+
+**Components:**
+- `ScenarioChatTurnRequest` DTO with `scenarioId`, `message`, `forceNew?`, `conversationId?`
+- `ScenarioChatTurnResponse` DTO with `reply`, `conversationId`, `turn`, `maxTurns`, `completed`
+- `ScenarioChatService` extends `GetxService` wrapping `POST /scenario/chat`
+- `ScenarioChatController` extends `BaseController` managing messages, sending, completion state
+- `ScenarioChatScreen` extends `BaseScreen<ScenarioChatController>`
+- Reuses existing widgets: `AiMessageBubble`, `UserMessageBubble`, `ChatInputBar`, `ChatTopBar`, `AiTypingBubble`
+
+**Key Features:**
+- Navigate via `/scenario-chat` with `{scenarioId, scenarioTitle, forceNew: bool}`
+- Auto-sends server kickoff on init (empty message or `forceNew: true` flag)
+- Text turns sent via `POST /scenario/chat` → render AI reply + update turn counter
+- On `completed: true` → input disabled + system banner shown
+- "Practice Again" mode: `forceNew: true` → fresh `conversationId` + reset turn counter
+- 403 (premium gate) → snackbar + pop + trigger paywall
+- Network errors → toast + retry-enabled
+
+**State Management:**
+- `messages` (ObsList<ChatMessage>), `isSending` (RxBool), `completed` (RxBool)
+- `turn`, `maxTurns`, `conversationId`, `scenarioTitle` (from args)
+- Auto-scroll to bottom on new messages
+
+**Translations (3 keys):**
+- `scenario_chat_complete_banner`, `scenario_chat_error_send`, `scenario_chat_premium_required`
+
+**Technical Decisions:**
+- No local persistence across restarts (conversationId in memory only)
+- Reuses existing chat widget suite instead of forking
+- Server-authoritative turn/completion state
+- No grammar correction, voice, or translation features (text MVP only)
+
 ## Performance Considerations
 
 ### Memory Management

@@ -8,6 +8,10 @@ import '../../features/home/views/main-shell-screen.dart';
 import '../../features/home/bindings/main-shell-binding.dart';
 import '../../features/subscription/bindings/subscription-binding.dart';
 import '../../features/subscription/views/paywall-screen.dart';
+import '../../features/scenarios/bindings/scenario_detail_binding.dart';
+import '../../features/scenarios/views/scenario_detail_screen.dart';
+import '../../features/scenario-chat/bindings/scenario_chat_binding.dart';
+import '../../features/scenario-chat/views/scenario_chat_screen.dart';
 
 /// Main app pages: home shell, chat, lessons, profile, settings, paywall
 final List<GetPage> mainPages = [
@@ -63,6 +67,26 @@ final List<GetPage> mainPages = [
     name: AppRoutes.settings,
     page: () => const AppPlaceholderScreen('Settings'),
     // binding: SettingsBinding(),
+    transition: kDefaultTransition,
+    transitionDuration: kDefaultDuration,
+    curve: kDefaultCurve,
+  ),
+
+  // Scenario detail screen
+  GetPage(
+    name: AppRoutes.scenarioDetail,
+    page: () => const ScenarioDetailScreen(),
+    binding: ScenarioDetailBinding(),
+    transition: kDefaultTransition,
+    transitionDuration: kDefaultDuration,
+    curve: kDefaultCurve,
+  ),
+
+  // Scenario chat screen
+  GetPage(
+    name: AppRoutes.scenarioChat,
+    page: () => const ScenarioChatScreen(),
+    binding: ScenarioChatBinding(),
     transition: kDefaultTransition,
     transitionDuration: kDefaultDuration,
     curve: kDefaultCurve,

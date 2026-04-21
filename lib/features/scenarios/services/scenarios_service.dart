@@ -4,6 +4,7 @@ import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_response.dart';
 import '../models/personal_scenario_item.dart';
+import '../models/scenario_detail.dart';
 import '../models/scenario_feed_item.dart';
 import '../models/scenarios_feed_response.dart';
 
@@ -30,6 +31,14 @@ class ScenariosService extends GetxService {
         data as Map<String, dynamic>,
         ScenarioFeedItem.fromJson,
       ),
+    );
+  }
+
+  Future<ApiResponse<ScenarioDetail>> getScenarioDetail(String id) {
+    return _apiClient.get<ScenarioDetail>(
+      '${ApiEndpoints.scenarios}/$id',
+      fromJson: (data) =>
+          ScenarioDetail.fromJson(data as Map<String, dynamic>),
     );
   }
 

@@ -25,6 +25,10 @@ abstract class AppRoutes {
   // Settings routes
   static const String settings = '/settings';
 
+  // Scenario routes
+  static const String scenarioDetail = '/scenarios/detail';
+  static const String scenarioChat = '/scenario-chat';
+
   // Subscription routes
   static const String paywall = '/paywall';
 

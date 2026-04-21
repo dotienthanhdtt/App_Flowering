@@ -21,6 +21,7 @@ import '../features/subscription/services/revenuecat-service.dart';
 import '../features/subscription/services/subscription-service.dart';
 import '../core/services/translation-service.dart';
 import '../features/scenarios/services/scenarios_service.dart';
+import '../features/scenario-chat/services/scenario_chat_service.dart';
 
 /// Global dependency injection for core services
 ///
@@ -118,6 +119,12 @@ class AppBindings extends Bindings {
     // Scenarios service — shared by both Home feed controllers.
     Get.lazyPut<ScenariosService>(
       () => ScenariosService(),
+      fenix: true,
+    );
+
+    // Scenario chat service — used by ScenarioChatController.
+    Get.lazyPut<ScenarioChatService>(
+      () => ScenarioChatService(),
       fenix: true,
     );
   }

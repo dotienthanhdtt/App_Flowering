@@ -37,8 +37,10 @@ class ApiEndpoints {
       '/onboarding/conversations/$id/messages';
 
   // Scenarios
+  static const String scenarios = '/scenarios';
   static const String scenariosDefault = '/scenarios/default';
   static const String scenariosPersonal = '/scenarios/personal';
+  static const String scenarioChat = '/scenario/chat';
 
   // Chat
   static const String chatMessages = '/chat/messages';
