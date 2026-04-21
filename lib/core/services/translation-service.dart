@@ -79,4 +79,39 @@ class TranslationService extends GetxService {
       userMessage: response.message,
     );
   }
+
+  /// Translate a sentence by text content directly (no server message_id needed).
+  /// Used by scenario chat where messages are created locally without server IDs.
+  Future<SentenceTranslationModel> translateContent(
+    String text, {
+    String sourceLang = 'en',
+    String targetLang = 'vi',
+    String? conversationId,
+  }) async {
+    final key = text.trim();
+    if (_sentenceCache.containsKey(key)) return _sentenceCache[key]!;
+
+    final response = await _apiClient.post<SentenceTranslationModel>(
+      ApiEndpoints.translate,
+      data: {
+        'type': 'SENTENCE',
+        'text': text,
+        'source_lang': sourceLang,
+        'target_lang': targetLang,
+        if (conversationId != null) 'conversation_id': conversationId,
+      },
+      fromJson: (data) =>
+          SentenceTranslationModel.fromJson(data as Map<String, dynamic>),
+    );
+
+    if (response.isSuccess && response.data != null) {
+      _sentenceCache[key] = response.data!;
+      return response.data!;
+    }
+
+    throw ApiErrorException(
+      message: response.message,
+      userMessage: response.message,
+    );
+  }
 }

@@ -4,7 +4,9 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/base/base_controller.dart';
 import '../../../core/network/api_exceptions.dart';
+import '../../../core/services/translation-service.dart';
 import '../../chat/models/chat_message_model.dart';
+import '../../chat/widgets/word-translation-sheet-loader.dart';
 import '../models/scenario_chat_turn_request.dart';
 import '../services/scenario_chat_service.dart';
 
@@ -171,6 +173,58 @@ class ScenarioChatController extends BaseController {
         );
       }
     });
+  }
+
+  // ─── Translation ──────────────────────────────────────────────────
+
+  TranslationService get _translation => Get.find<TranslationService>();
+
+  /// Toggle sentence translation. First tap fetches; subsequent taps toggle.
+  Future<void> toggleTranslation(String messageId) async {
+    final index = messages.indexWhere((m) => m.id == messageId);
+    if (index == -1) return;
+    final msg = messages[index];
+
+    if (msg.translatedText != null) {
+      msg.showTranslation = !msg.showTranslation;
+      messages.refresh();
+      if (msg.showTranslation) _scrollToBottom();
+      return;
+    }
+
+    final text = msg.text;
+    if (text == null || text.isEmpty) return;
+
+    try {
+      final result = await _translation.translateContent(
+        text,
+        conversationId: conversationId,
+      );
+      msg.translatedText = result.translation;
+      msg.showTranslation = true;
+      messages.refresh();
+      _scrollToBottom();
+    } on ApiException catch (e) {
+      Get.snackbar('', e.userMessage, snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  void onWordTap(String word) {
+    final clean = word
+        .replaceAll(RegExp(r"[^\p{L}\p{N}'\-]", unicode: true), '')
+        .trim();
+    if (clean.isEmpty) return;
+    final ctx = Get.context;
+    if (ctx == null) return;
+    showModalBottomSheet(
+      context: ctx,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => WordTranslationSheetLoader(
+        word: clean,
+        conversationId: conversationId,
+      ),
+    );
   }
 
   @override

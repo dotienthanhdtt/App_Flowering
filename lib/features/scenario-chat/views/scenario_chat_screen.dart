@@ -72,9 +72,9 @@ class _MessageList extends GetView<ScenarioChatController> {
       case ChatMessageType.aiText:
         return AiMessageBubble(
           message: msg,
-          onTranslate: null,
+          onTranslate: () => controller.toggleTranslation(msg.id),
           onPlayAudio: null,
-          onWordTap: null,
+          onWordTap: (word) => controller.onWordTap(word),
           isSpeaking: false,
         );
       default:
