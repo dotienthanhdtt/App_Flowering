@@ -3,107 +3,86 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-part 'storage_service_lessons.dart';
-part 'storage_service_chat.dart';
 part 'storage_service_preferences.dart';
 
-/// Storage service with LRU eviction for lessons, FIFO for chat
+/// Local preferences storage (Hive).
+///
+/// No API response cache lives here anymore — only long-lived user state:
+/// onboarding progress JSON, `has_completed_login` flag, etc. Tokens live in
+/// [AuthStorage], not here.
 class StorageService extends GetxService {
-  static const String _lessonsBox = 'lessons_cache';
-  static const String _lessonsAccessBox = 'lessons_access';
-  static const String _chatBox = 'chat_cache';
   static const String _preferencesBox = 'preferences';
 
   /// Key for the permanent "user has completed login" flag.
   /// This key survives clearAll() so returning users are never re-onboarded.
   static const String _hasCompletedLoginKey = 'has_completed_login';
 
-  // Size limits in bytes
-  static const int _lessonsMaxSize = 100 * 1024 * 1024; // 100 MB
-  static const int _chatMaxSize = 10 * 1024 * 1024; // 10 MB
+  /// One-shot guard that prevents the v1 orphan-box cleanup from running
+  /// more than once per install.
+  static const String _orphanBoxesCleanedV1Key = 'orphan_boxes_cleaned_v1';
 
-  late Box<String> _lessons;
-  late Box<int> _lessonsAccess;
-  late Box<String> _chat;
+  /// Names of old boxes that existed before the cache removal. Deleted from
+  /// disk on first run after the refactor to reclaim ~110 MB of stale data.
+  static const List<String> _orphanBoxNames = [
+    'lessons_cache',
+    'lessons_access',
+    'chat_cache',
+  ];
+
   late Box<dynamic> _preferences;
-  // Insertion-ordered LRU of open language lesson boxes. When we exceed
-  // [_maxOpenLangBoxes], the least-recently used box is closed to bound
-  // file-descriptor use across language switches.
-  static const int _maxOpenLangBoxes = 2;
-  final Map<String, Box<String>> _langLessonBoxes = <String, Box<String>>{};
 
-  int _lessonsCurrentSize = 0;
-  int _chatCurrentSize = 0;
-
-  /// Initialize storage service
+  /// Initialize storage service. On failure wipes Hive and retries once.
+  /// If the retry also fails the error is rethrown rather than swallowed
+  /// so callers don't end up with half-initialized late fields.
   Future<StorageService> init() async {
     try {
-      await Hive.initFlutter();
-
-      _lessons = await Hive.openBox<String>(_lessonsBox);
-      _lessonsAccess = await Hive.openBox<int>(_lessonsAccessBox);
-      _chat = await Hive.openBox<String>(_chatBox);
-      _preferences = await Hive.openBox<dynamic>(_preferencesBox);
-
-      // Calculate current sizes
-      _lessonsCurrentSize = _calculateBoxSize(_lessons);
-      _chatCurrentSize = _calculateBoxSize(_chat);
-    } on HiveError catch (e) {
-      // Box corrupted - recreate
+      await _openBoxes();
+    } catch (e, st) {
       if (kDebugMode) {
-        print('Hive box error: $e. Recreating...');
+        print('StorageService.init failed: $e. Wiping Hive and retrying once.');
       }
       await Hive.deleteFromDisk();
-      return await init(); // Retry
+      try {
+        await _openBoxes();
+      } catch (e2, st2) {
+        if (kDebugMode) {
+          print('StorageService.init failed after wipe-and-retry: $e2\n$st2');
+        }
+        rethrow;
+      }
+      if (kDebugMode) {
+        print('StorageService.init recovered from: $e\n$st');
+      }
     }
 
+    await _cleanOrphanBoxesOnce();
     return this;
+  }
+
+  Future<void> _openBoxes() async {
+    await Hive.initFlutter();
+    _preferences = await Hive.openBox<dynamic>(_preferencesBox);
+  }
+
+  /// One-time deletion of Hive boxes left over from the old API cache layer.
+  /// Gated by a preference flag so it runs exactly once per install.
+  Future<void> _cleanOrphanBoxesOnce() async {
+    if (_preferences.get(_orphanBoxesCleanedV1Key) == true) return;
+    for (final name in _orphanBoxNames) {
+      try {
+        await Hive.deleteBoxFromDisk(name);
+      } catch (e) {
+        if (kDebugMode) {
+          print('StorageService: failed to delete orphan box "$name": $e');
+        }
+      }
+    }
+    await _preferences.put(_orphanBoxesCleanedV1Key, true);
   }
 
   /// Close all boxes
   Future<void> close() async {
-    await _lessons.close();
-    await _lessonsAccess.close();
-    await _chat.close();
     await _preferences.close();
-    for (final box in _langLessonBoxes.values) {
-      await box.close();
-    }
-  }
-
-  // ─────────────────────────────────────────────────────────────────
-  // Cache Management
-  // ─────────────────────────────────────────────────────────────────
-
-  /// Get total cache size in bytes
-  int get totalCacheSize => _lessonsCurrentSize + _chatCurrentSize;
-
-  /// Get lessons cache size in bytes
-  int get lessonsCacheSize => _lessonsCurrentSize;
-
-  /// Get chat cache size in bytes
-  int get chatCacheSize => _chatCurrentSize;
-
-  /// Clear ALL lessons caches (flat box + all per-lang sub-boxes).
-  Future<void> clearLessonsCache() async {
-    await _lessons.clear();
-    await _lessonsAccess.clear();
-    _lessonsCurrentSize = 0;
-    for (final box in _langLessonBoxes.values) {
-      await box.clear();
-    }
-  }
-
-  /// Clear chat cache
-  Future<void> clearChatCache() async {
-    await _chat.clear();
-    _chatCurrentSize = 0;
-  }
-
-  /// Clear all caches
-  Future<void> clearAllCaches() async {
-    await clearLessonsCache();
-    await clearChatCache();
   }
 
   /// Clear all preferences
@@ -129,25 +108,5 @@ class StorageService extends GetxService {
   /// Remove preference
   Future<void> removePreference(String key) async {
     await _preferences.delete(key);
-  }
-
-  // ─────────────────────────────────────────────────────────────────
-  // Helpers
-  // ─────────────────────────────────────────────────────────────────
-
-  int _calculateBoxSize(Box box) {
-    int size = 0;
-    for (final key in box.keys) {
-      final value = box.get(key);
-      if (value != null) {
-        size += _estimateSize(value.toString());
-      }
-    }
-    return size;
-  }
-
-  int _estimateSize(String value) {
-    // UTF-16 encoding approximation
-    return value.length * 2;
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/base/base_controller.dart';
@@ -112,6 +113,7 @@ class OnboardingController extends BaseController {
 
   Future<void> loadLanguages() async {
     isLoadingLanguages.value = true;
+    if (kDebugMode) print('[OnboardingController] loadLanguages() start');
     try {
       final service = Get.find<OnboardingLanguageService>();
       final results = await Future.wait([
@@ -120,8 +122,14 @@ class OnboardingController extends BaseController {
       ]);
       nativeLanguages.value = results[0];
       learningLanguages.value = results[1];
-    } catch (_) {
-      // Languages remain empty — views show error state with retry button
+      if (kDebugMode) {
+        print(
+          '[OnboardingController] loaded native=${results[0].length} '
+          'learning=${results[1].length}',
+        );
+      }
+    } catch (e, st) {
+      if (kDebugMode) print('[OnboardingController] loadLanguages ERROR: $e\n$st');
     } finally {
       isLoadingLanguages.value = false;
     }

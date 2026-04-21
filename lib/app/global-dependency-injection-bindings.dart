@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import '../core/services/cache-invalidator-service.dart';
 import '../core/services/language-context-service.dart';
 import '../core/services/storage_service.dart';
 import '../core/services/auth_storage.dart';
@@ -44,12 +43,6 @@ class AppBindings extends Bindings {
     // Language context — single source of truth for active learning language
     Get.lazyPut<LanguageContextService>(
       () => LanguageContextService(),
-      fenix: true,
-    );
-
-    // Cache invalidator — flushes language-scoped caches on language switch
-    Get.lazyPut<CacheInvalidatorService>(
-      () => CacheInvalidatorService(),
       fenix: true,
     );
 
@@ -153,10 +146,6 @@ Future<void> initializeCriticalServices() async {
   // Language context — must init before ApiClient so interceptor has a code
   final languageContext = Get.put(LanguageContextService());
   await languageContext.init();
-
-  // Cache invalidator — subscribes to language changes
-  final cacheInvalidator = Get.put(CacheInvalidatorService());
-  await cacheInvalidator.init();
 
   // Onboarding progress — splash uses this to pick the resume route
   final onboardingProgress = Get.put(OnboardingProgressService());

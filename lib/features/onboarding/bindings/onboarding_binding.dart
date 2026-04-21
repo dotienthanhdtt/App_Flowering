@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import '../../../core/network/api_client.dart';
-import '../../../core/services/storage_service.dart';
 import '../controllers/onboarding_controller.dart';
 import '../services/onboarding_language_service.dart';
 
@@ -13,10 +12,7 @@ class OnboardingBinding extends Bindings {
     // errors. Persistent data still lives in OnboardingProgressService.
     if (!Get.isRegistered<OnboardingLanguageService>()) {
       Get.put<OnboardingLanguageService>(
-        OnboardingLanguageService(
-          Get.find<ApiClient>(),
-          Get.find<StorageService>(),
-        ),
+        OnboardingLanguageService(Get.find<ApiClient>()),
         permanent: true,
       );
     }

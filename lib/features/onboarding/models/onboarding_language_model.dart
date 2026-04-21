@@ -11,6 +11,7 @@ class OnboardingLanguage {
   final String name;
   final String subtitle;
   final bool isEnabled;
+  final List<String> levels;
 
   const OnboardingLanguage({
     this.id,
@@ -20,6 +21,7 @@ class OnboardingLanguage {
     required this.name,
     required this.subtitle,
     this.isEnabled = false,
+    this.levels = const [],
   });
 
   /// Parse from API response or cache.
@@ -47,6 +49,7 @@ class OnboardingLanguage {
           true;
     }
 
+    final rawLevels = json['levels'] as List<dynamic>? ?? const [];
     return OnboardingLanguage(
       id: json['id'] as String?,
       code: json['code'] as String,
@@ -58,6 +61,7 @@ class OnboardingLanguage {
           json['subtitle'] as String? ??
           '',
       isEnabled: isEnabled,
+      levels: rawLevels.whereType<String>().toList(),
     );
   }
 
@@ -69,5 +73,6 @@ class OnboardingLanguage {
         'name': name,
         'subtitle': subtitle,
         'is_active': isEnabled,
+        'levels': levels,
       };
 }

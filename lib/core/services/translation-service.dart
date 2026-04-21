@@ -5,13 +5,10 @@ import '../network/api_exceptions.dart';
 import '../../shared/models/word-translation-model.dart';
 import '../../shared/models/sentence-translation-model.dart';
 
-/// Global translation service with in-memory caching.
+/// Global translation service. Every call hits the API — no memoization.
 /// Registered as permanent GetxService for reuse across chat contexts.
 class TranslationService extends GetxService {
   final ApiClient _apiClient = Get.find();
-
-  final Map<String, WordTranslationModel> _wordCache = {};
-  final Map<String, SentenceTranslationModel> _sentenceCache = {};
 
   Future<WordTranslationModel> translateWord(
     String word, {
@@ -19,9 +16,6 @@ class TranslationService extends GetxService {
     String targetLang = 'vi',
     String? conversationId,
   }) async {
-    final key = word.toLowerCase().trim();
-    if (_wordCache.containsKey(key)) return _wordCache[key]!;
-
     final response = await _apiClient.post<WordTranslationModel>(
       ApiEndpoints.translate,
       data: {
@@ -36,7 +30,6 @@ class TranslationService extends GetxService {
     );
 
     if (response.isSuccess && response.data != null) {
-      _wordCache[key] = response.data!;
       return response.data!;
     }
 
@@ -52,10 +45,6 @@ class TranslationService extends GetxService {
     String targetLang = 'vi',
     String? conversationId,
   }) async {
-    if (_sentenceCache.containsKey(messageId)) {
-      return _sentenceCache[messageId]!;
-    }
-
     final response = await _apiClient.post<SentenceTranslationModel>(
       ApiEndpoints.translate,
       data: {
@@ -70,7 +59,6 @@ class TranslationService extends GetxService {
     );
 
     if (response.isSuccess && response.data != null) {
-      _sentenceCache[messageId] = response.data!;
       return response.data!;
     }
 
@@ -88,9 +76,6 @@ class TranslationService extends GetxService {
     String targetLang = 'vi',
     String? conversationId,
   }) async {
-    final key = text.trim();
-    if (_sentenceCache.containsKey(key)) return _sentenceCache[key]!;
-
     final response = await _apiClient.post<SentenceTranslationModel>(
       ApiEndpoints.translate,
       data: {
@@ -105,7 +90,6 @@ class TranslationService extends GetxService {
     );
 
     if (response.isSuccess && response.data != null) {
-      _sentenceCache[key] = response.data!;
       return response.data!;
     }
 

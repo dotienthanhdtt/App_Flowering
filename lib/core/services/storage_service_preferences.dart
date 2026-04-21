@@ -22,7 +22,6 @@ extension StorageServicePreferences on StorageService {
   /// Preserves [StorageService._hasCompletedLoginKey] so returning users are never re-onboarded.
   Future<void> clearAll() async {
     final hadLogin = hasCompletedLogin;
-    await clearAllCaches();
     await clearPreferences();
     if (hadLogin) await setHasCompletedLogin();
   }

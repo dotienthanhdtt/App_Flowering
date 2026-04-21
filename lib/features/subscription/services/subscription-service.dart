@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../models/subscription-model.dart';
@@ -8,19 +8,15 @@ import 'revenuecat-service.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/services/auth_storage.dart';
-import '../../../core/services/storage_service.dart';
 
 /// Orchestrates subscription state by combining RevenueCat SDK + backend API.
 ///
 /// Backend API is the source of truth; RevenueCat triggers sync on new purchases.
-/// Subscription state is cached in Hive via StorageService for offline access.
+/// No offline cache — network error leaves the current in-memory state unchanged.
 class SubscriptionService extends GetxService {
   final _revenueCatService = Get.find<RevenueCatService>();
   final _apiClient = Get.find<ApiClient>();
   final _authStorage = Get.find<AuthStorage>();
-  final _storageService = Get.find<StorageService>();
-
-  static const String _cacheKey = 'subscription_cache';
 
   final Rx<SubscriptionModel> currentSubscription = SubscriptionModel.free().obs;
 
@@ -30,7 +26,6 @@ class SubscriptionService extends GetxService {
   SubscriptionPlan get currentPlan => currentSubscription.value.plan;
 
   Future<SubscriptionService> init() async {
-    _loadCachedSubscription();
     // Assumes RevenueCatService is a singleton for the app lifetime.
     // If RevenueCatService is ever re-created, re-call _listenToCustomerInfoChanges().
     _listenToCustomerInfoChanges();
@@ -49,17 +44,16 @@ class SubscriptionService extends GetxService {
     await fetchSubscriptionFromBackend();
   }
 
-  /// Call on user logout — clears RC identity, resets state, clears cache.
+  /// Call on user logout — clears RC identity and resets state.
   Future<void> onUserLoggedOut() async {
     if (_revenueCatService.isConfigured) {
       await _revenueCatService.logOut();
     }
     currentSubscription.value = SubscriptionModel.free();
-    await _clearCache();
   }
 
   /// Fetches subscription from backend (source of truth) and updates state.
-  /// Falls back to cached subscription on error.
+  /// On error, leaves current state unchanged.
   Future<void> fetchSubscriptionFromBackend() async {
     try {
       final response = await _apiClient.get<SubscriptionModel>(
@@ -68,11 +62,11 @@ class SubscriptionService extends GetxService {
       );
       if (response.isSuccess && response.data != null) {
         currentSubscription.value = response.data!;
-        await _cacheSubscription(response.data!);
       }
-    } catch (_) {
-      // Network or parse error — fall back to cached data
-      _loadCachedSubscription();
+    } catch (e, st) {
+      if (kDebugMode) {
+        print('SubscriptionService.fetchSubscriptionFromBackend failed: $e\n$st');
+      }
     }
   }
 
@@ -90,26 +84,6 @@ class SubscriptionService extends GetxService {
         fetchSubscriptionFromBackend();
       }
     });
-  }
-
-  Future<void> _cacheSubscription(SubscriptionModel sub) async {
-    final jsonString = jsonEncode(sub.toJson());
-    await _storageService.setPreference<String>(_cacheKey, jsonString);
-  }
-
-  void _loadCachedSubscription() {
-    final jsonString = _storageService.getPreference<String>(_cacheKey);
-    if (jsonString == null) return;
-    try {
-      final json = jsonDecode(jsonString) as Map<String, dynamic>;
-      currentSubscription.value = SubscriptionModel.fromJson(json);
-    } catch (_) {
-      // Corrupted cache — retain free tier default
-    }
-  }
-
-  Future<void> _clearCache() async {
-    await _storageService.removePreference(_cacheKey);
   }
 
   @override

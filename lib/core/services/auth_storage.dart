@@ -1,4 +1,5 @@
 // lib/core/services/auth_storage.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
@@ -58,9 +59,21 @@ class AuthStorage extends GetxService {
   /// Check if user is logged in (sync — uses cached token)
   bool get isLoggedIn => _cachedToken != null && _cachedToken!.isNotEmpty;
 
-  /// Refresh the cached login state from secure storage
+  /// Refresh the cached login state from secure storage.
+  ///
+  /// Treats any Keychain/KeyStore failure as "no token available" instead of
+  /// propagating. A missing keychain entitlement (iOS error -34018) or a
+  /// locked device must not crash app boot — the user will just land on the
+  /// unauthenticated flow.
   Future<void> refreshLoginState() async {
-    _cachedToken = await _storage.read(key: _accessTokenKey);
+    try {
+      _cachedToken = await _storage.read(key: _accessTokenKey);
+    } catch (e, st) {
+      if (kDebugMode) {
+        print('AuthStorage.refreshLoginState failed: $e\n$st');
+      }
+      _cachedToken = null;
+    }
   }
 
   /// Clear all auth data

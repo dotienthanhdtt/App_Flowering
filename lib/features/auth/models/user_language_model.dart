@@ -61,6 +61,7 @@ class LanguageModel {
   final String? flagUrl;
   final bool isNativeAvailable;
   final bool isLearningAvailable;
+  final List<String> levels;
 
   const LanguageModel({
     required this.id,
@@ -70,9 +71,11 @@ class LanguageModel {
     required this.flagUrl,
     required this.isNativeAvailable,
     required this.isLearningAvailable,
+    this.levels = const [],
   });
 
   factory LanguageModel.fromJson(Map<String, dynamic> json) {
+    final rawLevels = json['levels'] as List<dynamic>? ?? const [];
     return LanguageModel(
       id: json['id'] as String? ?? '',
       code: json['code'] as String? ?? '',
@@ -86,6 +89,7 @@ class LanguageModel {
       isLearningAvailable: json['is_learning_available'] as bool? ??
           json['isLearningAvailable'] as bool? ??
           false,
+      levels: rawLevels.whereType<String>().toList(),
     );
   }
 
@@ -97,5 +101,6 @@ class LanguageModel {
         'flag_url': flagUrl,
         'is_native_available': isNativeAvailable,
         'is_learning_available': isLearningAvailable,
+        'levels': levels,
       };
 }

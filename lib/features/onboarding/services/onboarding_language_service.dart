@@ -1,25 +1,20 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
-import '../../../core/services/storage_service.dart';
 import '../models/onboarding_language_model.dart';
 
-/// Fetches language lists from API with 24-hour cache and offline fallback.
+/// Fetches language lists from API. No persistent cache — every call hits the network.
 class OnboardingLanguageService {
   final ApiClient _apiClient;
-  final StorageService _storageService;
 
-  static const _cacheDuration = Duration(hours: 24);
+  OnboardingLanguageService(this._apiClient);
 
-  OnboardingLanguageService(this._apiClient, this._storageService);
-
-  /// Returns native languages — API → cache.
+  /// Returns native languages.
   Future<List<OnboardingLanguage>> getNativeLanguages() {
     return _getLanguages(type: 'native');
   }
 
-  /// Returns learning languages — API → cache.
+  /// Returns learning languages.
   Future<List<OnboardingLanguage>> getLearningLanguages() {
     return _getLanguages(type: 'learning');
   }
@@ -27,18 +22,9 @@ class OnboardingLanguageService {
   Future<List<OnboardingLanguage>> _getLanguages({
     required String type,
   }) async {
-    final cacheKey = 'languages_cache_$type';
-    final timestampKey = 'languages_cache_ts_$type';
-
-    // Return valid cache if available
-    final cached = _readCache(cacheKey, timestampKey);
-    if (cached != null) return cached;
-
-    // Fetch from API
     try {
       final response = await _apiClient.get<List<OnboardingLanguage>>(
         ApiEndpoints.languages,
-        queryParameters: {'type': type},
         fromJson: (data) {
           if (data is List) {
             return data
@@ -53,56 +39,18 @@ class OnboardingLanguageService {
           return <OnboardingLanguage>[];
         },
       );
-      if (response.isSuccess &&
-          response.data != null &&
-          response.data!.isNotEmpty) {
-        await _writeCache(cacheKey, timestampKey, response.data!);
+      if (kDebugMode) {
+        print(
+          '[Languages:$type] code=${response.code} '
+          'msg="${response.message}" count=${response.data?.length ?? 0}',
+        );
+      }
+      if (response.isSuccess && response.data != null) {
         return response.data!;
       }
-    } catch (e) {
-      if (kDebugMode) print('OnboardingLanguageService[$type]: $e');
+    } catch (e, st) {
+      if (kDebugMode) print('[Languages:$type] ERROR: $e\n$st');
     }
-
-    // Fallback: expired cache only
-    return _readCache(cacheKey, timestampKey, ignoreExpiry: true) ?? [];
-  }
-
-  List<OnboardingLanguage>? _readCache(
-    String cacheKey,
-    String timestampKey, {
-    bool ignoreExpiry = false,
-  }) {
-    if (!ignoreExpiry) {
-      final ts = _storageService.getPreference<int>(timestampKey);
-      if (ts == null) return null;
-      final age = DateTime.now().millisecondsSinceEpoch - ts;
-      if (age > _cacheDuration.inMilliseconds) return null;
-    }
-
-    final raw = _storageService.getPreference<String>(cacheKey);
-    if (raw == null) return null;
-
-    try {
-      return (jsonDecode(raw) as List)
-          .map((e) => OnboardingLanguage.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } catch (_) {
-      return null;
-    }
-  }
-
-  Future<void> _writeCache(
-    String cacheKey,
-    String timestampKey,
-    List<OnboardingLanguage> languages,
-  ) async {
-    await _storageService.setPreference(
-      cacheKey,
-      jsonEncode(languages.map((l) => l.toJson()).toList()),
-    );
-    await _storageService.setPreference(
-      timestampKey,
-      DateTime.now().millisecondsSinceEpoch,
-    );
+    return [];
   }
 }

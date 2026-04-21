@@ -1,9 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'app/flowering-app-widget-with-getx.dart';
 import 'app/global-dependency-injection-bindings.dart';
 import 'config/firebase_options.dart';
@@ -29,22 +28,23 @@ Future<void> main() async {
   const env = String.fromEnvironment('ENV', defaultValue: 'dev');
   await dotenv.load(fileName: '.env.$env');
 
- try {
-   // Initialize Firebase
-   await Firebase.initializeApp(
-     options: DefaultFirebaseOptions.currentPlatform,
-   );
+  // Firebase is allowed to fail (emulator, network, missing config) — the app
+  // still works without it, just without push/analytics.
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e, st) {
+    if (kDebugMode) {
+      debugPrint('Firebase.initializeApp failed (non-fatal): $e\n$st');
+    }
+  }
 
-   // Initialize Hive local storage
-   await Hive.initFlutter();
-
-   // Only the services required for the first frame + splash auth decision.
-   // Non-critical services (audio, subscriptions, connectivity listeners)
-   // are kicked off below after the first frame paints.
-   await initializeCriticalServices();
- } catch (e) {
-   e.printError();
- }
+  // Critical services MUST succeed. Swallowing their failure leaves GetX with
+  // uninitialized services (e.g. StorageService._preferences) and produces
+  // cryptic LateInitializationErrors downstream. Let the error propagate so
+  // the platform crash reporter sees the real root cause.
+  await initializeCriticalServices();
 
   runApp(const FloweringApp());
 

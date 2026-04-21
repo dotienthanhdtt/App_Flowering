@@ -105,7 +105,12 @@
       "Bash(git -C /Users/tienthanh/Dev/new_flowering/app_flowering/flowering log --oneline -20 -- lib/core/network/active-language-interceptor.dart lib/core/services/language-context-service.dart lib/features/chat/controllers/chat-home-controller.dart)",
       "Bash(git -C /Users/tienthanh/Dev/new_flowering/app_flowering/flowering diff HEAD -- lib/features/chat/controllers/chat-home-controller.dart)",
       "Bash(git -C /Users/tienthanh/Dev/new_flowering/app_flowering/flowering log --all --oneline -10 -- scripts/api-smoke-test.sh)",
-      "Bash(git -C /Users/tienthanh/Dev/new_flowering/app_flowering/flowering log -p --since=\"7 days ago\" -- lib/features/chat/controllers/ai_chat_controller.dart)"
+      "Bash(git -C /Users/tienthanh/Dev/new_flowering/app_flowering/flowering log -p --since=\"7 days ago\" -- lib/features/chat/controllers/ai_chat_controller.dart)",
+      "Bash(dart run *)",
+      "Bash(curl -sS 'https://dev.broduck.me/languages?type=native' -H 'Accept: application/json')",
+      "Bash(curl -sS 'https://dev.broduck.me/languages' -H 'Accept: application/json')",
+      "Bash(dart compile *)",
+      "Bash(xxd)"
     ]
   },
   "enableAllProjectMcpServers": true,
