@@ -48,17 +48,21 @@ class ScenarioDetail {
         id: json['id'] as String? ?? '',
         title: json['title'] as String? ?? '',
         description: json['description'] as String?,
-        imageUrl: json['imageUrl'] as String?,
+        imageUrl: json['image_url'] as String? ?? json['imageUrl'] as String?,
         difficulty: json['difficulty'] as String? ?? '',
-        languageId: json['languageId'] as String? ?? '',
-        orderIndex: json['orderIndex'] as int? ?? 0,
+        languageId: json['language_id'] as String? ?? json['languageId'] as String? ?? '',
+        orderIndex: (json['order_index'] as int?) ?? (json['orderIndex'] as int?) ?? 0,
         category: json['category'] != null
             ? ScenarioCategoryRef.fromJson(
                 json['category'] as Map<String, dynamic>)
             : const ScenarioCategoryRef(id: '', name: ''),
-        accessTier: ScenarioAccessTier.fromString(json['accessTier'] as String?),
-        isLocked: json['isLocked'] as bool? ?? false,
-        lockReason: json['lockReason'] as String?,
-        userStatus: ScenarioUserStatus.fromString(json['userStatus'] as String?),
+        accessTier: ScenarioAccessTier.fromString(
+          json['access_tier'] as String? ?? json['accessTier'] as String?,
+        ),
+        isLocked: json['is_locked'] as bool? ?? json['isLocked'] as bool? ?? false,
+        lockReason: json['lock_reason'] as String? ?? json['lockReason'] as String?,
+        userStatus: ScenarioUserStatus.fromString(
+          json['user_status'] as String? ?? json['userStatus'] as String?,
+        ),
       );
 }
