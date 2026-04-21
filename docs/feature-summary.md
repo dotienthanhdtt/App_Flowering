@@ -1,6 +1,6 @@
 # Flowering — Feature Summary
 
-**Last Updated:** March 28, 2026
+**Last Updated:** April 20, 2026
 
 ---
 
@@ -8,6 +8,7 @@
 
 | Feature | Description |
 |---------|-------------|
+| **Onboarding Progress Resume** | Users who close the app during onboarding now resume from their last checkpoint (language selections, active conversation) instead of restarting. Unified `OnboardingProgress` model persists to local storage with schema version safety and legacy migration support. |
 | **Onboarding Flow** | New users land on the app with no account needed. They see 3 welcome screens, pick their native and target languages, and receive a personalized learning scenario — removing the friction of forced signup before trying the product. |
 | **Anonymous AI Chat** | During onboarding, users can chat with "Flora" (AI tutor) without creating an account. Conversations are limited to 10 turns with a 7-day lifespan, letting users experience the product value before committing. |
 | **Email Authentication** | Users can sign up and log in with email/password. Includes input validation and secure token management so returning users can pick up where they left off. |
@@ -19,8 +20,14 @@
 | **Mobile App Architecture** | Feature-organized Flutter app with state management, HTTP networking (auto-retry, token refresh), offline storage, and connectivity monitoring. The shell that all mobile features plug into. |
 | **Design System** | Consistent colors, typography (Outfit font), spacing, and reusable components (buttons, text fields, loading states) across the entire app. Users get a polished, cohesive experience. |
 | **Localization** | Full English and Vietnamese language support (~130+ translated strings). Users interact with the app in their preferred language. |
+| **Chat Cold-Resume & Rehydration** | When returning to an active conversation, the app fetches message history from the server and populates the chat UI. Handles conversation expiry gracefully (404 clears checkpoint and starts fresh). |
 | **Chat UI** | Conversational interface with message bubbles, quick reply buttons, typing indicators, and a progress bar. Makes AI interaction feel natural and guided. |
 | **Home Shell** | Bottom navigation with 4 tabs (Chat, Lessons, Vocabulary, Profile) using IndexedStack for instant tab switching. Users can navigate the app's main sections smoothly. |
+| **Text-to-Speech (TTS)** | Queue-based TTS service with auto-play toggle. Users can hear AI responses read aloud by a natural-sounding voice. |
+| **Speech-to-Text (STT)** | Voice input via speech_to_text with iOS parallel recording fallback. Users can chat by speaking instead of typing. |
+| **Multi-Language Support** | Active language context with cache invalidation per language. Users can switch learning languages without losing baseline data. |
+| **Home Language Switcher** | UI components (HomeLanguageButton, LanguagePickerSheet) for changing the active learning language from the home dashboard. |
+| **Critical Security Fixes** | Token refresh race condition mitigation (Completer-based gate), API contract alignment (camelCase→snake_case), Firebase error message masking, per-language cache scoping, baseline seeding atomicity, controller lifecycle cleanup. |
 | **AI Observability** | All AI interactions are traced via Langfuse — tracking costs, latency, and quality. Allows the team to monitor and optimize AI performance and spending. |
 | **Subscription Backend** | RevenueCat integration handling in-app purchase webhooks and subscription status. The billing plumbing needed to monetize premium features. |
 | **Push Notification Backend** | Firebase FCM device token registration and management. The server-side setup needed to send users reminders and updates. |
@@ -32,12 +39,12 @@
 
 | Feature | % Complete | Description |
 |---------|---------|-------------|
-| **API JSON Migration** | 100% | ✅ COMPLETED (Mar 28) - All JSON keys migrated from camelCase to snake_case. All 13 model files updated with backward-compatible fallbacks for cached data. |
+| **Home Dashboard** | 50% | HomeLanguageButton and LanguagePickerSheet widgets complete. Dashboard stats and learning summary pending. |
 | **Lessons & Exercises API** | 5% | Backend endpoints for creating, reading, and managing lessons and exercises. Without this, the app has no structured learning content to serve. |
-| **Social Authentication (Mobile)** | 15% | Google Sign-In and Apple Sign-In dependencies added. UI integration pending. Users expect one-tap login with their existing accounts instead of creating yet another password. |
+| **Social Authentication (Mobile)** | 90% | Google Sign-In and Apple Sign-In fully integrated with Firebase Auth. Error handling complete. UI refinement pending. |
 | **Push Notifications (Mobile)** | 10% | Firebase integration backend complete. Mobile Firebase SDK wiring pending. Push notifications end-to-end so users receive reminders and updates. |
-| **Premium Subscription Flow** | 25% | RevenueCat service created and integrated. Mobile paywall UI and subscription management pending. Needed to unlock revenue. |
-| **Testing Infrastructure** | 0% | Building out unit and integration tests for both backend and mobile. Currently at minimal coverage — the safety net needed before launching to real users. |
+| **Premium Subscription Flow** | 50% | RevenueCat service created and integrated. Mobile paywall UI and subscription management pending. Needed to unlock revenue. |
+| **Testing Infrastructure** | 5% | Building out unit and integration tests for both backend and mobile. Currently at minimal coverage — the safety net needed before launching to real users. |
 
 ---
 
@@ -66,10 +73,10 @@
 
 ## Progress Summary
 
-**Completed (Done):** 16 features
-**In Progress:** 6 features (API migration 100% complete, others ~15% avg)
+**Completed (Done):** 22 features (added: TTS, STT, multi-language support, home language switcher, critical security fixes)
+**In Progress:** 6 features (Home Dashboard 50%, Social Auth 90%, Subscription 50%, others < 15%)
 **Todo:** 13 features
 
-**Overall MVP Progress: ~70%** (increased from 65% due to API migration completion)
+**Overall MVP Progress: ~75%** (increased from 70% due to TTS/STT, multi-language, and critical fixes completion)
 **Target Launch: June 2026**
-**Latest Milestone:** All API JSON keys migrated to snake_case (March 28, 2026)
+**Latest Milestone:** Critical security/race-condition fixes and multi-language support complete (April 20, 2026); Phase 7 home dashboard in progress

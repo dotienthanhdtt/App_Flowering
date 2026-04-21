@@ -565,13 +565,26 @@ class StorageService {
 
 ### Token Storage with AuthStorage
 
+Uses `flutter_secure_storage` for hardware-backed encryption (iOS Keychain / Android Keystore):
+
 ```dart
 // lib/core/services/auth_storage.dart
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 class AuthStorage extends GetxService {
-  late Box<String> _box;
+  static const String _accessTokenKey = 'access_token';
+  static const String _refreshTokenKey = 'refresh_token';
+  static const String _userIdKey = 'user_id';
+
+  final FlutterSecureStorage _storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+  );
+
+  String? _cachedToken;  // For sync isLoggedIn checks
 
   Future<AuthStorage> init() async {
-    _box = await Hive.openBox<String>('auth');
+    await refreshLoginState();  // Load _cachedToken
     return this;
   }
 
@@ -579,19 +592,21 @@ class AuthStorage extends GetxService {
     required String accessToken,
     required String refreshToken,
   }) async {
-    await _box.put('access_token', accessToken);
-    await _box.put('refresh_token', refreshToken);
+    await _storage.write(key: _accessTokenKey, value: accessToken);
+    await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    _cachedToken = accessToken;
   }
 
   Future<String?> getAccessToken() async {
-    return _box.get('access_token');
+    return _storage.read(key: _accessTokenKey);
   }
 
-  bool get isLoggedIn => getAccessToken() != null;
+  bool get isLoggedIn => _cachedToken != null;  // Sync check
 
   Future<void> clearTokens() async {
-    await _box.delete('access_token');
-    await _box.delete('refresh_token');
+    await _storage.delete(key: _accessTokenKey);
+    await _storage.delete(key: _refreshTokenKey);
+    _cachedToken = null;
   }
 }
 ```

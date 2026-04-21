@@ -32,7 +32,6 @@ void main() {
       expect(Get.isRegistered<StorageService>(), isTrue);
       expect(Get.isRegistered<AuthStorage>(), isTrue);
       expect(Get.isRegistered<ConnectivityService>(), isTrue);
-      expect(Get.isRegistered<AudioService>(), isTrue);
       expect(Get.isRegistered<ApiClient>(), isTrue);
     });
   });
@@ -55,10 +54,6 @@ class AuthStorage extends GetxService {
 }
 
 class ConnectivityService extends GetxService {
-  Future<void> init() async {}
-}
-
-class AudioService extends GetxService {
   Future<void> init() async {}
 }
 

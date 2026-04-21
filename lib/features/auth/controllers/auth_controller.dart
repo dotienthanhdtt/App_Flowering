@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,11 +7,18 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../../app/routes/app-route-constants.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
+import '../../../shared/widgets/loading_widget.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exceptions.dart';
 import '../../../core/services/auth_storage.dart';
+import '../../../core/services/language-context-service.dart';
 import '../../../core/services/storage_service.dart';
+import '../../onboarding/services/onboarding_progress_service.dart';
 import '../models/auth_response_model.dart';
+import '../utils/firebase_auth_error_mapper.dart';
+import 'auth_validators.dart';
+
+part 'auth_controller_social.dart';
 
 /// Manages email/password auth + social auth stubs.
 /// Reads conversationId from StorageService to link onboarding with account.
@@ -20,6 +26,9 @@ class AuthController extends BaseController {
   final ApiClient _apiClient = Get.find();
   final AuthStorage _authStorage = Get.find();
   final StorageService _storageService = Get.find();
+  final OnboardingProgressService _progressSvc =
+      Get.find<OnboardingProgressService>();
+  final LanguageContextService _langCtx = Get.find<LanguageContextService>();
 
   final obscurePassword = true.obs;
   final obscureConfirmPassword = true.obs;
@@ -36,32 +45,15 @@ class AuthController extends BaseController {
   final loginEmailController = TextEditingController();
   final loginPasswordController = TextEditingController();
 
-  String? get _conversationId =>
-      _storageService.getPreference<String>('onboarding_conversation_id');
+  String? get _conversationId => _progressSvc.read().chat?.conversationId;
 
-  // ── Validators ──────────────────────────────────────────────────
+  // ── Validators (delegate to pure functions in auth_validators.dart) ──
 
-  String? validateFullName(String? v) {
-    if (v == null || v.trim().isEmpty) return 'full_name_required'.tr;
-    return null;
-  }
-
-  String? validateEmail(String? v) {
-    if (v == null || v.trim().isEmpty) return 'email_required'.tr;
-    if (!GetUtils.isEmail(v.trim())) return 'email_invalid'.tr;
-    return null;
-  }
-
-  String? validatePassword(String? v) {
-    if (v == null || v.isEmpty) return 'password_required'.tr;
-    if (v.length < 8) return 'password_min_length'.tr;
-    return null;
-  }
-
-  String? validateConfirmPassword(String? v, String password) {
-    if (v != password) return 'passwords_not_match'.tr;
-    return null;
-  }
+  String? validateFullName(String? v) => validateFullNameFn(v);
+  String? validateEmail(String? v) => validateEmailFn(v);
+  String? validatePassword(String? v) => validatePasswordFn(v);
+  String? validateConfirmPassword(String? v, String password) =>
+      validateConfirmPasswordFn(v, password);
 
   // ── Auth actions ─────────────────────────────────────────────────
 
@@ -130,95 +122,23 @@ class AuthController extends BaseController {
       refreshToken: auth.refreshToken,
     );
     await _authStorage.saveUserId(auth.user.id);
-    await _storageService.removePreference('onboarding_conversation_id');
+    await _progressSvc.clearChat();
+    // Returning users who sign in without going through onboarding have no
+    // locally stored active language, which leaves the x-language header
+    // empty. Seed from the server's languages list (createdAt DESC — newest
+    // first) so subsequent requests carry a valid header. Preserve any
+    // existing active code so we never clobber an in-flight onboarding
+    // selection.
+    final activeCode = _langCtx.activeCode.value;
+    if ((activeCode == null || activeCode.isEmpty) && auth.languages.isNotEmpty) {
+      final first = auth.languages.first;
+      await _langCtx.setActive(first.language.code, first.languageId);
+    }
+    // Mark that this device has completed login at least once.
+    // This flag persists through logout so returning users see auth on
+    // onboarding intro screens instead of re-entering onboarding flows.
+    await _storageService.setHasCompletedLogin();
     Get.offAllNamed(AppRoutes.home);
-  }
-
-  // ── Social auth via Firebase ──────────────────────────────────
-
-  Future<void> signInWithGoogle() async {
-    isLoading.value = true;
-    errorMessage.value = '';
-    try {
-      // serverClientId = Web Client ID (type 3) from google-services.json
-      // Required on Android to receive an idToken from Google Sign-In
-      final googleSignIn = GoogleSignIn(
-        scopes: ['email'],
-        serverClientId:
-            '898715197112-g89g04i54mpeqcjau6ptpu6vn33iful0.apps.googleusercontent.com',
-      );
-      final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        isLoading.value = false;
-        return; // user cancelled
-      }
-      final googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await _authenticateWithFirebase(credential);
-    } on FirebaseAuthException catch (e) {
-      errorMessage.value = e.message ?? 'google_sign_in_failed'.tr;
-    } catch (e) {
-      debugPrint('Google sign-in error: $e');
-      errorMessage.value = 'google_sign_in_failed'.tr;
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> signInWithApple() async {
-    if (!Platform.isIOS) return;
-    isLoading.value = true;
-    errorMessage.value = '';
-    try {
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-      final oauthCredential = OAuthProvider('apple.com').credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
-      await _authenticateWithFirebase(oauthCredential);
-    } on SignInWithAppleAuthorizationException {
-      // user cancelled — do nothing
-    } on FirebaseAuthException catch (e) {
-      errorMessage.value = e.message ?? 'apple_sign_in_failed'.tr;
-    } catch (e) {
-      debugPrint('Apple sign-in error: $e');
-      errorMessage.value = 'apple_sign_in_failed'.tr;
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  /// Signs in to Firebase, gets ID token, then calls backend /auth/firebase.
-  Future<void> _authenticateWithFirebase(AuthCredential credential) async {
-    final userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-    final idToken = await userCredential.user?.getIdToken();
-    if (idToken == null) {
-      errorMessage.value = 'firebase_token_error'.tr;
-      return;
-    }
-    final response = await _apiClient.post<AuthResponse>(
-      ApiEndpoints.loginFirebase,
-      data: {
-        'idToken': idToken,
-        'displayName': userCredential.user?.displayName,
-        if (_conversationId != null) 'conversationId': _conversationId,
-      },
-      fromJson: (data) => AuthResponse.fromJson(data as Map<String, dynamic>),
-    );
-    if (response.isSuccess && response.data != null) {
-      await _handleAuthSuccess(response.data!);
-    } else {
-      errorMessage.value = response.message;
-    }
   }
 
   @override

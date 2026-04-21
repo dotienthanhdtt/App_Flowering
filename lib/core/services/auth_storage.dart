@@ -36,6 +36,10 @@ class AuthStorage extends GetxService {
     return _storage.read(key: _accessTokenKey);
   }
 
+  /// Sync access to the last-known token. Updated on save/refresh/clear.
+  /// Prefer this in hot paths (interceptors) to avoid keychain I/O per request.
+  String? get cachedAccessToken => _cachedToken;
+
   /// Get refresh token
   Future<String?> getRefreshToken() async {
     return _storage.read(key: _refreshTokenKey);

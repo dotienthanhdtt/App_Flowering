@@ -1,8 +1,9 @@
-/// Response model for POST /onboarding/start and POST /onboarding/chat.
+/// Response model for the unified POST /onboarding/chat endpoint.
+/// Covers both Mode A (create session) and Mode B (chat turn) — shape is identical.
 ///
-/// [conversationId] — returned by /start; null in /chat responses.
+/// [conversationId] — returned in both modes; stable across the session.
 /// [isLastTurn] — when true, caller should trigger POST /onboarding/complete.
-/// [reply] — AI message text.
+/// [reply] — AI message text (greeting on create, response on turn).
 class OnboardingSession {
   final String? conversationId;
   final String? messageId;

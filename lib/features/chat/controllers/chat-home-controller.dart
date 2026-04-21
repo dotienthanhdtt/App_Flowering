@@ -1,95 +1,87 @@
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Response;
 
 import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
-import '../../../core/network/api_response.dart';
-import '../../lessons/models/lesson-models.dart';
+import '../../../core/services/language-context-service.dart';
+import '../../onboarding/models/onboarding_language_model.dart';
+import '../../scenarios/controllers/flowering_feed_controller.dart';
+import '../../scenarios/controllers/for_you_feed_controller.dart';
 
-/// Controls the Chat home tab — fetches /lessons scenarios for selection.
+/// Controls the Chat home screen header — manages the active-learning-language
+/// flag button and the picker sheet. Body content (scenarios) is owned by
+/// `FloweringFeedController` and `ForYouFeedController` via the top-tabs.
 class ChatHomeController extends BaseController {
   final _apiClient = Get.find<ApiClient>();
+  final _langCtx = Get.find<LanguageContextService>();
 
-  final categories = <LessonCategory>[].obs;
-  final isRefreshing = false.obs;
-
-  int _currentPage = 1;
-  bool _hasMore = true;
-
-  /// Total scenario count across all loaded categories.
-  int get totalScenarios =>
-      categories.fold(0, (sum, c) => sum + c.scenarios.length);
+  final availableLanguages = <OnboardingLanguage>[].obs;
+  final Rx<OnboardingLanguage?> activeLanguage = Rx<OnboardingLanguage?>(null);
+  bool _availableLoaded = false;
+  Worker? _activeCodeWorker;
 
   @override
   void onInit() {
     super.onInit();
-    fetchLessons();
+    // Eagerly resolve both feed controllers so each registers its
+    // language-change listener immediately — otherwise only the initially
+    // visible tab's API reloads when the active language switches.
+    Get.find<ForYouFeedController>();
+    Get.find<FloweringFeedController>();
+    // Fire-and-forget so first paint isn't blocked on the languages endpoint.
+    loadAvailableLanguages();
+    _activeCodeWorker = ever<String?>(_langCtx.activeCode, _syncActiveFromCode);
   }
 
-  Future<void> fetchLessons({bool refresh = false}) async {
-    // Guard against concurrent calls (e.g. double pull-to-refresh)
-    if (isLoading.value) return;
-    if (!refresh && !_hasMore) return;
-
-    if (refresh) {
-      _currentPage = 1;
-      _hasMore = true;
-      // Do NOT clear categories here — keep old data visible during refresh.
-      // assignAll in onSuccess replaces atomically once the response arrives.
-    }
-
-    await apiCall<ApiResponse<GetLessonsResponse>>(
-      () => _apiClient.get<GetLessonsResponse>(
-        ApiEndpoints.lessons,
-        queryParameters: {'page': _currentPage, 'limit': 20},
-        fromJson: (data) =>
-            GetLessonsResponse.fromJson(data as Map<String, dynamic>),
-      ),
-      showLoading: categories.isEmpty,
-      onSuccess: (response) {
-        if (!response.isSuccess || response.data == null) {
-          errorMessage.value = response.message;
-          return;
-        }
-        final data = response.data!;
-        if (_currentPage == 1) {
-          categories.assignAll(data.categories);
-        } else {
-          _mergeCategories(data.categories);
-        }
-        _hasMore = _currentPage * data.pagination.limit < data.pagination.total;
-        _currentPage++;
-      },
-    );
+  @override
+  void onClose() {
+    _activeCodeWorker?.dispose();
+    super.onClose();
   }
 
-  /// Merge incoming categories — single assignAll to fire one Obx update.
-  void _mergeCategories(List<LessonCategory> incoming) {
-    final merged = [...categories];
-    for (final cat in incoming) {
-      final idx = merged.indexWhere((c) => c.id == cat.id);
-      if (idx >= 0) {
-        final existing = merged[idx];
-        merged[idx] = LessonCategory(
-          id: existing.id,
-          name: existing.name,
-          icon: existing.icon,
-          scenarios: [...existing.scenarios, ...cat.scenarios],
-        );
-      } else {
-        merged.add(cat);
-      }
-    }
-    categories.assignAll(merged);
-  }
-
-  Future<void> refreshLessons() async {
-    if (isRefreshing.value) return;
-    isRefreshing.value = true;
+  /// Loads every language the backend marks as available to learn
+  /// (`/languages?type=learning` → `LanguageDto[]` flat list, already filtered
+  /// by `isLearningAvailable: true`). Idempotent unless [force]; client also
+  /// filters defensively in case the server sends an unfiltered list.
+  Future<void> loadAvailableLanguages({bool force = false}) async {
+    if (_availableLoaded && !force) return;
     try {
-      await fetchLessons(refresh: true);
-    } finally {
-      isRefreshing.value = false;
+      final resp = await _apiClient.get<List<dynamic>>(
+        ApiEndpoints.languages,
+        queryParameters: {'type': 'learning'},
+        fromJson: (d) => d as List<dynamic>,
+      );
+      if (!resp.isSuccess || resp.data == null) return;
+      final parsed = resp.data!
+          .whereType<Map<String, dynamic>>()
+          .map((j) => OnboardingLanguage.fromJson(j, type: 'learning'))
+          .where((l) => l.isEnabled)
+          .toList();
+      availableLanguages.assignAll(parsed);
+      _availableLoaded = true;
+      _syncActiveFromCode(_langCtx.activeCode.value);
+    } catch (_) {
+      // Swallow — picker can still be opened (shows empty state) and another
+      // call will retry on next open.
     }
+  }
+
+  /// Persists the selected language. Feed controllers listen to
+  /// `_langCtx.activeCode` and refresh themselves.
+  Future<void> switchActiveLanguage(OnboardingLanguage next) async {
+    if (!next.isEnabled) return;
+    if (next.code == _langCtx.activeCode.value) return;
+    await _langCtx.setActive(next.code, next.id);
+    activeLanguage.value = next;
+    errorMessage.value = '';
+  }
+
+  void _syncActiveFromCode(String? code) {
+    if (code == null || code.isEmpty) {
+      activeLanguage.value = null;
+      return;
+    }
+    final match = availableLanguages.firstWhereOrNull((l) => l.code == code);
+    if (match != null) activeLanguage.value = match;
   }
 }

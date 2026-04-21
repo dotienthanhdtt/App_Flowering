@@ -2,9 +2,9 @@
 
 Welcome to the Flowering Flutter documentation. This directory contains comprehensive documentation for the AI-powered language learning app.
 
-**Last Updated:** March 11, 2026
-**Current Phase:** 6 (Complete) - Ready for Phase 7
-**Status:** All infrastructure and user acquisition features complete
+**Last Updated:** April 20, 2026
+**Current Phase:** 6.12 (Critical Fixes) Complete; Phase 7 (Home Language Switcher) In Progress (50%)
+**Status:** All infrastructure, user acquisition, session persistence, and critical fixes complete; home language UI in progress
 
 ## Quick Navigation
 
@@ -46,7 +46,7 @@ Deep dive into system design:
 - **State Management:** GetX 4.6.6 (dependency injection, routing, reactive state)
 - **Networking:** Dio 5.4.0 (HTTP client with interceptors)
 - **Storage:** Hive 2.2.3 (local cache with eviction), AuthStorage (token management)
-- **Audio:** record 6.2.0 (recording), audioplayers 5.2.1 (playback)
+- **Audio:** flutter_tts 4.2.5 (TTS), speech_to_text 7.3.0 (STT), record 6.2.0 (iOS recording)
 - **UI:** Flutter Material3, google_fonts (Inter typography), lucide_icons
 
 ### Architecture Pattern
@@ -65,20 +65,22 @@ Feature-first clean architecture with 4 layers:
 
 ## Current Implementation Status
 
-### Complete (Phase 1-6.8)
+### Complete (Phase 1-6.12)
 - Project setup and dependencies
-- Network layer (ApiClient, interceptors, error handling)
-- Core services (Storage, Auth, Connectivity, Audio)
-- Base classes (BaseController, BaseScreen)
+- Network layer (ApiClient, interceptors, error handling, retry logic)
+- Core services (Storage, Auth, Connectivity, Audio, Language Context, Cache Invalidation)
+- Base classes (BaseController, BaseScreen, BaseStatelessScreen)
 - Routing (16 routes with transitions)
 - Localization (99+ keys per language: EN, VI)
-- **Onboarding flow:** 8 screens (splash, welcome, language selection, AI chat, scenario)
-- **Authentication:** 5 screens (login, signup, forgot password, OTP, new password)
+- **Onboarding flow:** 8 screens with session rehydration and checkpoint persistence
+- **Authentication:** 5 screens (login, signup, forgot password, OTP, new password) with Firebase error mapping
 - **Navigation:** 4-tab bottom navigation (Chat, Read, Vocabulary, Profile)
-- **Chat feature:** Grammar correction, translation support, message bubbles
+- **Chat feature:** Grammar correction, translation support, message bubbles, TTS/STT, session rehydration
+- **Multi-language support:** Active language context, cache scoping, language switching without data loss
+- **Critical fixes:** Token refresh race conditions, API contract alignment (camelCase→snake_case), error disclosure mitigation
 
-### Pending (Phase 7-10)
-- Home dashboard with learning statistics
+### In Progress & Pending (Phase 7-10)
+- **Phase 7 (50% complete):** Home dashboard UI with language switcher button and language picker sheet
 - Expanded chat with full history and persistence
 - Lessons browser with offline caching
 - Profile and settings pages
@@ -248,7 +250,7 @@ This documentation is actively maintained alongside development:
 
 ---
 
-**Last Reviewed:** 2026-03-11
+**Last Reviewed:** 2026-04-15
 **Next Review:** When Phase 7 begins
 **Maintainer:** Development Team
 **Status:** All documentation current and consistent

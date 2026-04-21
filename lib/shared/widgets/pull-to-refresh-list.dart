@@ -113,7 +113,11 @@ class _PullToRefreshListState extends State<PullToRefreshList> {
       onNotification: _handleScroll,
       child: Column(
         children: [
-          _buildIndicator(),
+          // Obx so the true→false and false→true transitions of
+          // `isRefreshing` both rebuild the indicator. Without it, the
+          // `true` transition never triggers a rebuild and the indicator
+          // visually freezes at whatever pull-offset the user released at.
+          Obx(() => _buildIndicator()),
           Expanded(child: widget.child),
         ],
       ),

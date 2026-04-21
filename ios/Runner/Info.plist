@@ -62,5 +62,7 @@
 		<string>Flowering uses speech recognition to transcribe your voice messages</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Flowering needs microphone access to record voice messages</string>
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
 	</dict>
 </plist>

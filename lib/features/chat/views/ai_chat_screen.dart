@@ -160,27 +160,29 @@ class _ChatList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Stack(
-        children: [
-          ListView.separated(
-            controller: controller.scrollController,
-            padding: const EdgeInsets.fromLTRB(
-              AppSizes.space4, AppSizes.space3, AppSizes.space4, AppSizes.space2,
-            ),
-            itemCount: controller.messages.length +
-                (controller.isTyping.value ? 1 : 0),
-            separatorBuilder: (context, index) => const SizedBox(height: AppSizes.space2),
-            itemBuilder: (_, index) {
-              if (index == controller.messages.length) {
-                return const AiTypingBubble();
-              }
-              return _buildMessageItem(controller, controller.messages[index]);
-            },
-          ),
-        ],
-      ),
-    );
+    // Split reactivity: the list rebuilds only when `messages` changes,
+    // the typing footer rebuilds only when `isTyping` flips. Previously a
+    // single Obx around both caused the whole list delegate to rebuild on
+    // every typing-indicator tick.
+    return Obx(() {
+      final messages = controller.messages;
+      return ListView.separated(
+        controller: controller.scrollController,
+        padding: const EdgeInsets.fromLTRB(
+          AppSizes.space4, AppSizes.space3, AppSizes.space4, AppSizes.space2,
+        ),
+        itemCount: messages.length + 1, // +1 for typing footer
+        separatorBuilder: (context, index) => const SizedBox(height: AppSizes.space2),
+        itemBuilder: (_, index) {
+          if (index == messages.length) {
+            return Obx(() => controller.isTyping.value
+                ? const AiTypingBubble()
+                : const SizedBox.shrink());
+          }
+          return _buildMessageItem(controller, messages[index]);
+        },
+      );
+    });
   }
 
   Widget _buildMessageItem(AiChatController controller, ChatMessage message) {

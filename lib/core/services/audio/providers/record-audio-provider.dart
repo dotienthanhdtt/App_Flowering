@@ -12,6 +12,35 @@ class RecordAudioProvider implements AudioRecorderProviderContract {
   String? _currentPath;
   Timer? _amplitudeTimer;
 
+  /// Sweep stale `voice_input_*.m4a` files in the temp dir. Should be called
+  /// once on app start / service init — failed-upload recordings that the
+  /// recorder process didn't get to clean up accumulate here over time.
+  /// Safe threshold: files older than 1 hour are considered orphaned.
+  static Future<void> cleanupStaleRecordings({
+    Duration maxAge = const Duration(hours: 1),
+  }) async {
+    try {
+      final dir = await getTemporaryDirectory();
+      if (!await dir.exists()) return;
+      final now = DateTime.now();
+      await for (final entity in dir.list(followLinks: false)) {
+        if (entity is! File) continue;
+        final name = entity.uri.pathSegments.last;
+        if (!name.startsWith('voice_input_') || !name.endsWith('.m4a')) continue;
+        try {
+          final stat = await entity.stat();
+          if (now.difference(stat.modified) > maxAge) {
+            await entity.delete();
+          }
+        } catch (_) {
+          // ignore — file may have been deleted underneath us
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) print('cleanupStaleRecordings error: $e');
+    }
+  }
+
   @override
   Future<bool> hasPermission() async => await _recorder.hasPermission();
 

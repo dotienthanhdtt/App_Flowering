@@ -75,18 +75,6 @@ class LoginGateBottomSheet extends StatelessWidget {
               ),
             );
           }),
-          // Loading indicator
-          Obx(() {
-            if (!_getAuthController().isLoading.value) return const SizedBox.shrink();
-            return const Padding(
-              padding: EdgeInsets.only(bottom: AppSizes.space3),
-              child: SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            );
-          }),
           // Apple Sign-In (iOS only)
           if (Platform.isIOS)
             SignInWithAppleButton(

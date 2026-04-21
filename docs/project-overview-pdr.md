@@ -83,10 +83,10 @@ Flowering is a Flutter-based AI-powered language learning application focused on
 - Progress tracking without internet
 
 #### 4.3 Security
-- Secure token storage using Hive (AuthStorage)
+- Secure token storage using flutter_secure_storage (iOS Keychain / Android Keystore, hardware-backed)
 - HTTPS-only API communication
-- No sensitive data in plain Hive storage (tokens separated in AuthStorage)
-- Token expiration and refresh handling
+- No sensitive data in plain Hive storage (tokens in AuthStorage, Hive for preferences only)
+- Token expiration and refresh handling with race condition prevention
 
 #### 4.4 Scalability
 - Support up to 10,000 cached messages
@@ -165,8 +165,9 @@ Flowering is a Flutter-based AI-powered language learning application focused on
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0.0-beta1 | 2026-03-28 | Phases 1-6.8 complete: Foundation, network, services, onboarding, auth, bottom nav, chat with grammar correction, all API JSON keys migrated to snake_case |
-| 1.0.0 | 2026-03-11 | Onboarding & Auth complete, chat with grammar correction, bottom nav, typography system |
+| 1.0.0-beta1 | 2026-03-11 | Phases 1-6 complete: Foundation, network, services, onboarding, auth, bottom nav, chat with grammar correction |
+| 1.0.0-rc1 | 2026-03-28 | Phase 6.8 complete: All API JSON keys migrated from camelCase to snake_case |
+| 1.0.0 | 2026-04-20 | Phases 6.9-6.12 complete: TTS/STT audio, onboarding progress resume, multi-language support, critical security/race-condition fixes; Phase 7 in progress (home language switcher UI) |
 
 ### 11. Acceptance Criteria
 

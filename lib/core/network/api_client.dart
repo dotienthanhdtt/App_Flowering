@@ -2,17 +2,25 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 import '../../config/env_config.dart';
 import '../services/auth_storage.dart';
+import 'active-language-interceptor.dart';
 import 'api_exceptions.dart';
 import 'api_response.dart';
 import 'auth_interceptor.dart';
 import 'http_logger_interceptor.dart';
+import 'language-recovery-interceptor.dart';
 import 'retry_interceptor.dart';
 
 /// Singleton API client with Dio
 class ApiClient extends GetxService {
   late final Dio _dio;
+  late final Dio _retryDio;
 
   Dio get dio => _dio;
+
+  // Opt-in in-memory GET cache. LRU-capped to avoid unbounded growth.
+  // Keyed by method+path+sorted-query. TTL is passed per-call via [get].
+  static const int _maxCacheEntries = 20;
+  final Map<String, _CachedResponse> _getCache = <String, _CachedResponse>{};
 
   /// Initialize with auth storage dependency
   Future<ApiClient> init(AuthStorage authStorage) async {
@@ -29,10 +37,19 @@ class ApiClient extends GetxService {
       ),
     );
 
-    // Order matters: retry first, then auth, then logging
+    // Shared retry Dio — no interceptors so retried requests bypass the full chain.
+    _retryDio = Dio(BaseOptions(
+      baseUrl: EnvConfig.apiBaseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
+    ));
+
+    // Order: retry → auth → language header → language 403 recovery → logger
     _dio.interceptors.addAll([
       RetryInterceptor(dio: _dio, maxRetries: 3),
-      AuthInterceptor(authStorage),
+      AuthInterceptor(authStorage, _retryDio),
+      ActiveLanguageInterceptor(),
+      LanguageRecoveryInterceptor(_retryDio),
       HttpLoggerInterceptor(),
     ]);
 
@@ -43,22 +60,70 @@ class ApiClient extends GetxService {
   // HTTP Methods
   // ─────────────────────────────────────────────────────────────────
 
-  /// GET request
+  /// GET request. Pass [cacheTtl] to serve subsequent identical GETs from an
+  /// in-memory cache for the given duration. Cache is bypassed when null.
   Future<ApiResponse<T>> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
     T Function(dynamic)? fromJson,
     Options? options,
+    CancelToken? cancelToken,
+    Duration? cacheTtl,
   }) async {
+    String? cacheKey;
+    if (cacheTtl != null) {
+      cacheKey = _buildCacheKey(path, queryParameters);
+      final cached = _getCache[cacheKey];
+      if (cached != null && !cached.expired) {
+        // Refresh LRU position.
+        _getCache.remove(cacheKey);
+        _getCache[cacheKey] = cached;
+        return ApiResponse<T>.fromJson(cached.raw, fromJson);
+      }
+    }
+
     try {
       final response = await _dio.get(
         path,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
-      return _handleResponse(response, fromJson);
+      final parsed = _handleResponse(response, fromJson);
+      if (cacheKey != null && parsed.isSuccess && response.data is Map<String, dynamic>) {
+        _putCache(cacheKey, response.data as Map<String, dynamic>, cacheTtl!);
+      }
+      return parsed;
     } on DioException catch (e) {
       throw mapDioException(e);
+    }
+  }
+
+  /// Invalidate any cached GET responses whose path contains [pathFragment].
+  /// Call after mutations that would stale the cache (e.g., language switch).
+  void invalidateCacheForPath(String pathFragment) {
+    _getCache.removeWhere((key, _) => key.contains(pathFragment));
+  }
+
+  /// Clear the entire GET cache. Call on logout or global state reset.
+  void clearGetCache() => _getCache.clear();
+
+  String _buildCacheKey(String path, Map<String, dynamic>? query) {
+    if (query == null || query.isEmpty) return 'GET $path';
+    final sorted = query.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    final qs = sorted.map((e) => '${e.key}=${e.value}').join('&');
+    return 'GET $path?$qs';
+  }
+
+  void _putCache(String key, Map<String, dynamic> raw, Duration ttl) {
+    _getCache.remove(key); // refresh LRU position if present
+    _getCache[key] = _CachedResponse(
+      raw: raw,
+      expiresAt: DateTime.now().add(ttl),
+    );
+    while (_getCache.length > _maxCacheEntries) {
+      _getCache.remove(_getCache.keys.first);
     }
   }
 
@@ -69,6 +134,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? queryParameters,
     T Function(dynamic)? fromJson,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     try {
       final response = await _dio.post(
@@ -76,6 +142,7 @@ class ApiClient extends GetxService {
         data: data,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
       return _handleResponse(response, fromJson);
     } on DioException catch (e) {
@@ -90,6 +157,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? queryParameters,
     T Function(dynamic)? fromJson,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     try {
       final response = await _dio.put(
@@ -97,6 +165,7 @@ class ApiClient extends GetxService {
         data: data,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
       return _handleResponse(response, fromJson);
     } on DioException catch (e) {
@@ -111,6 +180,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? queryParameters,
     T Function(dynamic)? fromJson,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     try {
       final response = await _dio.delete(
@@ -118,6 +188,7 @@ class ApiClient extends GetxService {
         data: data,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
       return _handleResponse(response, fromJson);
     } on DioException catch (e) {
@@ -180,6 +251,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? data,
     T Function(dynamic)? fromJson,
     void Function(int, int)? onSendProgress,
+    CancelToken? cancelToken,
   }) async {
     try {
       final formData = FormData.fromMap({
@@ -191,6 +263,7 @@ class ApiClient extends GetxService {
         path,
         data: formData,
         onSendProgress: onSendProgress,
+        cancelToken: cancelToken,
       );
       return _handleResponse(response, fromJson);
     } on DioException catch (e) {
@@ -215,4 +288,13 @@ class ApiClient extends GetxService {
       message: 'Unexpected response format',
     );
   }
+}
+
+class _CachedResponse {
+  final Map<String, dynamic> raw;
+  final DateTime expiresAt;
+
+  _CachedResponse({required this.raw, required this.expiresAt});
+
+  bool get expired => DateTime.now().isAfter(expiresAt);
 }

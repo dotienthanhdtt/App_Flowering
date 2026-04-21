@@ -3,18 +3,18 @@
 ## Project Info
 - **Name:** Flowering - AI Language Learning App
 - **Framework:** Flutter 3.10.3+ with GetX 4.6.6
-- **Status:** Phase 6.8 complete (March 28, 2026) - All API JSON keys migrated to snake_case
+- **Status:** Phase 6.12 complete (April 20, 2026) - Critical fixes + multi-language support; Phase 7 in progress (50%)
 - **Architecture:** Feature-first clean architecture
 - **Localization:** English & Vietnamese (99+ keys per language)
 
 ## Key Stats
-- **Implemented:** 126 Dart files across 8 feature modules
+- **Implemented:** 154 Dart files across 8+ feature modules
 - **Routes:** 16 named routes with transitions
-- **Screens:** 14 screens (8 onboarding, 5 auth, 1 shell)
-- **Services:** 5 core services (API, Storage, Auth, Connectivity, Audio) + TranslationService
+- **Screens:** 16+ screens (8 onboarding, 5 auth, 1 shell, home language switcher, etc.)
+- **Services:** 11 core services (Auth, Storage, Language Context, Cache Invalidation, OnboardingProgress, Connectivity, Audio, API, RevenueCat, Subscription, Translation)
 - **Tests:** Integration tests for core services (0% feature coverage)
 - **Design:** Warm neutral palette with Warm Orange (#FF7A27) primary
-- **Latest Changes:** All API JSON keys migrated to snake_case (March 28, 2026)
+- **Latest Changes:** Critical security/race-condition fixes, multi-language support, home language switcher UI (April 20, 2026)
 
 ## Core Features Completed
 1. **Authentication** - Login, signup, forgot password, OTP, password reset
@@ -76,9 +76,9 @@ if (response.isSuccess) {
 - **Disposal:** Always implement `onClose()` with proper cleanup
 
 ### Token Storage
-- **Uses:** AuthStorage (Hive-based 'auth' box)
-- **Pattern:** Separate from cache storage (lessons/chat boxes)
-- **Access:** Via `AuthInterceptor` automatic header injection
+- **Uses:** AuthStorage (flutter_secure_storage, Keychain/Keystore hardware-backed)
+- **Pattern:** Separate from cache storage (Hive for preferences/cache, secure_storage for tokens)
+- **Access:** Via `AuthInterceptor` automatic header injection with Completer-based concurrency gate
 
 ## Common Workflows
 
@@ -152,4 +152,4 @@ flutter pub run build_runner build --delete-conflicting-outputs
 - `codebase-summary.md` - Implementation status
 
 ---
-Last updated: 2026-03-28
+Last updated: 2026-04-20

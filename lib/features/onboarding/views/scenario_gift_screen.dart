@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/app_text.dart';
+import '../../../shared/widgets/loading_widget.dart';
 import '../../auth/widgets/login_gate_bottom_sheet.dart';
 import '../controllers/onboarding_controller.dart';
 import '../models/scenario_model.dart';
@@ -24,8 +25,6 @@ class ScenarioGiftScreen extends BaseScreen<OnboardingController> {
 
   @override
   Widget buildContent(BuildContext context) {
-    final scenarios = controller.onboardingProfile?.scenarios ?? [];
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -35,7 +34,16 @@ class ScenarioGiftScreen extends BaseScreen<OnboardingController> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _Header(),
-          Expanded(child: _ScenarioGrid(scenarios: scenarios)),
+          Expanded(
+            child: Obx(() {
+              // Cold-resume path: refetch in flight — show loader instead of empty grid.
+              if (controller.isRefetchingProfile.value) {
+                return const LoadingWidget();
+              }
+              final scenarios = controller.onboardingProfile?.scenarios ?? [];
+              return _ScenarioGrid(scenarios: scenarios);
+            }),
+          ),
           _CtaButton(onTap: () => _showLoginGate(context)),
         ],
       ),

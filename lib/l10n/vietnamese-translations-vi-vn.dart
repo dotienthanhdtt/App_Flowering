@@ -102,11 +102,20 @@ const Map<String, String> viVN = {
   'read_empty': 'Chưa có bài học',
   'lesson_count': '@count tình huống',
   'lesson_locked': 'Đã khóa',
+  'language_picker_title': 'Ngôn ngữ học',
+  'language_picker_empty': 'Chưa có ngôn ngữ. Thêm trong phần cài đặt.',
+  'language_picker_close': 'Đóng',
 
   // Vocabulary
   'vocabulary_title': 'Từ vựng',
   'vocabulary_search': 'Tìm từ...',
   'vocabulary_empty': 'Chưa học từ nào',
+
+  // Language context errors
+  'err_language_header_missing': 'Thiếu ngôn ngữ học. Vui lòng mở lại ứng dụng.',
+  'err_language_unknown': 'Ngôn ngữ này không còn được hỗ trợ.',
+  'err_language_not_enrolled': 'Bạn chưa đăng ký ngôn ngữ này.',
+  'err_language_required': 'Vui lòng chọn một ngôn ngữ để tiếp tục.',
 
   // Errors
   'network_error': 'Vui lòng kiểm tra kết nối mạng',
@@ -138,6 +147,11 @@ const Map<String, String> viVN = {
   // Onboarding — AI Chat (Screen 07)
   'chat_session_error': 'Không thể bắt đầu phiên. Vui lòng thử lại.',
   'chat_session_expired': 'Phiên hết hạn. Vui lòng bắt đầu lại.',
+  'chat_session_invalid': 'Không tìm thấy phiên. Hãy bắt đầu cuộc trò chuyện mới.',
+  'chat_rate_limit_create': 'Quá nhiều lần khởi tạo phiên. Vui lòng đợi một giờ trước khi thử lại.',
+  'chat_rate_limit_chat': 'Chậm lại nào — bạn đang gửi tin nhắn quá nhanh.',
+  'resume_chat_failed': 'Không thể khôi phục cuộc trò chuyện trước đó.',
+  'resume_chat_retry': 'Thử lại',
   'chat_retry': 'Thử lại',
   'chat_leave_confirm': 'Rời cuộc trò chuyện?',
   'chat_leave_message': 'Tiến trình của bạn sẽ bị mất nếu rời đi.',
@@ -228,12 +242,12 @@ const Map<String, String> viVN = {
 
   // Onboarding — Value Screens (Screens 03/04/05)
   'onboarding_skip': 'Bỏ qua',
-  'onboarding_value_headline_1': 'Con đường được tạo riêng cho bạn',
-  'onboarding_value_body_1': 'Bạn dẫn đường. Flowering theo sau.\nMỗi bài học thích ứng với nơi bạn đang đứng và nơi bạn muốn đến',
-  'onboarding_value_headline_2': 'Học một lần. Nhớ mãi mãi.',
-  'onboarding_value_body_2': 'Bí quyết? Thời điểm. Flowering ôn lại từ vựng đúng lúc não bạn cần nhất — không gì bị bỏ sót.',
-  'onboarding_value_headline_3': 'Lưu loát không phải bài kiểm tra. Đó là cảm giác.',
-  'onboarding_value_body_3': 'Không còn dịch trong đầu. Không còn đứng hình. Chỉ là bạn, nói chính xác điều bạn muốn.',
+  'onboarding_value_headline_1': 'Có người nở sớm\nCó người nở muộn\nĐều đẹp cả',
+  'onboarding_value_body_1': 'Flowering phát triển cùng bạn,\ntheo nhịp riêng của bạn',
+  'onboarding_value_headline_2': 'Gieo một lần\nNở mãi không tàn',
+  'onboarding_value_body_2': 'Học hôm nay, nhớ ngày mai —\nvà tháng sau, và mãi mãi',
+  'onboarding_value_headline_3': 'Cùng một mặt trời\nNhững đóa hoa khác nhau',
+  'onboarding_value_body_3': 'Mỗi người học theo cách riêng\nFlowering tạo con đường của riêng bạn',
   'onboarding_next': 'Tiếp',
   'onboarding_ready': 'Tôi đã sẵn sàng',
 
@@ -271,6 +285,17 @@ const Map<String, String> viVN = {
   'continue_with_apple': 'Tiếp tục với Apple',
   'continue_with_google': 'Tiếp tục với Google',
 
+  // Auth — Firebase error codes (never expose e.message — use these mapped keys)
+  'auth_error_invalid_credential': 'Thông tin đăng nhập không hợp lệ. Vui lòng thử lại.',
+  'auth_error_user_disabled': 'Tài khoản này đã bị vô hiệu hóa.',
+  'auth_error_user_not_found': 'Không tìm thấy tài khoản với thông tin này.',
+  'auth_error_wrong_password': 'Mật khẩu không đúng. Vui lòng thử lại.',
+  'auth_error_network': 'Lỗi mạng. Vui lòng kiểm tra kết nối.',
+  'auth_error_too_many_requests': 'Quá nhiều lần thử. Vui lòng đợi và thử lại.',
+  'auth_error_account_exists_different_credential': 'Tài khoản đã tồn tại với phương thức đăng nhập khác.',
+  'auth_error_operation_not_allowed': 'Phương thức đăng nhập này không được hỗ trợ.',
+  'auth_error_generic': 'Xác thực thất bại. Vui lòng thử lại.',
+
   // Grammar Correction
   'corrected': 'Đã sửa',
   'hide': 'Ẩn',
@@ -290,4 +315,15 @@ const Map<String, String> viVN = {
   'empty_explore_lessons': 'Khám phá bài học',
   'empty_no_internet': 'Không có kết nối internet',
   'empty_check_connection': 'Kiểm tra kết nối và thử lại',
+
+  // Scenarios (Home top-tabs)
+  'tab_for_you': 'Dành cho bạn',
+  'tab_flowering': 'Flowering',
+  'scenarios_empty_default': 'Chưa có kịch bản',
+  'scenarios_empty_personal':
+      'Hoàn thành giới thiệu để mở khóa kịch bản cá nhân hóa',
+  'scenarios_error_generic': 'Không thể tải kịch bản. Kéo để thử lại.',
+  'access_tier_pro_badge': 'PRO',
+  'source_ai_badge': 'AI',
+  'source_kol_badge': 'KOL',
 };

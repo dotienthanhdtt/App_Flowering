@@ -38,11 +38,18 @@ Future<void> main() async {
    // Initialize Hive local storage
    await Hive.initFlutter();
 
-   // Initialize all core services in dependency order
-   await initializeServices();
+   // Only the services required for the first frame + splash auth decision.
+   // Non-critical services (audio, subscriptions, connectivity listeners)
+   // are kicked off below after the first frame paints.
+   await initializeCriticalServices();
  } catch (e) {
    e.printError();
  }
 
   runApp(const FloweringApp());
+
+  // Defer non-critical init until after first frame to cut time-to-interactive.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    initializeDeferredServices();
+  });
 }

@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import '../controllers/main-shell-controller.dart';
 import '../../chat/controllers/chat-home-controller.dart';
 import '../../lessons/controllers/read-controller.dart';
+import '../../scenarios/controllers/flowering_feed_controller.dart';
+import '../../scenarios/controllers/for_you_feed_controller.dart';
 import '../../vocabulary/controllers/vocabulary-controller.dart';
 import '../../profile/controllers/profile-controller.dart';
 
@@ -12,6 +14,14 @@ class MainShellBinding extends Bindings {
   void dependencies() {
     Get.put<MainShellController>(MainShellController(), permanent: true);
     Get.lazyPut<ChatHomeController>(() => ChatHomeController(), fenix: true);
+    Get.lazyPut<FloweringFeedController>(
+      () => FloweringFeedController(),
+      fenix: true,
+    );
+    Get.lazyPut<ForYouFeedController>(
+      () => ForYouFeedController(),
+      fenix: true,
+    );
     Get.lazyPut<ReadController>(() => ReadController(), fenix: true);
     Get.lazyPut<VocabularyController>(() => VocabularyController(), fenix: true);
     Get.lazyPut<ProfileController>(() => ProfileController(), fenix: true);

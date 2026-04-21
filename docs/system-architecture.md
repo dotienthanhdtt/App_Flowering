@@ -10,7 +10,7 @@ Flowering uses a **feature-first clean architecture** with Flutter and GetX for 
 ┌─────────────────────────────────────────────────────────────┐
 │                         Presentation Layer                   │
 │  ┌──────────────────────────────────────────────────────┐   │
-│  │   Features (Auth, Home, Chat, Lessons, Profile)      │   │
+│  │   Features (Auth, Home, Chat, Scenarios, Profile)    │   │
 │  │   - Views (UI Components)                            │   │
 │  │   - Controllers (Business Logic)                     │   │
 │  │   - Bindings (Dependency Injection)                  │   │
@@ -33,7 +33,10 @@ Flowering uses a **feature-first clean architecture** with Flutter and GetX for 
 │  │   Core Services ✅                                   │   │
 │  │   - ApiClient (Dio HTTP Client) ✅                   │   │
 │  │   - StorageService (Hive Cache) ✅                   │   │
-│  │   - AuthStorage (Token Storage) ✅                   │   │
+│  │   - AuthStorage (Secure Token Storage) ✅             │   │
+│  │   - LanguageContextService (Active Language) ✅       │   │
+│  │   - CacheInvalidatorService (Language-Scoped) ✅      │   │
+│  │   - TranslationService (i18n) ✅                      │   │
 │  │   - AudioService (Voice I/O) ✅                      │   │
 │  │   - ConnectivityService (Network Status) ✅          │   │
 │  └──────────────────────────────────────────────────────┘   │
@@ -70,7 +73,7 @@ lib/
 │   │   └── auth_interceptor.dart      # Token injection
 │   ├── services/                      # Core services
 │   │   ├── storage_service.dart       # Hive operations
-│   │   ├── auth_storage.dart          # Secure token storage
+│   │   ├── auth_storage.dart          # flutter_secure_storage (Keychain/Keystore, hardware-backed)
 │   │   ├── connectivity_service.dart  # Network monitoring
 │   │   └── audio/                     # Audio I/O (TTS & STT)
 │   │       ├── models/                # TtsEvent, SttResult, VoiceInputResult
@@ -260,6 +263,14 @@ Future<void> clearAllCaches();
 - Hive box corruption: try-catch with box recreation
 - Validation on read operations
 
+**Onboarding Progress Persistence (Phase 6.10 ✅):**
+- **Key:** `onboarding_progress` in `preferences` box
+- **Format:** JSON string (schema versioned for future compatibility)
+- **Tracked Fields:** `native_lang{code,id}`, `learning_lang{code,id}`, `chat{conversation_id}`, `profileComplete`, `updated_at`
+- **Safety:** Unknown schema versions return empty (no crash on downgrade)
+- **Legacy Migration:** Auto-converts old `onboarding_conversation_id` preference to unified progress on first init
+- **Resume Logic:** Splash screen checks progress and routes user to last completed checkpoint (scenario gift → chat → language selection → welcome)
+
 #### AuthStorage
 Token management using `flutter_secure_storage` (iOS Keychain / Android Keystore).
 
@@ -431,6 +442,56 @@ Future<void> clearTranslationCache();
 - Model: `WordTranslationModel` with snake_case JSON serialization
 - Fallback reads: Supports old camelCase keys from cached data during migration
 
+#### LanguageContextService (Phase 6.11 ✅ Multi-Language Adaptation)
+Single source of truth for the active learning language. Persisted to Hive preferences box; read by content-scoped APIs and controllers.
+
+**Observable State:**
+```dart
+final activeCode = RxnString();  // e.g., 'es', 'fr', 'ja'
+final activeId = RxnString();    // UUID of enrolled language
+```
+
+**Storage:**
+- Hive box: `preferences`
+- Keys: `active_language_code`, `active_language_id`
+- Persisted across sessions
+
+**Key Methods:**
+```dart
+Future<LanguageContextService> init()  // Load from Hive on boot
+Future<void> setActive(String code, String? id)  // Persist and emit
+Future<void> clear()  // Clear on logout
+Future<String?> resyncFromServer()  // Fetch enrollments, sync active
+```
+
+**Integration Points:**
+- Must init BEFORE ApiClient so interceptors see valid service on boot
+- Accessed by `ActiveLanguageInterceptor` (header injection)
+- Accessed by `LanguageRecoveryInterceptor` (resync on 403 not-enrolled)
+- Read by content controllers (chat, lessons, read) for UI context
+
+#### CacheInvalidatorService (Phase 6.11 ✅ Multi-Language Adaptation)
+Subscribes to `LanguageContextService.activeCode` and flushes language-scoped caches on every language switch. Also runs one-time migration flush on first launch after upgrade.
+
+**Features:**
+- **On Language Switch:** Clears lessons cache, chat cache, and progress/attempt preferences
+- **On First Launch:** Detects pre-partition content (flag: `lang_migration_v1_done`) and performs one-time flush
+- **Worker Pattern:** Uses GetX `ever()` worker to react to language changes
+- **Safe Seeding:** Skips flush on boot emission (old persisted value) to avoid spurious clears on fresh installs
+
+**Key Methods:**
+```dart
+Future<CacheInvalidatorService> init()  // Subscribe and run migration if needed
+Future<void> _flush(StorageService storage)  // Internal: clear caches
+```
+
+**Flushes:**
+- `lessons_cache` — All lesson content
+- `lessons_access` — LRU access timestamps
+- `chat_cache` — All chat history
+- `progress_*` preferences — Lesson/scenario/exercise progress
+- `attempt_*` preferences — Word attempts, corrections, etc.
+
 ### 4. Infrastructure Layer
 
 **Purpose:** Low-level platform integrations.
@@ -485,7 +546,7 @@ BaseOptions(
 
 ### Interceptor Chain
 
-**Order:** Retry → Auth → Logging
+**Order:** Retry → Auth → ActiveLanguage → LanguageRecovery → Logging
 
 1. **RetryInterceptor:** Retry network/server errors with exponential backoff
    - Max retries: 3
@@ -500,7 +561,22 @@ BaseOptions(
    - On refresh failure: clear tokens → redirect to login
    - Uses separate Dio instance for refresh to avoid loops
 
-3. **LoggingInterceptor:** Request/response logging (dev mode only)
+3. **ActiveLanguageInterceptor (Phase 6.11 ✅):** Attaches `X-Learning-Language` header to content-scoped requests
+   - **Purpose:** Inform backend which language partition user is accessing
+   - **Header:** `X-Learning-Language: <code>` (e.g., `es`, `fr`, `ja`)
+   - **Skip Prefixes:** `/auth`, `/languages`, `/users/me`, `/subscription`, `/admin`
+   - **Per-Request Override:** Respects explicit `X-Learning-Language` header in request (caller priority)
+   - **Source:** Reads from `LanguageContextService.activeCode`
+   - **Graceful Degradation:** Continues if service not registered or code is null
+
+4. **LanguageRecoveryInterceptor (Phase 6.11 ✅):** Handles 403 "not enrolled" with one-shot resync+retry
+   - **Purpose:** Recover when user enrolls in new language but cache hasn't synced
+   - **Trigger:** HTTP 403 with error code indicating language not enrolled
+   - **Flow:** Calls `LanguageContextService.resyncFromServer()` once, then retries original request
+   - **Re-entrancy Guard:** Prevents infinite retry loops (max 1 resync per request)
+   - **Silent Failure:** If resync fails, original 403 propagates to caller
+
+5. **LoggingInterceptor:** Request/response logging (dev mode only)
    - Logs: method, path, status code
    - Format: `→ POST /auth/login`, `← 200 /auth/login`, `✗ 401 /user/profile`
 
@@ -530,11 +606,18 @@ try {
 - `DioExceptionType.connectionTimeout` → `TimeoutException`
 - `DioExceptionType.connectionError` → `NetworkException`
 - Status 401 → `UnauthorizedException`
-- Status 403 → `ForbiddenException`
+- Status 403 → `ForbiddenException` or **`LanguageContextError`** (Phase 6.11 ✅)
 - Status 404 → `NotFoundException`
 - Status 422 → `ValidationException`
 - Status 5xx → `ServerException`
 - Others → `ApiErrorException`
+
+**LanguageContextError Variants (Phase 6.11 ✅):**
+New error enum in `api_exceptions.dart` for language-specific 403 responses:
+- `notEnrolled` — User language not in enrollments (resync → retry)
+- `languageMissingOnServer` — Enrolled language deleted from backend
+- `enrollmentExpired` — User's language enrollment expired
+- `languageDisabled` — Admin disabled language globally
 
 ### API Contract
 
@@ -742,9 +825,11 @@ if (response.statusCode == 401) {
 ### Global Services (app_bindings.dart)
 
 ```dart
-Get.lazyPut(() => ApiClient());
-Get.lazyPut(() => StorageService());
 Get.lazyPut(() => AuthStorage());
+Get.lazyPut(() => StorageService());
+Get.lazyPut(() => LanguageContextService());
+Get.lazyPut(() => CacheInvalidatorService());
+Get.lazyPut(() => OnboardingProgressService());
 Get.lazyPut(() => ConnectivityService());
 
 // Audio providers (contracts)
@@ -755,29 +840,76 @@ Get.lazyPut<AudioRecorderProviderContract>(() => RecordAudioProvider());
 // Audio services
 Get.lazyPut(() => TtsService());
 Get.lazyPut(() => VoiceInputService());
+
+Get.lazyPut(() => ApiClient());  // Requires LanguageContextService for interceptors
+Get.lazyPut(() => RevenueCatService());
+Get.lazyPut(() => SubscriptionService());
+
+Get.put(TranslationService(), permanent: true);  // Permanent lifetime
 ```
 
 **Service Initialization:**
-All services extend `GetxService` and implement `init()` method:
+All services extend `GetxService` and implement `init()` method. Initialize in strict order:
 ```dart
+// 1. Token & storage
+final authStorage = Get.find<AuthStorage>();
+await authStorage.init();
+
 final storage = Get.find<StorageService>();
 await storage.init();
+
+// 2. Language context (required before cache invalidation)
+final langContext = Get.find<LanguageContextService>();
+await langContext.init();
+
+final cacheInvalidator = Get.find<CacheInvalidatorService>();
+await cacheInvalidator.init();
+
+// 3. Onboarding state
+final onboardingProgress = Get.find<OnboardingProgressService>();
+await onboardingProgress.init();
+
+// 4. Network & audio
+final connectivity = Get.find<ConnectivityService>();
+await connectivity.init();
+
+Get.find<TtsProviderContract>().init();
+Get.find<SttProviderContract>().init();
+Get.find<AudioRecorderProviderContract>().init();
 
 final ttsService = Get.find<TtsService>();
 await ttsService.init();
 
 final voiceInputService = Get.find<VoiceInputService>();
 await voiceInputService.init();
+
+// 5. API client (requires language context for interceptor)
+final apiClient = Get.find<ApiClient>();
+await apiClient.init();
+
+// 6. Subscriptions & i18n
+final revenueCat = Get.find<RevenueCatService>();
+await revenueCat.init();
+
+final subscriptionService = Get.find<SubscriptionService>();
+await subscriptionService.init();
+
+final translationService = Get.find<TranslationService>();
+await translationService.init();
 ```
 
-**Initialization Order:**
-1. ApiClient
-2. StorageService (loads preferences)
-3. AuthStorage
-4. ConnectivityService
-5. Audio providers (TtsProvider, SttProvider, RecorderProvider)
-6. TtsService (initializes provider, loads user preferences)
-7. VoiceInputService (initializes providers)
+**Initialization Order (Phase 6.11+ ✅ Updated for Multi-Language):**
+1. AuthStorage (flutter_secure_storage, Keychain/Keystore)
+2. StorageService (Hive operations, loads preferences)
+3. LanguageContextService (loads active_language_code, active_language_id from Hive)
+4. CacheInvalidatorService (subscribes to language changes, runs migration flush)
+5. OnboardingProgressService (restores onboarding checkpoints from Hive)
+6. ConnectivityService (network status monitoring)
+7. Audio providers (TtsProvider, SttProvider, RecorderProvider)
+8. TtsService + VoiceInputService (queue-based TTS, STT + recording)
+9. ApiClient (Dio client with interceptor chain; accesses LanguageContextService)
+10. RevenueCatService + SubscriptionService (in-app purchases)
+11. TranslationService (i18n, permanent lifetime)
 
 ### Feature Bindings
 

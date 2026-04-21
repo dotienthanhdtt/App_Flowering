@@ -88,8 +88,8 @@ const Map<String, String> enUS = {
 
   // Bottom Navigation
   'nav_chat': 'Chat',
-  'nav_read': 'Read',
-  'nav_vocabulary': 'Vocabulary',
+  'nav_read': 'Reading',
+  'nav_vocabulary': 'Vocab',
   'nav_profile': 'Profile',
 
   // Chat Home
@@ -102,11 +102,20 @@ const Map<String, String> enUS = {
   'read_empty': 'No lessons available',
   'lesson_count': '@count scenarios',
   'lesson_locked': 'Locked',
+  'language_picker_title': 'Learning language',
+  'language_picker_empty': 'No languages yet. Add one from settings.',
+  'language_picker_close': 'Close',
 
   // Vocabulary
   'vocabulary_title': 'Vocabulary',
   'vocabulary_search': 'Search words...',
   'vocabulary_empty': 'No words learned yet',
+
+  // Language context errors
+  'err_language_header_missing': 'Missing learning language. Please reopen the app.',
+  'err_language_unknown': 'That language is no longer supported.',
+  'err_language_not_enrolled': "You haven't enrolled in this language yet.",
+  'err_language_required': 'Please pick a learning language to continue.',
 
   // Errors
   'network_error': 'Please check your internet connection',
@@ -138,6 +147,11 @@ const Map<String, String> enUS = {
   // Onboarding — AI Chat (Screen 07)
   'chat_session_error': 'Could not start session. Please try again.',
   'chat_session_expired': 'Session expired. Please restart onboarding.',
+  'chat_session_invalid': 'Session not found. Let\'s start a new conversation.',
+  'chat_rate_limit_create': 'Too many session attempts. Please wait an hour before starting again.',
+  'chat_rate_limit_chat': 'Slow down — you\'re sending messages too quickly.',
+  'resume_chat_failed': 'Couldn\'t restore your previous conversation.',
+  'resume_chat_retry': 'Try again',
   'chat_retry': 'Retry',
   'chat_leave_confirm': 'Leave conversation?',
   'chat_leave_message': 'Your progress will be lost if you leave now.',
@@ -228,12 +242,12 @@ const Map<String, String> enUS = {
 
   // Onboarding — Value Screens (Screens 03/04/05)
   'onboarding_skip': 'Skip',
-  'onboarding_value_headline_1': 'A path shaped around you',
-  'onboarding_value_body_1': 'You lead. Flowering follows.\nEvery lesson adapts to where you are and where you\'re headed',
-  'onboarding_value_headline_2': 'Learn once. Remember forever.',
-  'onboarding_value_body_2': 'The secret? Timing. Flowering reviews words right when your brain needs it most — so nothing slips through.',
-  'onboarding_value_headline_3': 'Fluency isn\'t a test. It\'s a feeling.',
-  'onboarding_value_body_3': 'No more translating in your head. No more freezing up. Just you, saying exactly what you mean.',
+  'onboarding_value_headline_1': 'Some are early bloomers\nSome are late bloomers\nBoth are beautiful',
+  'onboarding_value_body_1': 'Flowering grows with you,\nat your own pace',
+  'onboarding_value_headline_2': 'Plant it once\nWatch it bloom forever',
+  'onboarding_value_body_2': 'Learn today, remember tomorrow\nand next month and forever',
+  'onboarding_value_headline_3': 'Same sun\nDifferent flowers',
+  'onboarding_value_body_3': 'Everyone learns differently\nFlowering creates your own path',
   'onboarding_next': 'Next',
   'onboarding_ready': 'I\'m Ready',
 
@@ -271,6 +285,17 @@ const Map<String, String> enUS = {
   'continue_with_apple': 'Continue with Apple',
   'continue_with_google': 'Continue with Google',
 
+  // Auth — Firebase error codes (never expose e.message — use these mapped keys)
+  'auth_error_invalid_credential': 'Invalid credentials. Please try again.',
+  'auth_error_user_disabled': 'This account has been disabled.',
+  'auth_error_user_not_found': 'No account found with these credentials.',
+  'auth_error_wrong_password': 'Incorrect password. Please try again.',
+  'auth_error_network': 'Network error. Please check your connection.',
+  'auth_error_too_many_requests': 'Too many attempts. Please wait and try again.',
+  'auth_error_account_exists_different_credential': 'An account already exists with a different sign-in method.',
+  'auth_error_operation_not_allowed': 'This sign-in method is not enabled.',
+  'auth_error_generic': 'Authentication failed. Please try again.',
+
   // Grammar Correction
   'corrected': 'Corrected',
   'hide': 'Hide',
@@ -290,4 +315,15 @@ const Map<String, String> enUS = {
   'empty_explore_lessons': 'Explore Lessons',
   'empty_no_internet': 'No internet connection',
   'empty_check_connection': 'Check your connection and try again',
+
+  // Scenarios (Home top-tabs)
+  'tab_for_you': 'For You',
+  'tab_flowering': 'Flowering',
+  'scenarios_empty_default': 'No scenarios yet',
+  'scenarios_empty_personal':
+      'Complete onboarding to unlock personalized scenarios',
+  'scenarios_error_generic': "Couldn't load scenarios. Pull to retry.",
+  'access_tier_pro_badge': 'PRO',
+  'source_ai_badge': 'AI',
+  'source_kol_badge': 'KOL',
 };

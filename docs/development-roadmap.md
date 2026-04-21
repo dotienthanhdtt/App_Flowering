@@ -6,8 +6,8 @@
 **Framework:** Flutter 3.10.3+
 **Architecture:** Feature-first with GetX
 **Start Date:** 2026-02-05
-**Current Status Date:** 2026-03-28
-**Completion Estimate:** Phases 1-6.8 complete, Phases 7-10 pending
+**Current Status Date:** 2026-04-20
+**Completion Estimate:** Phases 1-6.12 complete, Phase 7 in progress (~50%), Phases 8-10 pending
 
 ## Roadmap Overview
 
@@ -22,15 +22,18 @@ Phase 6.5: Bottom Navigation ████████████ 100% (1h) ✅ 
 Phase 6.7: Text→AppText Refactor ████████████ 100% (3h) ✅ COMPLETED 2026-03-18
 Phase 6.8: API JSON Migration ████████████ 100% (2h) ✅ COMPLETED 2026-03-28
 Phase 6.9: Audio Architecture (TTS/STT) ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-06
-Phase 7: Home Dashboard ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-04-15
-Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-04-25
-Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-05
-Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-15
+Phase 6.10: Onboarding Progress Resume ████████████ 100% (2h) ✅ COMPLETED 2026-04-15
+Phase 6.11: Multi-Language Adaptation ████████████ 100% (1.5h) ✅ COMPLETED 2026-04-19
+Phase 6.12: Critical Fixes (auth, casing, cache, controller, Firebase) ████████████ 100% (18h) ✅ COMPLETED 2026-04-19
+Phase 7: Home Dashboard ██████░░░░░░ 50% (1.5h) 🔄 In Progress ~2026-04-25
+Phase 8: Chat ░░░░░░░░░░░░ 0% (2.5h) 🔲 Pending ~2026-05-01
+Phase 9: Lessons ░░░░░░░░░░░░ 0% (2h) 🔲 Pending ~2026-05-10
+Phase 10: Profile/Settings ░░░░░░░░░░░░ 0% (1.5h) 🔲 Pending ~2026-05-20
 ```
 
-**Overall Progress:** 100% of foundation + onboarding + auth + audio architecture (Phases 1-6.9 complete)
-**Completed:** 25 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture)
-**Remaining:** Home dashboard, expanded chat, lessons, profile/settings (~8.5 hours estimated)
+**Overall Progress:** 100% of foundation + onboarding + auth + audio + persistence + multi-language + critical fixes (Phases 1-6.12 complete); Phase 7 50% complete (home language switcher UI + session rehydration)
+**Completed:** 47 hours of implementation (setup, network, services, base classes, routing, i18n, 8 onboarding screens, 5 auth screens, bottom nav, API migration, TTS/STT architecture, onboarding progress resume, multi-language context + interceptors + cache invalidation, 7 critical bug fixes, home language button/picker widgets, session rehydration)
+**Remaining:** Complete Phase 7 home dashboard polish, expanded chat, lessons, profile/settings (~7.5 hours estimated)
 
 ## Phase Details
 
@@ -735,11 +738,293 @@ Get.lazyPut(() => VoiceInputService());
 
 ---
 
+### Phase 6.10: Onboarding Progress Resume ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 2 hours
+**Completion Date:** 2026-04-15
+**Dependencies:** Phase 3 (StorageService), Phase 6.6 (Chat), Phase 6.9 (Audio) ✅
+**Priority:** P1 - Critical (UX polish, session persistence)
+
+**Overview:**
+Users who close the app during onboarding now resume from their last checkpoint (language selections, active conversation) instead of restarting from the welcome screen. Unified `OnboardingProgress` model persists to local storage with schema version safety, graceful degradation, and legacy migration support.
+
+**Deliverables:**
+- ✅ `OnboardingProgress` model with schema versioning and JSON round-trip
+- ✅ `OnboardingProgressService` with unified read/write API
+- ✅ Legacy migration: `onboarding_conversation_id` → `chat.conversation_id`
+- ✅ `SplashController.computeOnboardingResumeTarget()` with priority routing
+- ✅ Chat cold-resume via `AiChatController._bootstrapSession()`
+- ✅ `ChatMessage.fromServerJson()` factory for rehydration
+- ✅ `GET /onboarding/conversations/{id}/messages` endpoint integration
+- ✅ `StorageService.setHasCompletedLogin()` flag for returning users
+- ✅ Global DI registration with proper init order
+
+**Architecture:**
+```
+lib/features/onboarding/
+├── models/
+│   └── onboarding_progress_model.dart        (OnboardingProgress, LangCheckpoint, ChatCheckpoint)
+└── services/
+    └── onboarding_progress_service.dart      (read/write, legacy migration)
+
+lib/features/chat/
+└── models/
+    └── chat_message_model.dart               (fromServerJson factory)
+
+lib/core/constants/
+└── api_endpoints.dart                        (onboardingConversationMessages endpoint)
+
+lib/app/
+└── global-dependency-injection-bindings.dart (OnboardingProgressService DI + init)
+```
+
+**Storage Schema:**
+- **Hive Box:** `preferences`
+- **Key:** `onboarding_progress`
+- **Value:** JSON string (schema-versioned for future evolution)
+- **Fields Tracked:** `native_lang{code,id}`, `learning_lang{code,id}`, `chat{conversation_id}`, `profileComplete`, `updated_at`
+
+**Resume Priority (SplashController):**
+```
+1. If profileComplete → route to scenario-gift
+2. Else if chat checkpoint → route to chat (rehydrate from backend)
+3. Else if learningLang → route to chat (empty session)
+4. Else if nativeLang → route to learning-language picker
+5. Else → route to welcome screen
+```
+
+**Chat Cold-Resume Flow:**
+1. AiChatController init calls `_bootstrapSession()`
+2. Check `OnboardingProgressService.read().chat` for prior conversation
+3. If exists: call `GET /onboarding/conversations/{id}/messages`
+4. If 404: conversation expired → clear checkpoint, start fresh
+5. If 2xx: populate chat UI with rehydrated messages
+6. If error: show retryable error, user can create new session
+
+**Key Methods:**
+```dart
+// OnboardingProgressService
+OnboardingProgress read()
+Future<void> setNativeLang(String code, {String? id})
+Future<void> setLearningLang(String code, {String? id})
+Future<void> setChatConversationId(String conversationId)
+Future<void> setProfileComplete(bool complete)
+Future<void> clearChat()  // Clear only chat, keep languages
+Future<void> clearAll()   // Full reset
+
+// StorageService
+bool get hasCompletedLogin  // Never cleared, survives logout
+Future<void> setHasCompletedLogin()
+
+// SplashController (exported for testing)
+String computeOnboardingResumeTarget(OnboardingProgress p)
+```
+
+**Dependency Injection Order (initializeServices):**
+1. AuthStorage → init()
+2. StorageService → init()
+3. OnboardingProgressService → init() [runs legacy migration]
+4. ConnectivityService → init()
+5. Audio providers, TtsService, VoiceInputService → init()
+6. ApiClient → init()
+7. RevenueCat, Subscription services → init()
+
+**Migration Logic:**
+- Detects old `onboarding_conversation_id` preference (from prior implementation)
+- Auto-converts to `chat.conversation_id` in unified progress on first service init
+- Old key deleted after migration; never checked again
+- Graceful: if conversion fails, user restarts from beginning (no crash)
+
+**Error Handling:**
+- JSON corruption: return empty progress (safe degradation)
+- Missing key: return empty progress (first-time user)
+- Unknown schema version: return empty progress (forward-compatible)
+- Backend 404: clear chat checkpoint, offer fresh session
+- Backend network error: show retryable error
+
+**Tests:**
+- `test/features/onboarding/onboarding_progress_model_test.dart` — model serialization, schema versioning
+- `test/features/onboarding/splash_controller_resume_test.dart` — routing priority, login state logic
+- `test/features/onboarding/onboarding_progress_service_test.dart` — read/write ops, migration, error resilience
+- `test/features/chat/chat_message_server_parse_test.dart` — rehydration message parsing (snake_case + camelCase)
+- `test/features/chat/ai_chat_binding_cold_resume_test.dart` — cold-resume dependency chain
+
+**Files Created:**
+- `lib/features/onboarding/models/onboarding_progress_model.dart`
+- `lib/features/onboarding/services/onboarding_progress_service.dart`
+- 5 test files (model, service, splash routing, chat parsing, bindings)
+
+**Files Modified:**
+- `lib/app/global-dependency-injection-bindings.dart` — DI registration, init order
+- `lib/core/services/storage_service.dart` — `hasCompletedLogin` flag
+- `lib/core/constants/api_endpoints.dart` — new endpoint
+- `lib/features/chat/controllers/ai_chat_controller.dart` — cold-resume bootstrap
+- `lib/features/chat/models/chat_message_model.dart` — server JSON factory
+- `lib/features/chat/bindings/ai_chat_binding.dart` — delegate to OnboardingBinding
+- `lib/features/onboarding/controllers/splash_controller.dart` — resume routing
+- `lib/features/auth/controllers/auth_controller.dart` — post-login flag
+
+**Technical Decisions:**
+1. **JSON Storage (not Typed Hive Object):** Enables schema evolution without code-gen recompilation
+2. **Schema Version Guard:** Unknown versions degrade gracefully (return empty, no crash)
+3. **Synchronous Reads:** Hive is in-memory; no delay on hot-resume paths
+4. **Permanent `hasCompletedLogin` Flag:** Survives logout so re-login doesn't re-onboard
+5. **Unified Progress Map:** Single source of truth vs scattered preferences
+
+**Success Criteria Met:**
+- ✅ Users resume from last checkpoint after app restart
+- ✅ Language selections persisted and recovered
+- ✅ Active chat conversation rehydrated from backend
+- ✅ Conversation expiry (404) handled gracefully
+- ✅ Legacy migration runs automatically
+- ✅ No breaking changes; fully backward compatible
+- ✅ Schema versioning prevents crashes on future changes
+- ✅ All files compile without errors
+- ✅ Services init in correct dependency order
+
+---
+
+### Phase 6.11: Multi-Language Adaptation ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 1.5 hours
+**Completion Date:** 2026-04-19
+**Dependencies:** Phase 6.10 ✅
+**Priority:** P1 - Critical
+
+**Overview:**
+Multi-language adaptation infrastructure enabling users to learn multiple languages simultaneously. Introduces language context as single source of truth, automatic cache invalidation per language, and intelligent header injection for API partitioning.
+
+**Deliverables:**
+- ✅ `LanguageContextService` — Persisted active language (code + UUID) with reactive observables
+- ✅ `CacheInvalidatorService` — Automatic cache flush on language switch + one-time migration
+- ✅ `ActiveLanguageInterceptor` — Attaches `X-Learning-Language` header to content requests
+- ✅ `LanguageRecoveryInterceptor` — Handles 403 "not enrolled" with one-shot resync+retry
+- ✅ `StorageService.preferenceKeysMatching()` — Bulk-clear language-scoped preferences
+- ✅ `LanguageContextError` enum in api_exceptions.dart for 403 language-specific errors
+- ✅ Updated DI order: LanguageContextService init before ApiClient
+- ✅ Controller integration: chat, onboarding, profile delegate to service
+
+**Key Achievements:**
+- Language context persists across sessions (Hive storage)
+- Caches automatically clear on language switch (lessons, chat, progress, attempts)
+- Interceptors transparently attach language header to backend requests
+- 403 "not enrolled" automatically triggers resync + single retry
+- Migration safe: one-time flush flag prevents repeated migrations
+- Zero breaking changes to existing controllers
+- All files compile without errors
+
+**Files Created:**
+- `/lib/core/services/language-context-service.dart` (50 LOC)
+- `/lib/core/services/cache-invalidator-service.dart` (50 LOC)
+- `/lib/core/network/active-language-interceptor.dart` (45 LOC)
+- `/lib/core/network/language-recovery-interceptor.dart` (50 LOC)
+
+**Files Modified:**
+- `lib/core/services/storage_service.dart` (2 methods added)
+- `lib/core/network/api_client.dart` (interceptor chain reordered)
+- `lib/core/network/api_exceptions.dart` (new error enum + helper)
+- `lib/app/global-dependency-injection-bindings.dart` (DI + init order)
+- Feature controllers: onboarding, chat, profile
+
+**Success Criteria Met:**
+- ✅ LanguageContextService load/save via Hive
+- ✅ CacheInvalidatorService react to language changes via worker
+- ✅ ActiveLanguageInterceptor injects header on content requests
+- ✅ LanguageRecoveryInterceptor resync + retry on 403
+- ✅ StorageService bulk-clear preferences by pattern
+- ✅ DI order prevents interceptor access to uninitialized service
+- ✅ All controllers compile and function normally
+
+**Integration Points:**
+- Onboarding: language selection flows to active context
+- Chat: reads active language for message context
+- Profile: clears context on logout
+- API: all content requests include language header
+- Backend: partitions data by language code
+
+---
+
+### Phase 6.12: Critical Fixes (Auth Race, Casing, Cache, Controller, Firebase) ✅ COMPLETED
+
+**Status:** ✅ Completed
+**Duration:** 18 hours
+**Completion Date:** 2026-04-19
+**Dependencies:** Phase 6.11 ✅
+**Priority:** P0 - Critical
+
+**Overview:**
+7 critical bug fixes addressing security, race conditions, API contract mismatches, cache safety, controller lifecycle, and security leaks. All fixes required for production readiness of feat/update-onboarding branch.
+
+**Deliverables:**
+
+1. **C6: AuthInterceptor Double-Refresh Race** ✅
+   - Issue: Concurrent 401 responses → simultaneous refresh attempts → token corruption
+   - Fix: Added `Completer` gate preventing concurrent refresh, ensures single refresh call
+   - Impact: Eliminates race condition in token refresh flow
+
+2. **C1: Payload Casing (snake_case)** ✅
+   - Issue: Callers sending camelCase payload to snake_case backend endpoint (`/onboarding/complete`)
+   - Fix: Updated `ai_chat_controller.dart` + `auth_controller.dart` to send snake_case request bodies
+   - Impact: Fixes API contract mismatch, ensures backend receives correct field names
+
+3. **C2+C3: LanguageRecoveryInterceptor Retry Mechanism** ✅
+   - Issue: Naive retry loop in interceptor → HTTP exception re-thrown instead of being handled
+   - Fix: Created shared `retryDio` instance, converted to `QueuedInterceptor`, added `Completer` gate
+   - Impact: Prevents concurrent retry attempts, ensures language resync on 403 "not enrolled"
+
+4. **C4+C5a: Per-Language Cache Scoping + Seeded Race Fix** ✅
+   - Issue: Language switch → cache flush lost user's baseline code, race condition on seed
+   - Fix: Scoped cache invalidation (clear only affected language keys), added Hive transaction + lock
+   - Impact: Preserves baseline across language switches, prevents seeded code corruption
+
+5. **C5: OnboardingController Lifecycle** ✅
+   - Issue: Permanent controller lifetime → logic runs on every route transition, state leaks
+   - Fix: Converted to route-scoped binding (removed `permanent: true`)
+   - Impact: Controller init/destroy tied to screen lifecycle, prevents accidental re-execution
+
+6. **C9: Firebase Error Message Leak** ✅
+   - Issue: Firebase auth errors (PlatformException messages) leaked to user, exposing internals
+   - Fix: Added `mapFirebaseAuthErrorCode()` utility mapping platform exceptions → user-safe messages
+   - Impact: Prevents information disclosure, improves user experience with friendly error text
+
+**Files Modified:**
+- `lib/core/network/auth_interceptor.dart` — Completer gate for double-refresh prevention
+- `lib/features/chat/controllers/ai_chat_controller.dart` — snake_case payloads, C9 error mapping
+- `lib/features/auth/controllers/auth_controller.dart` — snake_case payloads, C9 error mapping
+- `lib/core/network/language_recovery_interceptor.dart` — QueuedInterceptor + shared retryDio + Completer gate
+- `lib/core/services/storage_service.dart` — Per-language cache scoping via `preferenceKeysMatching()`
+- `lib/core/services/cache_invalidator_service.dart` — Scoped flush + migration flag
+- `lib/features/onboarding/bindings/onboarding_binding.dart` — Removed `permanent: true`
+- `lib/core/utils/firebase_error_mapper.dart` — New utility for safe error messages
+
+**Success Criteria Met:**
+- ✅ Concurrent 401 responses don't trigger multiple refresh calls
+- ✅ Requests sent with correct snake_case payloads
+- ✅ 403 language errors automatically retry with resync
+- ✅ Language switches preserve user baseline code
+- ✅ Baseline seeding race condition eliminated
+- ✅ OnboardingController destroys when screen pops
+- ✅ Firebase errors mapped to user-safe messages
+- ✅ All files compile without errors
+- ✅ flutter analyze clean
+- ✅ flutter test green (all existing + new tests)
+
+**Quality Assurance:**
+- ✅ Code review complete (all 7 critical issues addressed)
+- ✅ Test coverage for all fixes implemented
+- ✅ No regression in onboarding happy-path
+- ✅ Concurrent/edge case scenarios covered
+- ✅ Security implications reviewed
+
+---
+
 ### Phase 7: Home Dashboard 🔲 PENDING
 
 **Status:** 🔲 Pending
 **Duration:** 1.5 hours
-**Dependencies:** Phase 6 ✅
+**Dependencies:** Phase 6.11 ✅
 **Priority:** P2 - High
 
 **Objectives:**

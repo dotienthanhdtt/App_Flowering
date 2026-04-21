@@ -301,36 +301,54 @@ Call after purchase and on app open. Empty body.
 
 ## Onboarding — no auth required
 
-### POST /onboarding/start
+> **Breaking change (2026-04-14):** `/onboarding/start` is removed. `/onboarding/chat` is now dual-mode.
+> Full spec: [onboarding-api.md](./onboarding-api.md).
+
+### POST /onboarding/chat — Mode A (create session)
 ```json
 // Request
-{ "native_language": "english" }
+{ "nativeLanguage": "vi", "targetLanguage": "en" }
 
 // Response data
-{ "session_id": "token", "expires_at": "2026-03-28T01:00:00Z" }
+{
+  "conversationId": "uuid",
+  "reply": "AI greeting",
+  "messageId": "uuid",
+  "turnNumber": 1,
+  "isLastTurn": false
+}
 ```
 
-### POST /onboarding/chat
+### POST /onboarding/chat — Mode B (chat turn)
 ```json
 // Request
-{ "session_id": "token", "message": "I want to learn Spanish" }
+{ "conversationId": "uuid", "message": "Hello" }
 
 // Response data
-{ "response": "...", "turn_count": 2, "max_turns": 10 }
+{
+  "conversationId": "uuid",
+  "reply": "AI response",
+  "messageId": "uuid",
+  "turnNumber": 2,
+  "isLastTurn": false
+}
 ```
+
+Rate limits per IP: **5/hr** for create (no `conversationId`), **30/hr** for chat turns.
+Errors: `400` expired/max turns, `404` invalid `conversationId`, `429` rate limited.
 
 ### POST /onboarding/complete
 ```json
 // Request
-{ "session_id": "token" }
+{ "conversationId": "uuid" }
 
-// Response data
+// Response data — extracted profile (shape varies)
 {
-  "extracted_profile": {
-    "languages": ["spanish"],
-    "interests": ["travel"],
-    "level": "beginner"
-  }
+  "name": "Thanh",
+  "nativeLanguage": "vi",
+  "targetLanguage": "en",
+  "currentLevel": "B1",
+  "learningGoals": ["business"]
 }
 ```
 

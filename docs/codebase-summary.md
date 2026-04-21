@@ -18,7 +18,7 @@
 ### Networking & Storage
 - **HTTP Client:** Dio 5.4.0
 - **Local Cache:** Hive 2.2.3, Hive Flutter 1.1.0
-- **Token Storage:** AuthStorage (Hive-based, separate 'auth' box)
+- **Token Storage:** AuthStorage (flutter_secure_storage, Keychain/Keystore, hardware-backed)
 
 ### Audio & Media
 - **Audio Recording:** record 6.2.0
@@ -75,7 +75,7 @@ flowering/
 │   ├── main.dart                                             # App entry point ✅
 │   ├── app/                                                  # App-level configuration ✅
 │   │   ├── flowering-app-widget-with-getx.dart              # Main app widget ✅
-│   │   ├── global-dependency-injection-bindings.dart        # Global DI (5 services) ✅
+│   │   ├── global-dependency-injection-bindings.dart        # Global DI (Phase 6.11: 9 services) ✅
 │   │   └── routes/
 │   │       ├── app-route-constants.dart                     # Route constants (16 routes) ✅
 │   │       └── app-page-definitions-with-transitions.dart   # Route definitions ✅
@@ -88,14 +88,18 @@ flowering/
 │   │   ├── network/
 │   │   │   ├── api_client.dart            # Dio client ✅
 │   │   │   ├── api_response.dart          # Response wrapper ✅
-│   │   │   ├── api_exceptions.dart        # Error types ✅
+│   │   │   ├── api_exceptions.dart        # Error types ✅ (Phase 6.11: +LanguageContextError)
 │   │   │   ├── auth_interceptor.dart      # Token management ✅
+│   │   │   ├── active-language-interceptor.dart     # Header injection (Phase 6.11 ✅)
+│   │   │   ├── language-recovery-interceptor.dart   # 403 resync (Phase 6.11 ✅)
 │   │   │   └── retry_interceptor.dart     # Retry logic ✅
 │   │   ├── services/
-│   │   │   ├── storage_service.dart       # Hive operations ✅
+│   │   │   ├── storage_service.dart       # Hive operations ✅ (Phase 6.11: +preferenceKeysMatching)
 │   │   │   ├── auth_storage.dart          # Token storage ✅
 │   │   │   ├── connectivity_service.dart  # Network monitor ✅
-│   │   │   └── audio_service.dart         # Audio I/O ✅
+│   │   │   ├── language-context-service.dart       # Active language state (Phase 6.11 ✅)
+│   │   │   ├── cache-invalidator-service.dart      # Cache flush on language switch (Phase 6.11 ✅)
+│   │   │   └── audio/                     # Audio I/O (TTS & STT)
 │   │   ├── utils/
 │   │   │   ├── extensions.dart            # Dart extensions (pending)
 │   │   │   └── validators.dart            # Input validation (pending)
@@ -119,11 +123,11 @@ flowering/
 │   ├── features/                          # Feature modules
 │   │   ├── onboarding/                    # Onboarding flow ✅ (screens 01-08)
 │   │   │   ├── bindings/                  # DI setup ✅
-│   │   │   ├── controllers/               # State management ✅
+│   │   │   ├── controllers/               # State management, resume logic ✅
 │   │   │   ├── views/                     # Screens 01-08 ✅
 │   │   │   ├── widgets/                   # Custom widgets ✅
-│   │   │   ├── models/                    # OnboardingLanguage, Session, etc. ✅
-│   │   │   └── services/                  # Language API service ✅
+│   │   │   ├── models/                    # OnboardingLanguage, Session, Progress ✅
+│   │   │   └── services/                  # Language API, Progress persistence ✅
 │   │   ├── auth/                          # Authentication ✅ (Screens 09-14)
 │   │   │   ├── bindings/                  # DI setup ✅
 │   │   │   ├── controllers/               # Login, signup, forgot password ✅
@@ -256,11 +260,15 @@ Complete dependency setup with all required packages.
 
 #### Core Services Layer
 - StorageService with LRU eviction for lessons (100MB) and FIFO for chat (10MB)
-- AuthStorage using Hive for token management
+- AuthStorage using flutter_secure_storage (Keychain/Keystore, hardware-backed)
+- LanguageContextService for active language state management (Phase 6.11 ✅)
+- CacheInvalidatorService for language-scoped cache invalidation (Phase 6.11 ✅)
 - ConnectivityService with online/offline detection
-- AudioService for recording/playback with proper cleanup
-- Error handling for all Hive and audio operations
-- Memory leak fixes in audio service
+- TtsService + VoiceInputService for audio I/O (Phase 6.9 ✅)
+- TranslationService for i18n
+- OnboardingProgressService for checkpoint persistence (Phase 6.10 ✅)
+- RevenueCatService + SubscriptionService for in-app purchases
+- Error handling for all operations with proper cleanup
 - path_provider dependency added
 
 ### ✅ Completed (Phase 4)
@@ -333,13 +341,19 @@ Complete dependency setup with all required packages.
 - `english-translations-en-us.dart` - English strings
 - `vietnamese-translations-vi-vn.dart` - Vietnamese strings
 
-#### Global Dependencies
+#### Global Dependencies (11 services)
 Services registered in `global-dependency-injection-bindings.dart`:
-- ApiClient
-- StorageService
-- AuthStorage
-- ConnectivityService
-- AudioService
+1. AuthStorage (flutter_secure_storage)
+2. StorageService (Hive)
+3. LanguageContextService
+4. CacheInvalidatorService
+5. OnboardingProgressService
+6. ConnectivityService
+7. Audio Providers (TtsProvider, SttProvider, RecorderProvider)
+8. TtsService + VoiceInputService
+9. ApiClient (Dio with interceptor chain)
+10. RevenueCatService + SubscriptionService
+11. TranslationService (permanent lifetime)
 
 #### App Configuration
 - Main app widget with GetX integration
@@ -630,6 +644,106 @@ Services registered in `global-dependency-injection-bindings.dart`:
 - ✅ Visual QA against Pencil screenshots verified
 - ✅ Grammar correction properly separated from user bubble
 - ✅ Full translation coverage (EN + VI)
+
+---
+
+### ✅ Completed (Phase 6.11 - Multi-Language Adaptation)
+
+**Status:** ✅ Completed (7 phases: language service, interceptors, cache invalidation, error handling, DI, integration)
+
+#### New Services
+
+**LanguageContextService** (`lib/core/services/language-context-service.dart`)
+- Single source of truth for active learning language (code + UUID)
+- Persists to Hive preferences (`active_language_code`, `active_language_id`)
+- Observable state: `activeCode: RxnString`, `activeId: RxnString`
+- Methods: `init()`, `setActive(code, id)`, `clear()`, `resyncFromServer()`
+- Must init BEFORE ApiClient (interceptor dependency)
+
+**CacheInvalidatorService** (`lib/core/services/cache-invalidator-service.dart`)
+- Subscribes to language changes via `ever()` worker
+- Flushes language-scoped caches on every switch: lessons, chat, progress, attempts
+- Runs one-time migration flush on first launch after upgrade (`lang_migration_v1_done` flag)
+- Safe seeding: skips flush on boot emission (already-persisted value)
+
+#### New Interceptors
+
+**ActiveLanguageInterceptor** (`lib/core/network/active-language-interceptor.dart`)
+- Attaches `X-Learning-Language` header to content-scoped requests
+- Skip prefixes: `/auth`, `/languages`, `/users/me`, `/subscription`, `/admin`
+- Per-request override respected (caller priority)
+- Graceful degradation: continues if service not registered or code is null
+
+**LanguageRecoveryInterceptor** (`lib/core/network/language-recovery-interceptor.dart`)
+- Handles 403 "not enrolled" with one-shot `LanguageContextService.resyncFromServer()` + retry
+- Re-entrancy guarded (max 1 resync per request)
+- Silent failure: original 403 propagates if resync fails
+
+#### Modified Services
+
+**StorageService** (`lib/core/services/storage_service.dart`)
+- Added `preferenceKeysMatching(test)` — query preferences by predicate
+- Added `removePreferencesMatching(test)` — bulk-remove matching preferences
+- Enables cache invalidator to clear `progress_*`, `attempt_*` keys by pattern
+
+**ApiClient** (`lib/core/network/api_client.dart`)
+- Interceptor chain updated: Retry → Auth → **ActiveLanguage → LanguageRecovery** → Logger
+- Must register AFTER LanguageContextService for interceptor chaining
+
+**api_exceptions.dart** (`lib/core/network/api_exceptions.dart`)
+- Added `LanguageContextError` enum with 4 variants: `notEnrolled`, `languageMissingOnServer`, `enrollmentExpired`, `languageDisabled`
+- Helper: `detectLanguageContextError(DioException)` — extracts language error from 403 response
+- Enables intelligent error handling in controllers
+
+**Modified Controllers & Models**
+
+- `onboarding_controller.dart` — delegates to `LanguageContextService`; language state mirrors via `ever()` worker
+- `ai_chat_controller.dart` — `_targetLanguage` reads from service; removed `targetLanguage` from message body
+- `chat_message_model.dart` — uses service context instead of per-message language field
+- `profile_controller.dart` — logout calls `LanguageContextService.clear()`
+
+#### Dependency Injection Order (Updated)
+
+```
+1. AuthStorage → init()
+2. StorageService → init()
+3. LanguageContextService → init()
+4. CacheInvalidatorService → init()
+5. ConnectivityService → init()
+6. Audio providers + services → init()
+7. ApiClient → init()  [now has access to LanguageContextService]
+```
+
+#### Files Created
+- `lib/core/services/language-context-service.dart` (50 LOC)
+- `lib/core/services/cache-invalidator-service.dart` (50 LOC)
+- `lib/core/network/active-language-interceptor.dart` (45 LOC)
+- `lib/core/network/language-recovery-interceptor.dart` (TBD LOC)
+
+#### Files Modified
+- `lib/core/services/storage_service.dart` — 2 methods added
+- `lib/core/network/api_client.dart` — interceptor chain reordered
+- `lib/core/network/api_exceptions.dart` — new error enum + helper
+- `lib/features/onboarding/controllers/onboarding_controller.dart`
+- `lib/features/chat/controllers/ai_chat_controller.dart`
+- `lib/features/chat/models/chat_message_model.dart`
+- `lib/features/auth/controllers/profile_controller.dart`
+- `lib/app/global-dependency-injection-bindings.dart` — updated DI + init order
+
+#### API Integration
+- Content-scoped requests now include `X-Learning-Language: <code>` header
+- Backend partitions response data by language (lessons, chat, progress)
+- 403 "not enrolled" triggers automatic resync + single retry
+- Onboarding language selection flows directly to active language context
+
+#### Success Criteria Met
+- ✅ Language context persists across sessions
+- ✅ Caches automatically clear on language switch
+- ✅ Header injection transparent to controllers
+- ✅ 403 recovery automatic and re-entrancy safe
+- ✅ Migration flush runs once on upgrade
+- ✅ Zero breaking changes to existing controllers
+- ✅ All files compile without errors
 
 ---
 

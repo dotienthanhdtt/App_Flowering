@@ -3,12 +3,20 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+part 'storage_service_lessons.dart';
+part 'storage_service_chat.dart';
+part 'storage_service_preferences.dart';
+
 /// Storage service with LRU eviction for lessons, FIFO for chat
 class StorageService extends GetxService {
   static const String _lessonsBox = 'lessons_cache';
   static const String _lessonsAccessBox = 'lessons_access';
   static const String _chatBox = 'chat_cache';
   static const String _preferencesBox = 'preferences';
+
+  /// Key for the permanent "user has completed login" flag.
+  /// This key survives clearAll() so returning users are never re-onboarded.
+  static const String _hasCompletedLoginKey = 'has_completed_login';
 
   // Size limits in bytes
   static const int _lessonsMaxSize = 100 * 1024 * 1024; // 100 MB
@@ -18,6 +26,11 @@ class StorageService extends GetxService {
   late Box<int> _lessonsAccess;
   late Box<String> _chat;
   late Box<dynamic> _preferences;
+  // Insertion-ordered LRU of open language lesson boxes. When we exceed
+  // [_maxOpenLangBoxes], the least-recently used box is closed to bound
+  // file-descriptor use across language switches.
+  static const int _maxOpenLangBoxes = 2;
+  final Map<String, Box<String>> _langLessonBoxes = <String, Box<String>>{};
 
   int _lessonsCurrentSize = 0;
   int _chatCurrentSize = 0;
@@ -47,128 +60,15 @@ class StorageService extends GetxService {
     return this;
   }
 
-  // ─────────────────────────────────────────────────────────────────
-  // Lessons Cache (LRU)
-  // ─────────────────────────────────────────────────────────────────
-
-  /// Get lesson from cache, updates access time
-  String? getLesson(String key) {
-    final value = _lessons.get(key);
-    if (value != null) {
-      // Update access time for LRU
-      _lessonsAccess.put(key, DateTime.now().millisecondsSinceEpoch);
+  /// Close all boxes
+  Future<void> close() async {
+    await _lessons.close();
+    await _lessonsAccess.close();
+    await _chat.close();
+    await _preferences.close();
+    for (final box in _langLessonBoxes.values) {
+      await box.close();
     }
-    return value;
-  }
-
-  /// Save lesson to cache with LRU eviction
-  Future<void> saveLesson(String key, String value) async {
-    try {
-      final valueSize = _estimateSize(value);
-
-      // Evict until we have space
-      while (_lessonsCurrentSize + valueSize > _lessonsMaxSize &&
-          _lessons.isNotEmpty) {
-        await _evictLRULesson();
-      }
-
-      await _lessons.put(key, value);
-      await _lessonsAccess.put(key, DateTime.now().millisecondsSinceEpoch);
-      _lessonsCurrentSize += valueSize;
-    } on HiveError catch (e) {
-      if (kDebugMode) {
-        print('Failed to save lesson: $e');
-      }
-      // Skip saving on error
-    }
-  }
-
-  /// Evict least recently used lesson
-  Future<void> _evictLRULesson() async {
-    if (_lessonsAccess.isEmpty) return;
-
-    // Find oldest access
-    String? oldestKey;
-    int oldestTime = DateTime.now().millisecondsSinceEpoch;
-
-    for (final key in _lessonsAccess.keys) {
-      final time = _lessonsAccess.get(key) ?? 0;
-      if (time < oldestTime) {
-        oldestTime = time;
-        oldestKey = key as String?;
-      }
-    }
-
-    if (oldestKey != null) {
-      final value = _lessons.get(oldestKey);
-      if (value != null) {
-        _lessonsCurrentSize -= _estimateSize(value);
-      }
-      await _lessons.delete(oldestKey);
-      await _lessonsAccess.delete(oldestKey);
-    }
-  }
-
-  // ─────────────────────────────────────────────────────────────────
-  // Chat Cache (FIFO)
-  // ─────────────────────────────────────────────────────────────────
-
-  /// Get chat messages
-  String? getChatMessage(String key) {
-    return _chat.get(key);
-  }
-
-  /// Get all chat messages for a conversation
-  List<String> getChatMessages(String conversationId) {
-    return _chat.keys
-        .where((k) => k.toString().startsWith(conversationId))
-        .map((k) => _chat.get(k))
-        .whereType<String>()
-        .toList();
-  }
-
-  /// Save chat message with FIFO eviction
-  Future<void> saveChatMessage(String key, String value) async {
-    try {
-      final valueSize = _estimateSize(value);
-
-      // FIFO eviction - remove oldest entries first
-      while (_chatCurrentSize + valueSize > _chatMaxSize && _chat.isNotEmpty) {
-        final firstKey = _chat.keyAt(0);
-        final firstValue = _chat.get(firstKey);
-        if (firstValue != null) {
-          _chatCurrentSize -= _estimateSize(firstValue);
-        }
-        await _chat.deleteAt(0);
-      }
-
-      await _chat.put(key, value);
-      _chatCurrentSize += valueSize;
-    } on HiveError catch (e) {
-      if (kDebugMode) {
-        print('Failed to save chat message: $e');
-      }
-      // Skip saving on error
-    }
-  }
-
-  // ─────────────────────────────────────────────────────────────────
-  // Preferences
-  // ─────────────────────────────────────────────────────────────────
-
-  /// Get preference value
-  T? getPreference<T>(String key) {
-    return _preferences.get(key) as T?;
-  }
-
-  /// Set preference value
-  Future<void> setPreference<T>(String key, T value) async {
-    await _preferences.put(key, value);
-  }
-
-  /// Remove preference
-  Future<void> removePreference(String key) async {
-    await _preferences.delete(key);
   }
 
   // ─────────────────────────────────────────────────────────────────
@@ -184,11 +84,14 @@ class StorageService extends GetxService {
   /// Get chat cache size in bytes
   int get chatCacheSize => _chatCurrentSize;
 
-  /// Clear lessons cache
+  /// Clear ALL lessons caches (flat box + all per-lang sub-boxes).
   Future<void> clearLessonsCache() async {
     await _lessons.clear();
     await _lessonsAccess.clear();
     _lessonsCurrentSize = 0;
+    for (final box in _langLessonBoxes.values) {
+      await box.clear();
+    }
   }
 
   /// Clear chat cache
@@ -208,18 +111,24 @@ class StorageService extends GetxService {
     await _preferences.clear();
   }
 
-  /// Clear everything — used on logout
-  Future<void> clearAll() async {
-    await clearAllCaches();
-    await clearPreferences();
+  // ─────────────────────────────────────────────────────────────────
+  // Preferences — instance methods (not extension) so tests can
+  // override with in-memory fakes without touching Hive.
+  // ─────────────────────────────────────────────────────────────────
+
+  /// Get preference value
+  T? getPreference<T>(String key) {
+    return _preferences.get(key) as T?;
   }
 
-  /// Close all boxes
-  Future<void> close() async {
-    await _lessons.close();
-    await _lessonsAccess.close();
-    await _chat.close();
-    await _preferences.close();
+  /// Set preference value
+  Future<void> setPreference<T>(String key, T value) async {
+    await _preferences.put(key, value);
+  }
+
+  /// Remove preference
+  Future<void> removePreference(String key) async {
+    await _preferences.delete(key);
   }
 
   // ─────────────────────────────────────────────────────────────────

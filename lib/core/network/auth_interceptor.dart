@@ -1,28 +1,31 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import '../services/auth_storage.dart';
 import '../constants/api_endpoints.dart';
 import '../../config/env_config.dart';
 
-/// QueuedInterceptor ensures concurrent 401s wait for single refresh
+/// QueuedInterceptor serializes onRequest callbacks.
+/// Completer gate ensures a single concurrent refresh; waiters retry with
+/// the freshly obtained token instead of triggering a second refresh.
 class AuthInterceptor extends QueuedInterceptor {
   final AuthStorage _authStorage;
-  bool _isRefreshing = false;
+  final Dio _retryDio;
+  Completer<bool>? _refreshGate;
 
-  AuthInterceptor(this._authStorage);
+  AuthInterceptor(this._authStorage, this._retryDio);
 
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    // Skip auth header for refresh endpoint to avoid loop
     if (options.path.contains(ApiEndpoints.refreshToken)) {
       handler.next(options);
       return;
     }
-
-    final token = await _authStorage.getAccessToken();
+    final token = _authStorage.cachedAccessToken ??
+        await _authStorage.getAccessToken();
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -34,44 +37,54 @@ class AuthInterceptor extends QueuedInterceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    // Only handle 401 for non-refresh requests
-    if (err.response?.statusCode == 401 &&
-        !err.requestOptions.path.contains(ApiEndpoints.refreshToken)) {
+    if (err.response?.statusCode != 401 ||
+        err.requestOptions.path.contains(ApiEndpoints.refreshToken)) {
+      handler.next(err);
+      return;
+    }
 
-      if (_isRefreshing) {
-        // Another request is already refreshing, wait and retry
-        handler.next(err);
-        return;
-      }
-
-      _isRefreshing = true;
-
-      try {
-        final refreshed = await _refreshToken();
-        if (refreshed) {
-          // Retry original request with new token
-          final newToken = await _authStorage.getAccessToken();
-          err.requestOptions.headers['Authorization'] = 'Bearer $newToken';
-
-          // Create new Dio for retry to avoid interceptor loop
-          final retryDio = Dio(BaseOptions(
-            baseUrl: EnvConfig.apiBaseUrl,
-            connectTimeout: const Duration(seconds: 15),
-            receiveTimeout: const Duration(seconds: 30),
-          ));
-
-          final response = await retryDio.fetch(err.requestOptions);
+    if (_refreshGate != null) {
+      // Refresh already in-flight — await result, then retry with new token.
+      final refreshed = await _refreshGate!.future;
+      if (refreshed) {
+        final newToken = await _authStorage.getAccessToken();
+        err.requestOptions.headers['Authorization'] = 'Bearer $newToken';
+        try {
+          final response = await _retryDio.fetch(err.requestOptions);
           handler.resolve(response);
-          return;
+        } catch (_) {
+          handler.next(err);
         }
-      } catch (e) {
-        // Refresh failed, clear tokens and let error propagate
-        await _authStorage.clearTokens();
-      } finally {
-        _isRefreshing = false;
+      } else {
+        handler.next(err);
       }
+      return;
+    }
 
-      // Refresh failed, trigger logout
+    final gate = Completer<bool>();
+    _refreshGate = gate;
+    bool refreshed = false;
+    try {
+      refreshed = await _refreshToken();
+    } catch (_) {
+      refreshed = false;
+    } finally {
+      gate.complete(refreshed);
+      _refreshGate = null;
+    }
+
+    if (refreshed) {
+      final newToken = await _authStorage.getAccessToken();
+      err.requestOptions.headers['Authorization'] = 'Bearer $newToken';
+      try {
+        final response = await _retryDio.fetch(err.requestOptions);
+        handler.resolve(response);
+        return;
+      } catch (_) {
+        // retry failed — fall through
+      }
+    } else {
+      await _authStorage.clearTokens();
       _triggerLogout();
     }
 
@@ -81,11 +94,8 @@ class AuthInterceptor extends QueuedInterceptor {
   Future<bool> _refreshToken() async {
     try {
       final refreshToken = await _authStorage.getRefreshToken();
-      if (refreshToken == null || refreshToken.isEmpty) {
-        return false;
-      }
+      if (refreshToken == null || refreshToken.isEmpty) return false;
 
-      // Use separate Dio instance for refresh to avoid interceptor loop
       final refreshDio = Dio(BaseOptions(
         baseUrl: EnvConfig.apiBaseUrl,
         connectTimeout: const Duration(seconds: 15),
@@ -104,15 +114,13 @@ class AuthInterceptor extends QueuedInterceptor {
         );
         return true;
       }
-    } catch (e) {
+    } catch (_) {
       // Refresh failed
     }
     return false;
   }
 
   void _triggerLogout() {
-    // Navigate to login and clear auth state
-    // Will be implemented when AuthController exists
     Get.offAllNamed('/login');
   }
 }

@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 
-/// Firebase configuration generated from GoogleService-Info.plist.
-/// Re-generate with FlutterFire CLI if project settings change.
+import 'env_config.dart';
+
+/// Firebase configuration loaded from environment files.
+/// Update `.env.dev` / `.env.prod` to change project settings.
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     switch (defaultTargetPlatform) {
@@ -17,24 +19,22 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDkAKe5avwUaNOXnS70eD82jRnyrOlchrM',
-    appId: '1:898715197112:ios:e6dda7e85a9f8f60011e4d',
-    messagingSenderId: '898715197112',
-    projectId: 'flowering-74b9e',
-    storageBucket: 'flowering-74b9e.firebasestorage.app',
-    iosBundleId: 'com.flowering.app',
-    iosClientId:
-        '898715197112-igsgcfq3chp3a1k9akkoph87aab0fdkt.apps.googleusercontent.com',
-  );
+  static FirebaseOptions get ios => FirebaseOptions(
+        apiKey: EnvConfig.firebaseIosApiKey,
+        appId: EnvConfig.firebaseIosAppId,
+        messagingSenderId: EnvConfig.firebaseMessagingSenderId,
+        projectId: EnvConfig.firebaseProjectId,
+        storageBucket: EnvConfig.firebaseStorageBucket,
+        iosBundleId: EnvConfig.firebaseIosBundleId,
+        iosClientId: EnvConfig.firebaseIosClientId,
+      );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC2TWz5n4OFhbHzXj5edubsrwxUAIQoiM4',
-    appId: '1:898715197112:android:098aed5e19b877e2011e4d',
-    messagingSenderId: '898715197112',
-    projectId: 'flowering-74b9e',
-    storageBucket: 'flowering-74b9e.firebasestorage.app',
-    androidClientId:
-        '898715197112-ngpcn026j0f4qrpsakfn3j4cf98tk8oq.apps.googleusercontent.com',
-  );
+  static FirebaseOptions get android => FirebaseOptions(
+        apiKey: EnvConfig.firebaseAndroidApiKey,
+        appId: EnvConfig.firebaseAndroidAppId,
+        messagingSenderId: EnvConfig.firebaseMessagingSenderId,
+        projectId: EnvConfig.firebaseProjectId,
+        storageBucket: EnvConfig.firebaseStorageBucket,
+        androidClientId: EnvConfig.firebaseAndroidClientId,
+      );
 }
