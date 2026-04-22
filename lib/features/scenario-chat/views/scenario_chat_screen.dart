@@ -10,6 +10,7 @@ import '../../chat/models/chat_message_model.dart';
 import '../../chat/widgets/ai_message_bubble.dart';
 import '../../chat/widgets/ai_typing_bubble.dart';
 import '../../chat/widgets/chat_top_bar.dart';
+import '../../chat/widgets/grammar_correction_section.dart';
 import '../../chat/widgets/user_message_bubble.dart';
 import '../controllers/scenario_chat_controller.dart';
 import '../widgets/scenario_chat_input_bar.dart';
@@ -29,15 +30,19 @@ class ScenarioChatScreen extends BaseScreen<ScenarioChatController> {
       children: [
         Obx(() => ChatTopBar(title: controller.scenarioTitle)),
         Expanded(child: _MessageList()),
+        // Partial transcript overlay shown while the mic is live
+        Obx(() {
+          final isListening = controller.voiceInputService.isListening.value;
+          final partial = controller.voiceInputService.partialText.value;
+          if (!isListening) return const SizedBox.shrink();
+          return _VoiceInputOverlay(partial: partial);
+        }),
         Obx(() {
           if (controller.completed.value) return _CompletedBanner();
           if (controller.kickoffFailed.value) {
             return _KickoffErrorBanner(onRetry: controller.retryKickoff);
           }
-          return ScenarioChatInputBar(
-            enabled: !controller.isSending.value,
-            onSend: controller.sendText,
-          );
+          return const ScenarioChatInputBar();
         }),
       ],
     );
@@ -58,28 +63,77 @@ class _MessageList extends GetView<ScenarioChatController> {
         itemCount: msgs.length,
         separatorBuilder: (context, index) =>
             const SizedBox(height: AppSizes.space4),
-        itemBuilder: (_, i) => _buildMessage(msgs[i]),
+        itemBuilder: (ctx, i) => _buildMessage(ctx, msgs[i]),
       );
     });
   }
 
-  Widget _buildMessage(ChatMessage msg) {
+  Widget _buildMessage(BuildContext context, ChatMessage msg) {
     switch (msg.type) {
       case ChatMessageType.aiTyping:
         return const AiTypingBubble();
       case ChatMessageType.userText:
-        return UserMessageBubble(message: msg);
-      case ChatMessageType.aiText:
-        return AiMessageBubble(
-          message: msg,
-          onTranslate: () => controller.toggleTranslation(msg.id),
-          onPlayAudio: null,
-          onWordTap: (word) => controller.onWordTap(word),
-          isSpeaking: false,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            UserMessageBubble(message: msg),
+            if (msg.correctedText != null) ...[
+              const SizedBox(height: AppSizes.space2),
+              Align(
+                alignment: Alignment.centerRight,
+                child: GrammarCorrectionSection(
+                  correctedText: msg.correctedText!,
+                ),
+              ),
+            ],
+          ],
         );
+      case ChatMessageType.aiText:
+        return Obx(() => AiMessageBubble(
+              message: msg,
+              onTranslate: () => controller.toggleTranslation(msg.id),
+              onPlayAudio: () => controller.playAudio(msg.id),
+              onWordTap: (word) => controller.onWordTap(word),
+              isSpeaking:
+                  controller.ttsService.currentText.value == msg.text,
+            ));
       default:
         return const SizedBox.shrink();
     }
+  }
+}
+
+class _VoiceInputOverlay extends StatelessWidget {
+  final String partial;
+  const _VoiceInputOverlay({required this.partial});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.space4,
+        vertical: AppSizes.space2,
+      ),
+      color: AppColors.surfaceMutedColor,
+      child: Row(
+        children: [
+          const Icon(
+            Icons.mic_rounded,
+            size: AppSizes.iconSM,
+            color: AppColors.errorColor,
+          ),
+          const SizedBox(width: AppSizes.space2),
+          Expanded(
+            child: AppText(
+              partial.isEmpty ? 'chat_listening'.tr : partial,
+              variant: AppTextVariant.bodyLarge,
+              color: AppColors.textSecondaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

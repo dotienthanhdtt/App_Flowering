@@ -30,7 +30,12 @@ class ChatInputBar extends StatelessWidget {
         final sttAvailable = controller.voiceInputService.sttAvailable.value;
 
         if (isRecording) {
-          return ChatRecordingBar(controller: controller);
+          return ChatRecordingBar(
+            duration: controller.recordingDuration,
+            amplitude: controller.recordingAmplitude,
+            onCancel: controller.cancelRecording,
+            onSend: controller.stopRecording,
+          );
         }
 
         return ValueListenableBuilder<TextEditingValue>(

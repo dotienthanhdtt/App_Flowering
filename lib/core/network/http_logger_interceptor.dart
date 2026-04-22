@@ -125,11 +125,11 @@ class HttpLoggerInterceptor extends Interceptor {
     parts.add("'$url$query'");
 
     options.headers.forEach((key, value) {
-      if (key.toLowerCase() == 'authorization') {
-        parts.add("-H '$key: Bearer ***'");
-      } else {
+      // if (key.toLowerCase() == 'authorization') {
+      //   parts.add("-H '$key: Bearer ***'");
+      // } else {
         parts.add("-H '$key: $value'");
-      }
+      // }
     });
 
     if (options.data != null && options.data is! FormData) {

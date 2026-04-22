@@ -17,9 +17,10 @@ class ScenarioChatTurnResponse {
   factory ScenarioChatTurnResponse.fromJson(Map<String, dynamic> json) =>
       ScenarioChatTurnResponse(
         reply: json['reply'] as String? ?? '',
-        conversationId: json['conversationId'] as String? ?? '',
-        turn: json['turn'] as int? ?? 0,
-        maxTurns: json['maxTurns'] as int? ?? 0,
+        conversationId:
+            json['conversation_id'] as String? ?? json['conversationId'] as String? ?? '',
+        turn: (json['turn'] as int?) ?? 0,
+        maxTurns: (json['max_turns'] as int?) ?? (json['maxTurns'] as int?) ?? 0,
         completed: json['completed'] as bool? ?? false,
       );
 }

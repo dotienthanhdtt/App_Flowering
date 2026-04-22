@@ -3,14 +3,24 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../shared/widgets/app_text.dart';
-import '../controllers/ai_chat_controller.dart';
 import 'chat_waveform_bars.dart';
 
 /// Recording bar: cancel (X) + waveform area (red dot, timer, bars) + send.
+/// Controller-agnostic — driven by raw Rx values and callbacks so any chat
+/// feature can reuse it (onboarding chat, scenario chat, etc).
 class ChatRecordingBar extends StatelessWidget {
-  final AiChatController controller;
+  final Rx<Duration> duration;
+  final RxDouble amplitude;
+  final VoidCallback onCancel;
+  final VoidCallback onSend;
 
-  const ChatRecordingBar({super.key, required this.controller});
+  const ChatRecordingBar({
+    super.key,
+    required this.duration,
+    required this.amplitude,
+    required this.onCancel,
+    required this.onSend,
+  });
 
   String _formatDuration(int seconds) {
     final m = seconds ~/ 60;
@@ -22,9 +32,8 @@ class ChatRecordingBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Cancel button — 48px
         GestureDetector(
-          onTap: controller.cancelRecording,
+          onTap: onCancel,
           child: Container(
             width: AppSizes.avatarXL,
             height: AppSizes.avatarXL,
@@ -36,7 +45,6 @@ class ChatRecordingBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AppSizes.space3),
-        // Red dot
         Container(
           width: 8,
           height: 8,
@@ -46,21 +54,18 @@ class ChatRecordingBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AppSizes.space2),
-        // Timer
         Obx(() => AppText(
-              _formatDuration(controller.recordingDuration.value.inSeconds),
+              _formatDuration(duration.value.inSeconds),
               variant: AppTextVariant.label,
               color: AppColors.textPrimaryColor,
             )),
         const SizedBox(width: AppSizes.space3),
-        // Waveform bars driven by real microphone amplitude
-        Expanded(child: Obx(() => ChatWaveformBars(
-          amplitude: controller.recordingAmplitude.value,
-        ))),
+        Expanded(
+          child: Obx(() => ChatWaveformBars(amplitude: amplitude.value)),
+        ),
         const SizedBox(width: AppSizes.space3),
-        // Send button — 48px
         GestureDetector(
-          onTap: controller.stopRecording,
+          onTap: onSend,
           child: Container(
             width: AppSizes.avatarXL,
             height: AppSizes.avatarXL,
