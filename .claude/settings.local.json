@@ -111,7 +111,8 @@
       "Bash(curl -sS 'https://dev.broduck.me/languages' -H 'Accept: application/json')",
       "Bash(dart compile *)",
       "Bash(xxd)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(git *)"
     ]
   },
   "enableAllProjectMcpServers": true,
