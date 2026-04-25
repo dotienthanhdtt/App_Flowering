@@ -335,9 +335,8 @@ const Map<String, String> enUS = {
   'scenario_detail_not_found': 'Scenario not found',
   'scenario_detail_error_generic': 'Could not load scenario',
 
-  // Scenario Chat (Phase 3)
-  'scenario_chat_complete_banner':
-      'Conversation complete. Tap Practice Again to replay.',
+  // Scenario Chat
+  'scenario_chat_view_result': 'View Result',
   'scenario_chat_error_send': "Couldn't send. Try again.",
   'scenario_chat_premium_required': 'Premium required for this scenario.',
 };

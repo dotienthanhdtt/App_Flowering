@@ -38,7 +38,7 @@ class ScenarioChatScreen extends BaseScreen<ScenarioChatController> {
           return _VoiceInputOverlay(partial: partial);
         }),
         Obx(() {
-          if (controller.completed.value) return _CompletedBanner();
+          if (controller.completed.value) return const _ViewResultBar();
           if (controller.kickoffFailed.value) {
             return _KickoffErrorBanner(onRetry: controller.retryKickoff);
           }
@@ -137,7 +137,9 @@ class _VoiceInputOverlay extends StatelessWidget {
   }
 }
 
-class _CompletedBanner extends StatelessWidget {
+class _ViewResultBar extends StatelessWidget {
+  const _ViewResultBar();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -145,24 +147,14 @@ class _CompletedBanner extends StatelessWidget {
       color: AppColors.surfaceColor,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSizes.space4,
-        vertical: AppSizes.space4,
+        vertical: AppSizes.space3,
       ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.check_circle_rounded,
-            color: AppColors.successColor,
-            size: AppSizes.iconXL,
-          ),
-          const SizedBox(width: AppSizes.space3),
-          Expanded(
-            child: AppText(
-              'scenario_chat_complete_banner'.tr,
-              fontSize: AppSizes.fontSizeSmall,
-              color: AppColors.textSecondaryColor,
-            ),
-          ),
-        ],
+      child: SafeArea(
+        top: false,
+        child: AppButton(
+          text: 'scenario_chat_view_result'.tr,
+          onPressed: () {},
+        ),
       ),
     );
   }

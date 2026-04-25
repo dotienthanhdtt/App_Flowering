@@ -46,7 +46,7 @@ extension ScenarioChatControllerGrammar on ScenarioChatController {
       if (response.isSuccess && response.data != null) {
         final corrected = response.data!['corrected_text'] as String?;
         if (corrected != null) {
-          final idx = messages.indexWhere((m) => m.id == messageId);
+          final idx = _findUserMessageIndex(messageId, userText);
           if (idx != -1) {
             messages[idx].correctedText = corrected;
             messages[idx].showCorrection = true;
@@ -57,5 +57,20 @@ extension ScenarioChatControllerGrammar on ScenarioChatController {
     } catch (_) {
       // Silent fail — grammar check is non-critical.
     }
+  }
+
+  // After server merge the temp id may be replaced by a UUID, so fall back
+  // to matching by (role=user, text) to find the right bubble.
+  int _findUserMessageIndex(String messageId, String trimmed) {
+    final byId = messages.indexWhere((m) => m.id == messageId);
+    if (byId != -1) return byId;
+    for (var i = messages.length - 1; i >= 0; i--) {
+      final m = messages[i];
+      if (m.type == ChatMessageType.userText &&
+          (m.text?.trim() ?? '') == trimmed) {
+        return i;
+      }
+    }
+    return -1;
   }
 }

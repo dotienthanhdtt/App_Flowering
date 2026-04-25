@@ -112,7 +112,10 @@
       "Bash(dart compile *)",
       "Bash(xxd)",
       "Bash(curl *)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(fvm flutter *)",
+      "Bash(/Users/tienthanh/fvm/versions/3.38.4/bin/dart analyze *)",
+      "Bash(dart analyze *)"
     ]
   },
   "enableAllProjectMcpServers": true,

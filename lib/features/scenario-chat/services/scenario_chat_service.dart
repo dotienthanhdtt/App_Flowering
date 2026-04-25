@@ -6,18 +6,17 @@ import '../../../core/network/api_response.dart';
 import '../models/scenario_chat_turn_request.dart';
 import '../models/scenario_chat_turn_response.dart';
 
-/// Service for the POST /scenario/chat endpoint.
 class ScenarioChatService extends GetxService {
   ApiClient get _apiClient => Get.find<ApiClient>();
 
-  Future<ApiResponse<ScenarioChatTurnResponse>> chat(
+  Future<ApiResponse<ScenarioChatResponse>> chat(
     ScenarioChatTurnRequest req,
   ) {
-    return _apiClient.post<ScenarioChatTurnResponse>(
+    return _apiClient.post<ScenarioChatResponse>(
       ApiEndpoints.scenarioChat,
       data: req.toJson(),
       fromJson: (data) =>
-          ScenarioChatTurnResponse.fromJson(data as Map<String, dynamic>),
+          ScenarioChatResponse.fromJson(data as Map<String, dynamic>),
     );
   }
 }

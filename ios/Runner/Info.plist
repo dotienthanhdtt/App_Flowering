@@ -62,6 +62,8 @@
 		<string>Flowering uses speech recognition to transcribe your voice messages</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Flowering needs microphone access to record voice messages</string>
+		<key>NSUserTrackingUsageDescription</key>
+		<string>Flowering uses your advertising identifier to personalise your learning experience</string>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 	</dict>

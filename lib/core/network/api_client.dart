@@ -122,6 +122,29 @@ class ApiClient extends GetxService {
     }
   }
 
+  /// PATCH request
+  Future<ApiResponse<T>> patch<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    T Function(dynamic)? fromJson,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final response = await _dio.patch(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      return _handleResponse(response, fromJson);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
+
   /// DELETE request
   Future<ApiResponse<T>> delete<T>(
     String path, {

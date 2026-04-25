@@ -4,6 +4,7 @@ import '../../../core/base/base_controller.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/services/auth_storage.dart';
+import '../../../core/services/device-info-service.dart';
 import '../../../core/services/storage_service.dart';
 import '../models/onboarding_progress_model.dart';
 import '../services/onboarding_progress_service.dart';
@@ -61,10 +62,22 @@ class SplashController extends BaseController {
 
     try {
       // Dio already has built-in 15s connect + 30s receive timeouts
-      final response = await _apiClient.get(ApiEndpoints.userMe);
-      return response.isSuccess;
+      final response = await _apiClient.post(ApiEndpoints.userMe);
+      if (response.isSuccess) {
+        _syncDeviceInfo();
+        return true;
+      }
+      return false;
     } catch (_) {
       return false;
     }
+  }
+
+  // Fire-and-forget: collect device context and PATCH /users/me.
+  // Never blocks navigation or token validation result.
+  void _syncDeviceInfo() {
+    DeviceInfoService().collect().then((deviceInfo) {
+      _apiClient.patch(ApiEndpoints.updateUserMe, data: deviceInfo).ignore();
+    }).ignore();
   }
 }

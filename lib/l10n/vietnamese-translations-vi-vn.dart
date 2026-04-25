@@ -335,9 +335,8 @@ const Map<String, String> viVN = {
   'scenario_detail_not_found': 'Không tìm thấy kịch bản',
   'scenario_detail_error_generic': 'Không thể tải kịch bản',
 
-  // Scenario Chat (Phase 3)
-  'scenario_chat_complete_banner':
-      'Đã hoàn thành hội thoại. Nhấn Luyện lại để thực hành tiếp.',
+  // Scenario Chat
+  'scenario_chat_view_result': 'Xem kết quả',
   'scenario_chat_error_send': 'Không thể gửi. Vui lòng thử lại.',
   'scenario_chat_premium_required': 'Cần gói Premium cho kịch bản này.',
 };

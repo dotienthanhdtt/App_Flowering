@@ -14,6 +14,7 @@ import '../../../core/services/translation-service.dart';
 import '../../chat/models/chat_message_model.dart';
 import '../../chat/widgets/word-translation-sheet-loader.dart';
 import '../models/scenario_chat_turn_request.dart';
+import '../models/scenario_chat_turn_response.dart';
 import '../services/scenario_chat_service.dart';
 
 part 'scenario_chat_controller_messaging.dart';
@@ -50,6 +51,7 @@ class ScenarioChatController extends BaseController {
   final maxTurns = 0.obs;
 
   String? conversationId;
+  bool _isFirstLoad = true;
 
   final scrollController = ScrollController();
   final textEditingController = TextEditingController();
@@ -97,22 +99,6 @@ class ScenarioChatController extends BaseController {
     messages.removeWhere((m) => m.id == _typingId);
   }
 
-  void _addAiMessage(String text) {
-    if (text.trim().isEmpty) return;
-    messages.add(ChatMessage(
-      id: const Uuid().v4(),
-      type: ChatMessageType.aiText,
-      text: text,
-      timestamp: DateTime.now(),
-    ));
-    _scrollToBottom();
-
-    // Auto-play AI messages via TTS if user has opted in
-    if (_ttsService.autoPlayEnabled) {
-      _ttsService.speak(text, language: _targetLanguage);
-    }
-  }
-
   void _addUserMessage(String text, {String? messageId}) {
     messages.add(ChatMessage(
       id: messageId ?? const Uuid().v4(),
@@ -121,6 +107,65 @@ class ScenarioChatController extends BaseController {
       timestamp: DateTime.now(),
     ));
     _scrollToBottom();
+  }
+
+  void _maybeAutoplayLatestAi() {
+    for (var i = messages.length - 1; i >= 0; i--) {
+      final m = messages[i];
+      if (m.type == ChatMessageType.aiText && (m.text ?? '').isNotEmpty) {
+        if (_ttsService.autoPlayEnabled) {
+          _ttsService.speak(m.text!, language: _targetLanguage);
+        }
+        return;
+      }
+    }
+  }
+
+  List<ChatMessage> _mergeWithServer(
+    List<ChatMessage> local,
+    List<ScenarioMessage> server,
+  ) {
+    final byId = <String, ChatMessage>{
+      for (final m in local) m.id: m,
+    };
+    final matchedIds = <String>{};
+    final result = <ChatMessage>[];
+
+    for (final srv in server) {
+      final content = srv.content.trim();
+      if (content.isEmpty) continue;
+
+      final type =
+          srv.isAssistant ? ChatMessageType.aiText : ChatMessageType.userText;
+
+      ChatMessage? cached = byId[srv.id];
+      if (cached == null && srv.isUser) {
+        // Fallback: match by (role=user, text) for temp-id → UUID transition
+        for (var i = local.length - 1; i >= 0; i--) {
+          final m = local[i];
+          if (m.type == ChatMessageType.userText &&
+              (m.text?.trim() ?? '') == content &&
+              !matchedIds.contains(m.id)) {
+            cached = m;
+            break;
+          }
+        }
+      }
+
+      if (cached != null) matchedIds.add(cached.id);
+
+      result.add(ChatMessage(
+        id: srv.id,
+        type: type,
+        text: srv.content,
+        timestamp: srv.createdAt,
+        translatedText: cached?.translatedText,
+        showTranslation: cached?.showTranslation ?? false,
+        correctedText: cached?.correctedText,
+        showCorrection: cached?.showCorrection ?? true,
+      ));
+    }
+    return result;
   }
 
   void _scrollToBottom() {

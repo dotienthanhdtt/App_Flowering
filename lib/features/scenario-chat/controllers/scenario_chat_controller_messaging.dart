@@ -1,12 +1,22 @@
 part of 'scenario_chat_controller.dart';
 
 // Chat turn flow for ScenarioChatController — kickoff + send + error mapping.
-// Uses library-private helpers (_addAiMessage, _addTypingPlaceholder, …) and
-// the `conversationId`/`turn`/`maxTurns`/`completed` state on the main class.
 
 extension ScenarioChatControllerMessaging on ScenarioChatController {
-  /// First turn: sends an empty message so the backend seeds the conversation
-  /// with its scenario-opener greeting.
+  void _applyServerState(ScenarioChatResponse r) {
+    final s = r.scenario;
+    if (s.conversationId.isNotEmpty) conversationId = s.conversationId;
+    turn.value = s.turn;
+    maxTurns.value = s.maxTurns;
+    completed.value = s.status == ScenarioStatus.done;
+
+    messages.value = _mergeWithServer(messages, r.messages);
+    _scrollToBottom();
+
+    if (!_isFirstLoad) _maybeAutoplayLatestAi();
+    _isFirstLoad = false;
+  }
+
   Future<void> sendKickoff() async {
     kickoffFailed.value = false;
     _addTypingPlaceholder();
@@ -20,14 +30,7 @@ extension ScenarioChatControllerMessaging on ScenarioChatController {
       onSuccess: (resp) {
         _removeTypingPlaceholder();
         if (resp.isSuccess && resp.data != null) {
-          final data = resp.data!;
-          if (data.conversationId.isNotEmpty) {
-            conversationId = data.conversationId;
-          }
-          turn.value = data.turn;
-          maxTurns.value = data.maxTurns;
-          completed.value = data.completed;
-          _addAiMessage(data.reply);
+          _applyServerState(resp.data!);
         }
       },
       onError: (e) {
@@ -39,8 +42,6 @@ extension ScenarioChatControllerMessaging on ScenarioChatController {
 
   Future<void> retryKickoff() => sendKickoff();
 
-  /// Standard turn: user text → /scenario/chat → AI reply. Also fires grammar
-  /// check in parallel so the "Try instead" card can render when ready.
   Future<void> sendText(String text) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty || isSending.value || completed.value) return;
@@ -64,14 +65,7 @@ extension ScenarioChatControllerMessaging on ScenarioChatController {
       onSuccess: (resp) {
         _removeTypingPlaceholder();
         if (resp.isSuccess && resp.data != null) {
-          final data = resp.data!;
-          if (data.conversationId.isNotEmpty) {
-            conversationId = data.conversationId;
-          }
-          turn.value = data.turn;
-          maxTurns.value = data.maxTurns;
-          completed.value = data.completed;
-          _addAiMessage(data.reply);
+          _applyServerState(resp.data!);
         }
         isSending.value = false;
       },
