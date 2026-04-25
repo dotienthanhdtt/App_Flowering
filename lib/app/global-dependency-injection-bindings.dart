@@ -21,6 +21,7 @@ import '../features/subscription/services/subscription-service.dart';
 import '../core/services/translation-service.dart';
 import '../features/scenarios/services/scenarios_service.dart';
 import '../features/scenario-chat/services/scenario_chat_service.dart';
+import '../features/vocabulary/services/vocabulary-service.dart';
 
 /// Global dependency injection for core services
 ///
@@ -118,6 +119,12 @@ class AppBindings extends Bindings {
     // Scenario chat service — used by ScenarioChatController.
     Get.lazyPut<ScenarioChatService>(
       () => ScenarioChatService(),
+      fenix: true,
+    );
+
+    // Vocabulary service — shared by the Vocabulary tab controller.
+    Get.lazyPut<VocabularyService>(
+      () => VocabularyService(),
       fenix: true,
     );
   }

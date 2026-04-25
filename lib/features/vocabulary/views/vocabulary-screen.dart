@@ -6,24 +6,54 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/app_text.dart';
+import '../../../shared/widgets/empty_or_error_view.dart';
+import '../../../shared/widgets/loading_widget.dart';
+import '../../../shared/widgets/pull-to-refresh-list.dart';
 import '../controllers/vocabulary-controller.dart';
+import '../widgets/vocabulary-box-tabs.dart';
+import '../widgets/vocabulary-card.dart';
 
-/// Vocabulary tab — search bar + word list or empty state.
+/// Vocabulary tab — paginated API-backed list.
 /// Tab child screen — exempt from BaseScreen to avoid nested Scaffold.
-class VocabularyScreen extends StatelessWidget {
+class VocabularyScreen extends StatefulWidget {
   const VocabularyScreen({super.key});
 
   @override
+  State<VocabularyScreen> createState() => _VocabularyScreenState();
+}
+
+class _VocabularyScreenState extends State<VocabularyScreen>
+    with AutomaticKeepAliveClientMixin {
+  final VocabularyController _controller = Get.find<VocabularyController>();
+
+  @override
+  bool get wantKeepAlive => true;
+
+  bool _onScroll(ScrollNotification notification) {
+    if (notification.metrics.pixels >=
+        notification.metrics.maxScrollExtent - 240) {
+      _controller.loadMore();
+    }
+    return false;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.find<VocabularyController>();
+    super.build(context);
 
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          _buildSearchBar(controller),
-          Expanded(child: _buildBody(controller)),
+          _buildSearchBar(),
+          Obx(
+            () => VocabularyBoxTabs(
+              selectedBox: _controller.selectedBox.value,
+              onChanged: _controller.changeBox,
+            ),
+          ),
+          Expanded(child: _buildBody()),
         ],
       ),
     );
@@ -41,14 +71,14 @@ class VocabularyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar(VocabularyController controller) {
+  Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSizes.space6,
         vertical: AppSizes.space2,
       ),
       child: TextField(
-        onChanged: controller.updateSearch,
+        onChanged: _controller.updateSearch,
         decoration: InputDecoration(
           hintText: 'vocabulary_search'.tr,
           hintStyle: AppTextStyles.caption,
@@ -63,49 +93,73 @@ class VocabularyScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: AppSizes.space3,
-          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: AppSizes.space3),
         ),
       ),
     );
   }
 
-  Widget _buildBody(VocabularyController controller) {
-    return Obx(() {
-      final words = controller.filteredWords;
-      if (words.isEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                LucideIcons.languages,
-                size: AppSizes.icon3XL,
-                color: AppColors.textTertiaryColor,
+  Widget _buildBody() {
+    return PullToRefreshList(
+      isRefreshing: _controller.isRefreshing,
+      onRefresh: _controller.refreshVocabulary,
+      child: NotificationListener<ScrollNotification>(
+        onNotification: _onScroll,
+        child: Obx(() {
+          if (_controller.isLoading.value && _controller.items.isEmpty) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
               ),
-              const SizedBox(height: AppSizes.space4),
-              AppText(
-                'vocabulary_empty'.tr,
-                variant: AppTextVariant.bodyMedium,
-                color: AppColors.textTertiaryColor,
-              ),
-            ],
-          ),
-        );
-      }
+              children: const [
+                SizedBox(height: 120),
+                Center(child: LoadingWidget()),
+              ],
+            );
+          }
 
-      return ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.space4),
-        itemCount: words.length,
-        itemBuilder: (context, index) {
-          final word = words[index];
-          return ListTile(
-            title: AppText(word['term'] ?? '', variant: AppTextVariant.label),
-            subtitle: AppText(word['translation'] ?? '', variant: AppTextVariant.caption),
+          if (_controller.items.isEmpty) {
+            final hasError = _controller.errorMessage.value.isNotEmpty;
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.55,
+                  child: EmptyOrErrorView(
+                    icon: LucideIcons.languages,
+                    message: hasError
+                        ? _controller.errorMessage.value
+                        : 'vocabulary_empty'.tr,
+                    onRetry: hasError
+                        ? () => _controller.fetchVocabulary(refresh: true)
+                        : null,
+                    retryLabel: 'retry'.tr,
+                  ),
+                ),
+              ],
+            );
+          }
+
+          final items = _controller.items;
+          return ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: const EdgeInsets.fromLTRB(
+              AppSizes.space4,
+              AppSizes.space4,
+              AppSizes.space4,
+              AppSizes.space6,
+            ),
+            itemCount: items.length,
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: AppSizes.space3),
+            itemBuilder: (_, index) => VocabularyCard(item: items[index]),
           );
-        },
-      );
-    });
+        }),
+      ),
+    );
   }
 }

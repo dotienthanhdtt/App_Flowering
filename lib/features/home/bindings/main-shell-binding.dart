@@ -6,6 +6,7 @@ import '../../lessons/controllers/read-controller.dart';
 import '../../scenarios/controllers/flowering_feed_controller.dart';
 import '../../scenarios/controllers/for_you_feed_controller.dart';
 import '../../vocabulary/controllers/vocabulary-controller.dart';
+import '../../vocabulary/services/vocabulary-service.dart';
 import '../../profile/controllers/profile-controller.dart';
 
 /// Registers MainShellController + all tab controllers
@@ -23,7 +24,11 @@ class MainShellBinding extends Bindings {
       fenix: true,
     );
     Get.lazyPut<ReadController>(() => ReadController(), fenix: true);
-    Get.lazyPut<VocabularyController>(() => VocabularyController(), fenix: true);
+    Get.lazyPut<VocabularyService>(() => VocabularyService(), fenix: true);
+    Get.lazyPut<VocabularyController>(
+      () => VocabularyController(),
+      fenix: true,
+    );
     Get.lazyPut<ProfileController>(() => ProfileController(), fenix: true);
   }
 }
